@@ -1,0 +1,47 @@
+%=================%
+% Section:        %
+%    Abstract     %
+%=================%
+
+\begin{center} AN ABSTRACT OF THE THESIS OF  \end{center}
+
+\thispagestyle{empty}
+
+\belowSecSkip
+
+\ResetSingleSpace
+
+\noindent \underline{Mathew A. Cleveland} for the degree of 
+	  \underline{Master of Science} in
+	  \underline{Nuclear Engineering} presented on 
+	  \underline{\myDefenseDate}. \\
+	  Title:\hfill\underline{Extending the Applicability of Implicit Monte Carlo Diffusion: Frequency }
+	  \underline{ Dependence and Variance Reduction Using the Difference Formulation}.
+
+\vskip0.3in
+
+\noindent Abstract approved: \hspace{0.25in} \hrulefill\
+
+
+
+
+	  
+\noindent \hspace{3.25in} Todd S. Palmer \hfill
+
+\vskip0.25in
+
+
+% Begin abstract text %
+
+\ResetDoubleSpace
+
+\noindent 
+	\indent The intent of this work is to extend Implicit Monte Carlo Diffusion (IMD)[Gen. 2001] to account for frequency dependence and to incorporate the difference formulation[Szo. 2005] as a source manipulation variance reduction technique. This work shows the derivation of the probabilities and the associated proofs which govern the frequency dependent IMD algorithm. The frequency dependent IMD code was tested using both grey and frequency dependent benchmarks. The Su and Olson semi-analytic Marshak wave benchmark was used for grey problems[Su 1996]. The Su and Olson semi-analytic picket fence benchmark was used for the frequency dependent problems[Su 1999]. The dependence upon mesh refinement was tested for both the grey and frequency dependent algorithms.
+
+	This work also includes the derivation of the difference formulation as it applies to IMD. The newly derived difference formulation is then tested using the same benchmark problems used for the grey and frequency dependent IMD algorithms without the difference formulation. The effectiveness of the difference formulation is analyzed for both the grey and the frequency dependent implimentations.
+
+	It was determined from this work that the frequency dependent IMD algorithm could reproduce the Su and Olson Benchmarks. The spatial refinements used to analyze the mesh dependents indicated that the spatial resolution is more limiting than spatial accuracy. The temporal refinement indicated that the existence of numerical diffusion for large time steps may require adaptive mesh refinement. Group mesh refinement indicated that the computational cost of refining the energy group mesh is likely less then that of deterministic methods.
+
+	This work demonstrates that applying the difference formulation to the IMD algorithm can result in an overall increase in the figure of merit for frequency dependent problems. However, the creation of negatively weighted particles from the difference formulation can cause significant instabilities in regions of the problem that are rapidly changing. This will require the development of an adaptive implimentation of the difference formulation to focus its use in regions of systems that are at or near equilibrium.
+
+\thispagestyle{empty}

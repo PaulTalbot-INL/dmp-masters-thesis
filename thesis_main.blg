@@ -1,0 +1,28 @@
+This is BibTeX, Version 0.99dThe top-level auxiliary file: thesis_main.aux
+A level-1 auxiliary file: ./sections/thesis_glossary.aux
+A level-1 auxiliary file: ./sections/thesis_abstract.aux
+A level-1 auxiliary file: ./sections/thesis_copyright.aux
+A level-1 auxiliary file: ./sections/thesis_title.aux
+A level-1 auxiliary file: ./sections/thesis_approval.aux
+A level-1 auxiliary file: ./sections/thesis_intro.aux
+A level-1 auxiliary file: ./sections/thesis_imc.aux
+A level-1 auxiliary file: ./sections/thesis_methods.aux
+A level-1 auxiliary file: ./sections/thesis_results.aux
+A level-1 auxiliary file: ./sections/thesis_conclusions.aux
+The style file: amsplain.bst
+Database file #1: ./bibliography/imcref.bib
+You're missing a field name---line 16 of file ./bibliography/imcref.bib
+ :         
+ :         %organization = "Latin American Section (LAS)/American Nuclear Society (ANS)",
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+Warning--I didn't find a database entry for "TODO"
+Too many commas in name 1 of "J. D. Densmore, T. J. Urbatsch, T. M. Evans, M. W. Buksas" for entry ddmc
+while executing---line 1149 of file amsplain.bst
+Warning--missing pages in Dirac
+Too many commas in name 1 of "J. D. Densmore, T. J. Urbatsch, T. M. Evans, M. W. Buksas" for entry ddmc
+while executing---line 1233 of file amsplain.bst
+Warning--missing pages in CarterForest
+Warning--missing pages in long
+Warning--missing pages in WolThesis
+(There were 3 error messages)

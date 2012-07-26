@@ -1,0 +1,1393 @@
+%=================================================%
+% Section:                        	              %
+%    The Boltzmann Transport Equation and Stochastic Media%
+%=================================================%
+
+\begin{center}
+\section{THE BOLTZMANN TRANSPORT EQUATION}
+\label{sec:Transport}
+\end{center}
+
+%====================================================================%
+% SubSection:                        	                             %
+%    Transport: Introduction %
+%====================================================================%
+\aboveSubSecSkip
+
+\subsection{Introduction}
+\label{sec:Transport-Intro}
+
+\noindent
+	\indent This chapter provides a discussion of the modeling philosophies in current 
+	numerical radiation transport calculations and the deterministic method used in this study.
+	The governing analytic Boltzmann transport equation describing neutron transport in 
+	any arbitrary medium is provided.  The assumptions behind this are given, as is an example
+	of a particular eigenvalue problem we solve and its physical significance.
+	Further assumptions are made to the analytic general geometry Boltzmann transport equation,
+	arriving at the analytic planar geometry transport equation.  The discretization techniques for
+	the spatial, energy, and angular variables are then discussed, yielding a system of equations
+	which are solved numerically in an iterative fashion.  The nested iterative procedure used
+	to solve this system of equations is outlined.  Finally, there is a detailed derivation
+	of the preconditioner of the system of equations used as a synthetic acceleration scheme to
+	improve the convergence rate of the iterative solution procedure.
+			
+\belowSubSecSkip
+
+%=====================================================================%
+% SubSection:                        	                              %
+%     Transport: Modeling Philosophies for Transport %
+%=====================================================================%
+\subsection{Modeling Philosophies for Radiation Transport}
+\label{sec:Transport-Modeling}
+
+\noindent
+	\indent There currently exists two major, and for the most part separate, philosophies
+	particle transport modeling in any media: deterministic and Monte Carlo.  Deterministic
+	transport involves designing methods to explicitly solve the Boltzmann transport
+	equation.  The Boltzmann transport equation considers an arbitrary volume and those
+	mechanisms by which particles enter or escape that volume.  The transport equation is a
+	complicated integro-differential equation, and cannot be solved analytically except for highly
+	idealized problems.  Current deterministic transport research includes improving the speed, 
+	accuracy, and physical fidelity of calculations.  The diffusion equation has been a successful
+	approximation to the transport equation in many applications.  The quantity of interest in a 
+	deterministic calculation is typically the particle flux of the system, obtained to some requested
+	deterministic error. 
+	
+	Monte Carlo transport simulates individual particle tracks from their time and place of birth,
+	through each interaction with the background medium, until they eventually escape from the
+	system or become absorbed.  This simulation is statistical in nature, but it can be shown that it
+	solves the integral form of the Boltzmann transport equation in the limit of an infinite number of
+	particle histories.  Current Monte Carlo transport research centers primarily around variance
+	reduction, where an accurate mean behavior of the solution can be obtained more rapidly by
+	giving particles important to the measurement of interest greater weight than those that make little
+	or no contribution.  The Monte Carlo solution is also typically related to a particle flux solution, but
+	is statistical in nature and has an associated statistical error.  
+	
+	This study involves deterministic solutions of the transport equation.  This choice was made
+	because a transport solution in one dimension can be obtained much more rapidly when using
+	a deterministic method than a Monte Carlo method.   Also, the solution of a deterministic
+	calculation gives the flux profile for the entire system, instead of only at specified locations, which
+	is usually the case in typical Monte Carlo calculations.  The effect of random distributions of the
+	constituents of the background material on the flux profile is of interest.  The numerical solution
+	approach to the stochastic mixture transport problem of this thesis does have a Monte Carlo
+	component to it, which will be described in more detail in Chapter \ref{sec:StochMedTrans}.  Next,
+	a detailed description of the Boltzmann transport equation will be given, followed by the
+	discretization procedures used. 
+
+\belowSubSecSkip
+
+%=====================================================================%
+% SubSection:                        	                              %
+%     Transport: The Boltzmann Transport Equation %
+%=====================================================================%
+\subsection{The Boltzmann Transport Equation}
+\label{sec:Transport-Boltz}
+
+\noindent
+	\indent The neutron transport equation gives the neutron distribution in a general, arbitrary
+	phase space and is given by the Boltzmann transport equation:
+	\begin{multline}
+		\frac{\partial{n}}{\partial{t}}+\emph{v}\mathbf{\hat{\Omega}} \!\cdot\! \mathbf{\nabla}{n}
+		 + \sigma\emph{v}{n} = \\ \int_{4\pi} \mathrm{d}\mathbf{\hat{\Omega}}^{'}\int_{0}^{\infty}
+		 \mathrm{d}{E}^{'}\sigma_{s}({E}^{'}\rightarrow{E},
+		 \mathbf{\hat{\Omega}}^{'}\rightarrow \mathbf{\hat{\Omega}})
+		 \emph{v}^{'}{n}(\mathbf{r},E^{'},\mathbf{\hat{\Omega}}^{'},t)+q
+	\label{eq:transport1}
+	\end{multline}
+	where, \vspace{10pt} \\
+	\begin{tabular}{ll}
+		${t}$ \hfill = & time,  \vspace{10pt} \\
+		${E}$ or ${E}^{'}$ \hfill = & energy, \vspace{10pt} \\
+		$\mathbf{v}$ or $\mathbf{v}^{'}$ \hfill = & neutron velocity vector,  \vspace{10pt} \\
+		$\emph{v}$ or $\emph{v}^{'}$ \hfill = & ${|\mathbf{v}|}$ or ${|\mathbf{v}^{'}|}$; neutron speed, 
+			\vspace{10pt} \\
+		$\mathbf{\hat{\Omega}}$ or $\mathbf{\hat{\Omega}} ^{'}$ \hfill = & 
+			$\frac{\mathbf{v}}{|\mathbf{v}|}$ or $\frac{\mathbf{v}^{'}}{|\mathbf{v}^{'}|}$; unit vector 
+			for neutron direction of travel \\ & with both a  polar and azimuthal component,
+			\vspace{10pt} \\
+		$\sigma$ \hfill = & $\sigma(\mathbf{r},E)$; total macroscopic cross-section, or the
+			\\ & probability per unit path length that a neutron at \\&
+			point $\mathbf{r}$ with energy $E$ will undergo some \\&
+			interaction, \vspace{10pt} \\
+		$\sigma_s({E}^{'}\rightarrow{E},\mathbf{\hat{\Omega}}^{'}
+			\rightarrow\mathbf{\hat{\Omega}})$ \hfill = & 
+			scattering cross-section, or the probability per unit \\& path length that a neutron at
+			point $\mathbf{r}$ with energy \\& ${E}^{'}$ traveling in direction
+			$\mathbf{\hat{\Omega}}^{'}$ will scatter into the \\& energy and direction of
+			interest, ${E}$,  $\mathbf{\hat{\Omega}}$, \vspace{10pt} \\
+		${n}={n(\mathbf{r},E,\mathbf{\hat{\Omega}},t)}$ \hfill = & angular neutron density at point
+		$\mathbf{r}$, with energy ${E}$, \\& moving in direction $\mathbf{\hat{\Omega}}$,  at
+		time ${t}$, \vspace{10pt} \\
+		${q}={q(\mathbf{r},E,\mathbf{\hat{\Omega}},t)}$ \hfill = & source of neutrons at point
+		$\mathbf{r}$, producing neutrons \\ & with energy ${E}$, moving in direction
+		$\mathbf{\hat{\Omega}}$,  at time ${t}$. \vspace{10pt} \\
+	\end{tabular} \vspace{10pt} \\
+
+\noindent
+	\indent Thus, the Boltzmann transport equation is an exact equation for the angular neutron
+	density through a balance of gain and loss mechanisms of neutrons in an arbitrary
+	phase space, ${(\mathbf{r},E,\mathbf{\hat{\Omega}},t)}$. Possible gain mechanisms, or
+	ways in which neutrons appear in ${(\mathbf{r},E,\mathbf{\hat{\Omega}},t)}$ include:
+
+\begin{itemize}
+	\item \textbf{Sources} into ${(\mathbf{r},E,\mathbf{\hat{\Omega}},t)}$ - fission or nuclide decay
+		resulting in neutron production
+	\item \textbf{Streaming} into ${(\mathbf{r},E,\mathbf{\hat{\Omega}},t)}$ - neutrons moving into
+	${(\mathbf{r},E,\mathbf{\hat{\Omega}},t)}$ from ${(\mathbf{r}^{'},E,\mathbf{\hat{\Omega}},t)}$
+	\item \textbf{Collision} into ${(\mathbf{r},E,\mathbf{\hat{\Omega}},t)}$ - neutrons in
+	${(\mathbf{r},{E}^{'},\mathbf{\hat{\Omega}}^{'},t)}$ colliding into
+	${(\mathbf{r},E,\mathbf{\hat{\Omega}},t)}$
+		
+	Possible loss mechanisms, where neutrons disappear from 
+	${(\mathbf{r},E,\mathbf{\hat{\Omega}},t)}$ include:
+	
+	\item \textbf{Leakage} out of ${(\mathbf{r},E,\mathbf{\hat{\Omega}},t)}$ - neutrons from 
+	${(\mathbf{r},E,\mathbf{\hat{\Omega}},t)}$ escape into ${(\mathbf{r}^{'},E,\mathbf{\hat{\Omega}},t)}$
+	\item \textbf{Collision} out of ${(\mathbf{r},E,\mathbf{\hat{\Omega}},t)}$ - neutrons in
+	${(\mathbf{r},E,\mathbf{\hat{\Omega}},t)}$ collide into
+	${(\mathbf{r},{E}^{'},\mathbf{\hat{\Omega}}^{'},t)}$ or are absorbed (including
+	those that cause fission).	
+\end{itemize}
+\noindent
+	The Boltzmann transport equation is a linear, integrodifferential equation for 
+	the angular neutron density in a seven dimensional phase space,
+	($\mathbf{r}=x,y,z;{E};\mathbf{\hat{\Omega}}=\Theta,\gamma;t)$.  It is assumed in the
+	Boltzmann transport equation that~\cite{Lew:93}:
+\begin{itemize}
+	\item Particles and the sites where they interact with the background medium are considered
+	as points,
+	\item Particles are so rarefied that they do not interact with one another,
+	\item No forces influence the momentum of particles between interaction sites, so particles
+		stream in straight lines,
+	\item Collisions are consider instantaneous,
+	\item Particles interact with the background material isotropically,
+	\item The properties of the background material are assumed known and, 
+	\item Only the mean value of the particle distribution is considered.
+\end{itemize}
+ 
+ \noindent
+	\indent Defining the angular neutron flux as a product of the angular neutron density and
+	the neutron speed,
+	\begin{equation}
+		\psi(\mathbf{r},E,\mathbf{\hat{\Omega}},t) = \emph{v} {n}
+			(\mathbf{r},E,\mathbf{\hat{\Omega}},t),
+	\end{equation}
+	 it is convenient to rewrite the neutron transport equation in terms of the angular neutron flux,
+	 \begin{multline}
+		\frac{\partial{\psi}}{\partial{t}}+\mathbf{\hat{\Omega}} \!\cdot\! \mathbf{\nabla}{\psi}
+		 + \sigma{\psi} = \\ \int_{4\pi} \mathrm{d}\mathbf{\hat{\Omega}}^{'}
+		 \int_{0}^{\infty}\mathrm{d}{E}^{'}\sigma_{s}({E}^{'}\rightarrow{E},
+		 \mathbf{\hat{\Omega}}^{'}\rightarrow\mathbf{\hat{\Omega}}) 
+		 \psi(\mathbf{r},{E}^{'},\mathbf{\hat{\Omega}}^{'},t)+q,
+	\end{multline}
+	 since the neutron scalar flux, defined as, 
+	 \begin{equation}
+		\phi(\mathbf{r},{E},t) = \int_{4\pi}
+		\mathrm{d}\mathbf{\hat{\Omega}}^{'}\psi(\mathbf{r},{E},\mathbf{\hat{\Omega}}^{'},t)
+	\end{equation}
+	is often the quantity of interest as it is the simplest to conceptualize and used in
+	calculating reaction rates.  
+
+\belowSubSecSkip
+
+%=====================================================================%
+% SubSection:                        	                              %
+%    Transport: The Analytic Steady-State Eigenvalue Problem in General Geometry %
+%=====================================================================%
+\subsection{The Analytic Steady-State Eigenvalue Problem in General Geometry}
+\label{sec:Transport-EigenGen}
+
+\noindent
+	\indent With the Boltzmann transport equation defined (Eq.~(\ref{eq:transport1})), the
+	eigenvalue problem investigated for a stochastic multiplying background medium can be
+	developed using an example adopted from reference~\cite{Bel:70}.  Consider the transport
+	problem governed by Eq.~(\ref{eq:transport1}) where the first generation of neutrons is a
+	pulsed neutron source given as ${q_1}$ resulting in the angular neutron density of the first
+	generation of neutrons in a multiplying medium, 
+\begin{multline}
+		\frac{\partial{n_1}}{\partial{t}}+\emph{v}\mathbf{\hat{\Omega}} \!\cdot\! \mathbf{\nabla}{n_1}
+		 + \sigma\emph{v}{n_1} = \\ \int_{4\pi}
+		 \mathrm{d}\mathbf{\hat{\Omega}}^{'}\int_{0}^{\infty}\mathrm{d}{E}^{'}
+		 \sigma_{s}({E}^{'}\rightarrow{E},\mathbf{\hat{\Omega}}^{'}
+		 \rightarrow\mathbf{\hat{\Omega}})\emph{v}^{'}{n_1}
+		 (\mathbf{r},{E}^{'},\mathbf{\hat{\Omega}}^{'},t)+q_1.
+\end{multline}
+\noindent
+	Integrating over all time ($0\le{t}\le{\infty}$) results in the first term on the left-hand-side going to
+	zero, since the pulsed source is of finite duration.  Those pulsed neutrons in that generation
+	eventually scatter or leak out of the system, or are absorbed in the medium into either
+	a multiplying component (fuel) or another non-multiplying component.  The time integrated
+	neutron source shall be denoted as 
+	$\tilde{q_1}=\tilde{q_1}(\mathbf{r},E,\mathbf{\hat{\Omega}})$ and the time integrated angular
+	neutron density as $\tilde{n_1}=\tilde{n_1}(\mathbf{r},E,\mathbf{\hat{\Omega}})$ giving,
+\begin{multline}
+	\emph{v}\mathbf{\hat{\Omega}} \!\cdot\! \mathbf{\nabla}\tilde{n_1}
+		 + \sigma \emph{v}{\tilde{n_1}} = \\ \int_{4\pi} \mathrm{d}\mathbf{\hat{\Omega}}^{'}
+		 \int_{0}^{\infty}\mathrm{d}{E}^{'}\sigma_{s}({E}^{'}\rightarrow{E},
+		 \mathbf{\hat{\Omega}}^{'}\rightarrow \mathbf{\hat{\Omega}})\emph{v}^{'}\tilde{n_1}
+		 (\mathbf{r},{E}^{'},\mathbf{\hat{\Omega}}^{'},t)+\tilde{q_1}.
+\end{multline}
+
+\noindent
+	The second generation of neutrons, $\tilde{n_2}$, are produced by those neutrons in
+	$\tilde{n_1}$ which are absorbed in fuel and cause a fission.  Thus, fission is the
+	process by which a generation of neutrons gives birth to a subsequent generation, making
+	it the event separating generations.  The source, $\tilde{q_2}$,
+	producing the second generation of neutrons, $\tilde{n_2}$, is given by,
+\begin{equation}
+	\tilde{q_2} = \chi\int_{4\pi} \mathrm{d}\mathbf{\hat{\Omega}}^{'}\int_{0}^{\infty}
+		\mathrm{d}{E}^{'} \nu{\sigma_f}
+		\emph{v}^{'}\tilde{n_1}(\mathbf{r},{E}^{'},\mathbf{\hat{\Omega}}^{'},t)
+	\label{eq:src-gen2}
+\end{equation}
+	where, \vspace{10pt} \\
+	\begin{tabular}{ll}
+		${\chi}$ \hfill = & ${\chi({E})}$; the probability that a neutron produced from fission
+			will \\ & have energy ${E}$, where, ${\int_{0}^{\infty}{\chi}({E})\mathrm{d}{E}=1}$,
+			\vspace{10pt} \\	
+		${\nu}$ \hfill = & ${\nu({E}^{'})}$; the mean number of neutrons produced by fission
+		from \\ & a neutron with energy ${E}^{'}$\vspace{10pt} \\
+		${\sigma_f}$ \hfill = & ${\sigma_f(\mathbf{r},{E}^{'})}$; fission cross section, or the
+		probability per unit path length \\ & that a neutron with energy ${E}^{'}$ is absorbed at point
+		$\mathbf{r}$
+		in fuel will fission.  \vspace{10pt} \\
+	\end{tabular} \vspace{10pt} \\
+	
+\noindent
+	Equations can be written in this manner for the ${\emph{(i)}^{th}}$ generation of neutrons
+	produced by the ${\emph{(i-1)}^{th}}$ generation or by the following recursive equation,
+\begin{multline}
+	\emph{v}\mathbf{\hat{\Omega}} \!\cdot\! \mathbf{\nabla}\tilde{n_\emph{i}}
+		 +\sigma \emph{v}{\tilde{n_\emph{i}}} = \int_{4\pi} \mathrm{d}\mathbf{\hat{\Omega}}^{'}
+		 \int_{0}^{\infty}\mathrm{d}{E}^{'}\sigma_{s}({E}^{'}\rightarrow{E},
+		 \mathbf{\hat{\Omega}}^{'}\rightarrow \mathbf{\hat{\Omega}})
+		\emph{v}^{'}\tilde{n_\emph{i}}(\mathbf{r},{E}^{'},\mathbf{\hat{\Omega}}^{'},t) + \\
+		 \chi\int_{4\pi} \mathrm{d}\mathbf{\hat{\Omega}}^{'}\int_{0}^{\infty}\mathrm{d}{E}^{'}
+		 \nu{\sigma_f} \emph{v}^{'}{\tilde{n}_{i-1}}(\mathbf{r},{E}^{'},\mathbf{\hat{\Omega}}^{'},t).
+	\label{eq:recurs}
+\end{multline}
+
+\noindent
+	As the number of generations becomes large for Eq.~(\ref{eq:recurs}), the ratio of
+	successive generations will be a constant, or, 
+\begin{equation}
+	\lim_{i\rightarrow \infty}\frac{\tilde{n_i}}{\tilde{n}_{i-1}}=constant={k}
+\end{equation}
+\noindent
+	\indent This constant ${k}$ is known as the multiplication factor and indicates the
+	``criticality'' of the system.  Calculating the multiplication factor is most
+	often approached as an eigenvalue problem, where ${\lambda=\frac{1}{k}}$ and ${\psi}$
+	are eigenvalue-eigenvector pairs that are solutions to the eigenvalue problem.  In practical
+	application, the ${\nu}$ of Eq.~(\ref{eq:src-gen2}) is replaced by ${\nu/{k}}$ , or
+	${\lambda{\nu}}$, adjusting the average number of neutrons per fission to balance the
+	equation.  The maximum ${\lambda}$ (or minimum ${k}$) and resulting 
+	eigenvector (fundamental mode) are the quantities of interest for typical reactor analysis 
+	applications.  For a system where
+	${k} < {1}$ the neutron density in successive generations is decreasing, or the number
+	of neutrons per fission, ${\nu/{k}}$, required to make the system exactly critical is larger
+	than ${\nu}$.  This is known as a subcritical system.  If ${k} > 1$ the neutron density in
+	successive generations is increasing,  or the number of neutrons per fission, ${\nu/{k}}$,
+	required to make the system exactly critical is smaller than ${\nu}$.  This is known as a
+	supercritical system.  For ${k} = 1$, the total neutron population is unchanging from
+	generation to generation; the total neutron gain mechanisms being exactly balanced by the
+	loss mechanisms.  This is known as a critical system.  The resulting time-independent governing
+	equation for this eigenvalue problem, written here in terms of the angular flux, is
+	
+\begin{multline}
+	\mathbf{\hat{\Omega}} \!\cdot\! \mathbf{\nabla}{\psi}
+		 + \sigma{\psi} = \int_{4\pi}\mathrm {d}\mathbf{\hat{\Omega}}^{'}\int_{0}^{\infty}
+		\mathrm{d}{E}^{'}\sigma_{s}({E}^{'}\rightarrow{E},\mathbf{\hat{\Omega}}^{'}\rightarrow
+		\mathbf{\hat{\Omega}})\psi(\mathbf{r},{E}^{'},\mathbf{\hat{\Omega}}^{'},t)+ \\ 
+		\frac{\chi}{k} \int_{4\pi}\mathrm{d}\mathbf
+		{\hat{\Omega}}^{'}\int_{0}^{\infty}\mathrm{d}{E}^{'}\nu{\sigma_f}{\psi}
+		(\mathbf{r},{E}^{'},\mathbf{\hat{\Omega}}^{'},t).
+	\label{eq:crit}
+\end{multline}
+
+\noindent This study is confined to planar geometry (1-D) and considers only
+	isotropic scattering.  Defining the single spatial variable ${x}$, and ${\mu}$ as the 
+	cosine of the angle measured from the ${x}$-axis, the above equation governing the
+	eigenvalue problem of interest then becomes,
+\begin{multline}
+	\mu\frac{\partial{\psi}}{\partial{x}}+\sigma{\psi} = \frac{1}{2} \left[ \int_{-1}^{1}\mathrm
+		{d}{\mu}^{'} \int_{0}^{\infty}\mathrm{d}{E}^{'}\sigma_{s}({E}^{'}\rightarrow{E})
+		\psi({x},{E}^{'},{\mu}^{'}) \right. + \\
+		\left. \frac{\chi}{k}\int_{-1}^{1}\mathrm{d}{\mu}^{'}\int_{0}^{\infty}\mathrm{d}{E}^{'}
+		\nu{\sigma_f}{\psi}({x},{E}^{'},{\mu}^{'})\right ],
+		\label{eq:plnr_crit}
+\end{multline}
+\noindent where all of the dependent variables are written now as functions of the planar geometry
+	independent variables, i.e.
+\begin{equation}
+	\psi = \psi({x},{E},{\mu}).
+\end{equation}
+
+\belowSubSecSkip
+
+%=====================================================================%
+% SubSection:                        	                              %
+%     Transport: Discretization of the Planar Geometry Eigenvalue Problem
+% 		with Isotropic Scattering %
+%=====================================================================%
+\subsection{Discretization of the Planar Geometry Eigenvalue Problem with Isotropic Scattering}
+\label{sec:Transport-Discret}
+
+\noindent
+	\indent Since the phase space has been confined to include a single angular and spatial
+	variable as well as energy dependence, each of these variables is discretized.  The transport
+	equation is then solved at discrete values of each of the independent variables.  This reduces the
+	complicated integro-differential transport equation for the eigenvalue problem to a system of linear
+	equations amenable to numerical solution.
+	
+%==================%
+% SubSubSection:   %
+%    Angular Discretization %
+%==================%
+\subsubsection{Angular Discretization}
+\label{sec:Transport-Discret-Ang}
+
+\noindent
+	\indent To discretize the angular variable (${\mu}$) in the planar geometry 
+	transport equation, the well known ${S_N}$ method is
+	used~\cite{Lew:93}.  The transport equation is rewritten as ${N}$ linearly
+	independent equations for the angular flux in each discrete angle ${\mu}_m$,
+\begin{equation}
+	\psi({x},{E},{\mu}_{m})=\psi_{m}({x},{E}).
+\end{equation}	
+	A symmetric Gauss-Legendre quadrature is chosen to integrate this angular flux over angle
+	yielding the scalar flux (zeroth angular moment),
+\begin{equation}
+	\phi({x},{E})=\int_{-1}^{1}{\psi}({x},{E},{\mu}^{'})\mathrm{d}{\mu}^{'}
+		\approx \sum^{N}_{m=1}\emph{w}_{m}\psi_{m}({x},{E}),
+	\label{eq:ang_int}
+\end{equation}	
+	and the current (first angular moment),
+\begin{equation}
+	J({x},{E})=\int_{-1}^{1}{\psi}({x},{E},{\mu}^{'})\mu^{'}\mathrm{d}{\mu}^{'}
+		\approx \sum^{N}_{m=1}\mu_{m}\emph{w}_{m}\psi_{m}({x},{E}),
+	\label{eq:ang_int2}
+\end{equation}	
+	where the weights of the quadrature set have been normalized such that, 
+\begin{equation}
+	\sum_{m}\emph{w}_{m}=2.
+\end{equation}	
+
+\belowSubSecSkip
+
+%==================%
+% SubSubSection:   %
+%    Energy Discretization %
+%==================%
+\subsubsection{Energy Discretization}
+\label{sec:Transport-Discret-Eng}
+
+\noindent
+	\indent To discretize the energy variable (${E}$), the muligroup
+	approximation is employed (reference~\cite{Lew:93}).  The multigroup approximation 
+	discretizes the continuous energy variable into ${G}$ discrete energy
+	groups, where the angular flux in each discrete group (${g}$) is given as,
+\begin{equation}
+	\psi_{g}({x},{\mu})=\int_{E_g}^{E_{g-1}}{\psi}({x},{E}^{'},{\mu})\mathrm{d}{E}^{'} , 
+		\quad {E_g} < E^{'} \le {E_{g-1}}.
+\end{equation}	
+	The full energy integral can then be approximated by, 
+\begin{equation}
+	\int_{0}^{\infty}{\psi}({x},{E}^{'},{\mu})\mathrm{d}{E}^{'}=\sum^{G}_{g=1}
+		\int_{E_{g}}^{E_{g-1}}{\psi}({x},{E}^{'},{\mu})\mathrm{d}{E}^{'}, 
+		\quad {E_{g}} < E^{'} \le {E_{g-1}}.
+	\label{eq:eng_int}
+\end{equation}	
+Multigroup constants are then given as~\cite{Dud:76},
+\begin{subequations}
+	\begin{equation}
+		\sigma_{g}({x})=\frac{1}{\phi_{g}(x)}\int_{E_{g}}^{E_{g-1}}
+			\mathrm{d}{E}^{'}\phi({x},{E}^{'})
+		\eqspace,
+	\end{equation}
+	\begin{equation}
+		\sigma_{s,g^{'}\rightarrow{g}}({x})=\frac{1}{\phi_{g^{'}}(x)}\int_{E_{g}}^{E_{g-1}}
+			\mathrm{d}{E}\int_{E_{g^{'}}}^{E_{g^{'}-1}}\mathrm{d}{E}^{'}\sigma_{s}
+			({E}^{'}\rightarrow{E})\phi({x},{E}^{'})
+		\eqspace,
+	\end{equation}
+	\begin{equation}
+		\nu_{g}\sigma_{f,g}({x})=\frac{1}{\phi_{g}(x)}\int_{E_{g}}^{E_{g-1}}
+			\mathrm{d}{E}^{'}\nu({E}^{'})\sigma_{f}({E}^{'})\phi({x},{E}^{'})
+		\eqspace,
+	\end{equation}
+	\begin{equation}
+		\chi_{g}=\int_{E_{g}}^{E_{g-1}}\mathrm{d}{E}^{'}\chi({E}^{'})
+		\eqspace,
+	\end{equation}
+\end{subequations}
+	where, ${\phi_{g}(x)}$ is given by Eq.~(\ref{eq:ang_int}) for ${\psi_g(x)}$. 
+
+\noindent
+	\indent Rewriting Eq.~(\ref{eq:plnr_crit}) with the discretizations in angle and energy yields
+	for neutrons in a group (${g}$) and quadrature direction (${m}$),
+\begin{equation}
+	\mu_{m}\frac{\partial{\psi_{g,m}}({x})}{\partial{x}}+{\sigma}_{g}({x}){\psi_{g,m}}({x}) = 
+		\frac{1}{2}\sum^{G}_{g^{'}=1}{\sigma}_{s,g^{'}\rightarrow{g}}({x})\phi_{g^{'}}({x})
+		+\frac{\chi_g}{2{k}}\sum^{G}_{g^{'}=1}\nu_{g^{'}}\sigma_{f,g^{'}}({x})\phi_{g^{'}}({x}).
+	\label{eq:plnr_crit_dis1}
+\end{equation}
+	The scope of this thesis is focused on calculations which include self-scatter or downscatter only.
+	This is to say that if a neutron undergoes a scattering event, it can either experience no change in
+	energy (coherent scatter) or a decrease in energy. 	This assumption is inserted into the first term
+	of the left-hand-side of Eq.~(\ref{eq:plnr_crit_dis1}) giving, 
+\begin{equation}
+	\mu_{m}\frac{\partial{\psi_{g,m}}({x})}{\partial{x}}+{\sigma}_{g}({x}){\psi_{g,m}}({x}) = 
+		\frac{1}{2}{\sum^{g}_{g^{'}=1}}{\sigma}_{s,g^{'}\rightarrow{g}}({x})
+		\phi_{g^{'}}({x})+\frac{\chi_g}{2{k}}\sum^{G}_{g^{'}=1}\nu_{g^{'}}\sigma_{f,g^{'}}({x})
+		\phi_{g^{'}}({x}),
+	\label{eq:plnr_crit_dis2}
+\end{equation}
+	where from the previously mentioned assumption of coherent or downscatter only, it is clear that, 
+	(${g^{'} \le g}$).  Defining the scattering source as,
+\begin{equation}
+	S_{g}{(x)}={{\sum^{g}_{g^{'}=1}}{\sigma}_{s,g^{'}\rightarrow{g}}({x})
+	\phi_{g^{'}}({x})},
+	\label{eq:scat_src}
+\end{equation}
+	and the fission source as,	
+\begin{equation}
+	F{(x)}={\sum^{G}_{g^{'}=1}\nu_{g^{'}}\sigma_{f,g^{'}}({x})
+		\phi_{g^{'}}({x})},
+	\label{eq:fiss_src}
+\end{equation}
+	all source terms can be combined into a single source term, ${Q_{g}(x)}$,
+\begin{equation}
+	{Q_{g}(x)}={S_{g}{(x)}}+{\frac{\chi_g}{k}}F{(x)},
+\end{equation}	
+	giving,
+\begin{equation}
+	\mu_{m}\frac{\partial{\psi_{g,m}}({x})}{\partial{x}}+{\sigma}_{g}({x}){\psi_{g,m}}(x)=
+	\frac{1}{2}{Q_{g}({x})}.
+	\label{eq:plnr_crit_simp}
+\end{equation}
+	This ``within-group'' transport equation will be the focus of the discussion in the next section on
+	spatial discretization.
+
+\belowSubSecSkip
+
+%==================%
+% SubSubSection:   %
+%    Spatial Discretization %
+%==================%
+\subsubsection{Spatial Discretization}
+\label{sec:Transport-Discret-Spc}
+
+\noindent
+	\indent The spatial discretization chosen for Eq.~(\ref{eq:plnr_crit_simp}) is
+	the linear characteristics method, since it provides highly accurate solutions and is not
+	difficult to derive or implement in planar geometry.  The linear characteristic spatial
+	discretization gives exact results for planar geometry systems in which there is no
+	interior source, and the medium is purely absorbing.   Linear characteristics provides
+	fourth-order accuracy otherwise~\cite{Ada:04}.  The discetization is based
+	on the assumption of a linear form of the total source as a first-order spatial expansion in
+	Legendre polynomials,
+\begin{subequations}
+	\begin{equation}
+		{Q_{g}({x})}={Q_{g,i}}\left[{P}_{0,i}(x)\right]+{Q_{g,i}^{x}}\left[{P}_{1,i}(x)\right]
+		\eqspace,
+	\end{equation}
+	\text{where,}
+	\begin{equation}
+		\left[{P}_{0,i}(x)\right]=1
+		\eqspace,
+	\end{equation}
+	\begin{equation}
+		\left[{P}_{1,i}(x)\right]=\frac{2(x-x_{i})}{\Delta{x_{i}}}
+		\eqspace.
+	\end{equation}
+\end{subequations}
+	This is often referred to as ``slope-average'' form.  The analytic equation for the angular
+	flux on the edges of a discrete spatial zone is found by integrating Eq.~(\ref{eq:plnr_crit_simp})
+	over the length of the zone.  This yields an equation for the angular flux exiting the zone in terms of
+	the angular flux incident on the zone and the linear source in the zone,
+\begin{multline}
+	\psi_{g,m,i_{exit}}=\psi_{g,m,i_{inc}}\,e^{-\sigma_{g,i}\Delta{x}_{i}/\mu_{m}}+\frac{1}{2\sigma_{g,i}}
+		\bigg\{ Q_{g,i}\left(1-\,e^{-\sigma_{g,i}\Delta{x}_{i}/\mu_{m}}\right) + \\ Q_{g,i}^{x}
+		\left[\left(1+\,e^{-\sigma_{g,i}\Delta{x}_{i}/\mu_{m}}\right)-\frac{2\mu_{m}}
+		{\Delta{x}_{i}\sigma_{g,i}}\left(1-\,e^{-\sigma_{g,i}\Delta{x}_{i}/\mu_{m}}\right)\right] \bigg\}.
+	\label{eq:lc1}
+\end{multline}
+	``Average'' quantities are defined as:
+\begin{subequations}
+	\begin{equation}
+		f_{i}=\frac{1}{\Delta_{{x}_{i}}}\int_{x_{inc}}^{x_{exit}}\left[{P}_{0,i}(x)\right]f({x})
+		\mathrm{d}{x}
+		\eqspace,
+	\end{equation}
+	and ``slope'' quantities are defined as:
+	\begin{equation}
+		f_{i}^{x}=\frac{3}{\Delta_{{x}_{i}}}\int_{x_{inc}}^{x_{exit}}\left[{P}_{1,i}(x)\right]
+		f({x})\mathrm{d}{x}
+		\eqspace.
+	\end{equation}
+\end{subequations}
+	The zeroth and first spatial moments of the transport equation yield, respectively,
+\begin{equation}
+	\psi_{g,m,i}=\frac{Q_{g,i}}{2\sigma_{g,i}}-\frac{\mu_{m}}{\sigma_{g,i}\Delta{x}_{i}}
+		\left(\psi_{g,m,i_{exit}}-\psi_{g,m,i_{inc}}\right),
+	\label{eq:lc2}
+\end{equation}
+	and,
+\begin{equation}
+	\psi_{g,m,i}^{x}=\frac{Q_{g,i}^{x}}{2\sigma_{g,i}}-\frac{3\mu_{m}}{\sigma_{g,i}\Delta{x}_{i}}
+		\left(\psi_{g,m,i_{exit}}+\psi_{g,m,i_{inc}}-2\psi_{g,m,i}\right).
+	\label{eq:lc3}
+\end{equation}
+
+\noindent 
+	\indent Together with boundary conditions, Eq.~(\ref{eq:lc1}), Eq.~(\ref{eq:lc2}), and
+	Eq.~(\ref{eq:lc3}) form a closed set of equations which can be solved to obtain $\psi_{g,m,i}$
+	and $\psi_{g,m,i}^{x}$ in each zone by a ``transport sweep''.  Only vacuum boundary conditions
+	on both of the system boundaries given by,
+\begin{subequations}
+	\begin{equation}
+		\psi_{g,m,1_{inc}} = \psi_{g,m,1/2} = 0, \quad m > 0,
+	\end{equation}
+	\begin{equation}
+		\psi_{g,m,X_{inc}} = \psi_{g,m,X+1/2} = 0, \quad m < 0,
+	\end{equation}
+	\label{eq:bc-vacuum}
+\end{subequations}
+ 	and specular reflection boundary conditions on both of the system boundaries given by,
+\begin{subequations}
+	\begin{equation}
+		\psi_{g,m,1/2} = \psi_{g,-m,1/2}, \quad m > 0,
+	\label{eq:bc-reflect-L}
+	\end{equation}
+	\begin{equation}
+		\psi_{g,-m,X+1/2} = \psi_{g,m,X+1/2}, \quad m < 0,
+	\label{eq:bc-reflect-R}
+	\end{equation}
+	\label{eq:bc-reflect}
+\end{subequations}
+	where ${X}$ is the planar system length, are considered for the purposes of this study.  Of course, 
+	in the case of specular reflection on both of the system boundaries results in an infinite 
+	medium, which has zero leakage.  A single 
+	transport sweep begins at one edge of the system beginning with the incoming information
+	from the boundary condition, and ``sweeps'' the spatial mesh in the direction of the opposite
+	side of the system.  In a sweep, Eq.~(\ref{eq:lc1}), Eq.~(\ref{eq:lc2}), and Eq.~(\ref{eq:lc3})
+	are solved in order along an angle in the quadrature set, with $\psi_{g,m,i_{exit}}$ becoming
+	$\psi_{g,m,i+1_{inc}}$ when sweeping from~left-to-right or $\psi_{g,m,i-1_{exit}}$ when
+	sweeping from~right-to-left.
+
+\noindent
+	\indent The next section gives a description of the iterative procedure in which equations
+	Eq.~(\ref{eq:lc1}), Eq.~(\ref{eq:lc2}), and Eq.~(\ref{eq:lc3}) are evaluated to solve
+	Eq.~(\ref{eq:plnr_crit_simp}), obtaining a~k-eigenvalue and scalar flux solution for 
+	the system.
+	
+\belowSubSecSkip
+
+%=====================================================================%
+% SubSection:                        	                              %
+%     Transport: Richardson and Power Iteration %
+%=====================================================================%
+\subsection{Richardson and Power Iteration}
+\label{sec:Transport-RichPow}
+
+\noindent
+	\indent Eq.~(\ref{eq:plnr_crit_dis2}) is numerically solved using a nested iterative process.  A
+	group scalar flux solution to Eq.~(\ref{eq:plnr_crit_simp}) is determined through Richardson (or
+	source) iteration, giving the inner iteration of the nested iterative process.  Power iteration is
+	used in the outer iteration to determine an improved k-eigenvalue estimate in
+	Eq.~(\ref{eq:plnr_crit_dis2}) from each improved estimate of the group scalar flux.
+	Eq.~(\ref{eq:plnr_crit_dis2}) is rewritten to include the inner and outer iteration indices, and the
+	spatial zone index below,
+	\begin{equation}
+		\mu_{m}\frac{\partial{{\psi}_{i,g,m}^{\left({l+1},{n}\right)}}}{\partial{x}}+
+		{\sigma}_{i,g}{{\psi}_{i,g,m}^{\left({l+1},{n}\right)}} = 
+		\frac{1}{2}{\sum^{g}_{g^{'}=1}}
+		{\sigma}_{s,i,g^{'}\rightarrow{g}}{{\phi}_{i,g^{'}}^{\left({l},{n}
+		\right)}}+  \\ \frac{\chi_g}{2{k^{\left({n}\right)}}}\sum^{G}_{g^{'}=
+		1}\nu_{g^{'}}\sigma_{f,i,g^{'}}{{\phi}_{i,g^{'}}^{\left(n\right)}},
+	\label{eq:plnr_crit_full_disc}
+	\end{equation}
+	where, (${i}$) is the spatial zone, (${l}$) is the inner iteration index and
+	(${n}$) is the outer iteration index.  A description of the Richardson iteration
+	solution procedure for each ${{{\phi}_{g^{'}}^{\left({l},{n}\right)}}({x})}$ and the power
+	iteration procedure for each ${k^{\left( {n} \right)}}$ of Eq.~(\ref{eq:plnr_crit_full_disc})
+	is given below.
+	
+\noindent
+	\indent Consider a simple system of equations written in matrix notation,
+	\begin{equation}
+		\underline{\underline{\mathbf{A}}}\, \underline{\psi}=\underline{q}	
+	\end{equation}
+	where ${\underline{\underline{\mathbf{A}}}}$ is an invertible matrix acting on some
+	vector ${\underline{\psi}}$ resulting in some other vector $\underline{q}$.  In order to obtain a
+	solution for ${\underline{\psi}}$, it is common to split the operator 
+	$\left({{\underline{\underline{\mathbf{A}}}}=
+	{\underline{\underline{\mathbf{L}}}}-{\underline{\underline{\mathbf{S}}}}}\right)$
+	to obtain the iterative equation~\cite{Ada:04},
+	\begin{equation}
+		\underline{\psi}^{\left({l+1}\right)}=\underline{\underline{\mathbf{L}}}^{-1} \, 
+		\underline{\underline{\mathbf{S}}} \,\underline{\psi}^{\left({l} \right)}+
+		\underline{\underline{\mathbf{L}}}^{-1} \, \underline{q}.
+	\label{eq:lin_sys1}
+	\end{equation}
+	The iteration is performed by the repetitive evaluation of Eq.~(\ref{eq:lin_sys1}) with a trial
+	vector ${\underline{\psi}^{\left({l} \right)}}$ to obtain the new vector 
+	${\underline{\psi}^{\left({l+1}\right)}}$.
+	When the splitting is done such that $\left({{\underline{\underline{\mathbf{L}}}}=
+	{\underline{\underline{\mathbf{I}}}}}\right)$ and $\left({{\underline{\underline{\mathbf{S}}}}=
+	{\underline{\underline{\mathbf{I}}}}-{\underline{\underline{\mathbf{A}}}}}\right)$, this is known
+	as Richardson iteration.  Richardson iteration is known to be unconditionally stable for the 
+	discretized Boltzmann transport equation in planar geometry if ${c<1}$, where,
+	\begin{equation}
+		c=\frac  {{\sigma}_{s,g\rightarrow{g}}({x})}  {{\sigma}_{g}({x})},
+	\label{eq:scat_rat}
+	\end{equation}
+	and converges very slowly when ${\left(c\approx1\right)}$.  It can be shown that
+	the slowest converging modes are relatively flat spatially and nearly isotropic in
+	angle~\cite{Ada:04}.  This nice feature makes the diffusion equation a
+	good choice of preconditioner for this system of equations for faster convergence in the
+	limit of ${\left(c\approx1\right)}$.  This is further explored in the discussion of diffusion
+	synthetic acceleration in the following subsection, \ref{sec:Transport-RichPow-DSA} .
+	
+\noindent
+	\indent Now consider the simple system of equations written in matrix notation,
+	\begin{equation}
+		\underline{\underline{\mathbf{A}}}\, \underline{\phi}=\lambda
+		\underline{\underline{\mathbf{F}}} \, \underline{\phi}
+	\end{equation}
+	where ${\underline{\underline{\mathbf{A}}}}$ is again an invertible matrix,
+	such as the transport operator, ${\lambda}$ is an eigenvalue with a corresponding
+	eigenvector ${\underline{\phi}}$, and ${\underline{\underline{\mathbf{F}}}}$ some other 
+	``source'' matrix.  An iterative equation for the eigensystem can be written 
+	as~\cite{Hof:01},
+	\begin{equation}
+		\underline{\underline{\mathbf{A}}}\, {\underline{\phi}}^{\left({n}\right)}=
+		{\underline{{\hat{\phi}}}^{\left({n+1}\right)}}=
+		{\lambda}^{\left({n+1}\right)}\underline{\underline{\mathbf{F}}} \,
+		{\underline{\phi}}^{\left({n+1}\right)}.
+	\label{eq:lin_sys2}
+	\end{equation}
+	Power iteration is performed by the repetitive evaluation of Eq.~(\ref{eq:lin_sys2}) with
+	a trial eigenvector ${\underline{\phi}}^{\left({n}\right)}$ to obtain
+	${\underline{{\hat{\phi}}}^{\left({n+1}\right)}}$ until convergence.  The eigenvector
+	${\underline{\phi}}^{\left({n}\right)}$ is scaled at each iteration to give 
+	${\underline{{\hat{\phi}}}^{\left({n+1}\right)}}$, such that the scaling factor 
+	approaches the largest eigenvalue ${\lambda}$.  Power iteration will converge to the
+	largest eigenvalue and corresponding eigenvector, if the largest eigenvalue is distinct
+	and the eigenvalues are independent.  It can be shown that the vector
+	${{\underline{\phi}}^{\left({n}\right)}\rightarrow \infty}$ for 
+	${{\lambda}^{\left({n}\right)}>1}$, and ${{\underline{\phi}}^{\left({n}\right)}\rightarrow 0}$
+	for ${{\lambda}^{\left({n}\right)}<1}$, as ${{n}\rightarrow \infty}$, unless the vector
+	is normalized after each power iteration~\cite{Hof:01}.
+	
+\noindent 
+	\indent When performing power iteration to obtain a new estimate of the eigenvalue in
+	Eq.~(\ref{eq:plnr_crit_full_disc}), the scaling is the ratio of the integrated fission sources
+	from successive outer iterations.  Recalling the definition of the fission source from
+	Eq.~(\ref{eq:fiss_src}), the scaling to determine the new estimate of the eigenvalue ${k}$
+	is given by,
+	\begin{equation}
+		{k}^{\left({n+1}\right)} ={k}^{\left({n}\right)} \frac{\int_{0}^{X}{\mathrm{d}{x^{'}}
+		{F}^{\left({n+1}\right)}{(x^{'})}}}
+		{\int_{0}^{X}{\mathrm{d}{x^{'}}{F}^{\left({n}\right)}{(x^{'})}}},
+	\label{eq:k_new1}
+	\end{equation}
+	where, ${X}$ is the planar system length.  After the latest estimate of the eigenvalue
+	${k^{\left({n+1}\right)}}$ has been evaluated, the fission source is normalized such that:
+	\begin{equation}
+		{\int_{0}^{X}{\mathrm{d}{x^{'}}{F}^{\left({n}\right)}{(x^{'})}}}=1,
+	\end{equation}
+	which reduces Eq.~(\ref{eq:k_new1}) to
+	\begin{equation}
+		{k}^{\left({n+1}\right)} ={k}^{\left({n}\right)}\int_{0}^{X}{\mathrm{d}{x^{'}}
+		{F}^{\left({n+1}\right)}{(x^{'})}}.
+	\label{eq:k_new2}
+	\end{equation}
+\noindent
+	\indent  Figure~\ref{fig:Flow-Chart} is a flow chart of the nested iteration algorithm used to
+	determine the largest eigenvalue ${\left({\lambda=\frac{1}{k}}\right)}$ and corresponding 
+	eigenvector ${\left({\underline{\phi}}\right)}$ of Eq.~(\ref{eq:plnr_crit_full_disc}).
+%	\vspace{0.2in}
+	\begin{figure}[htbp]
+		\unitlength1in
+		\begin{center}
+			\begin{minipage}[t]{4.53in}
+			\begin{picture}(4.53,6.88)
+	            	{\includegraphics[width=4.53in,height=6.88in]{Flow_Chart}}
+			\end{picture}
+			\caption{\label{fig:Flow-Chart} Inner and Outer Iterations Flow Chart}
+			\end{minipage} %\hfill
+		\end{center}
+	\end{figure}	
+	\vspace{-0.25in}
+%	\begin{enumerate}
+%		\item [{Outer Iteration} 0:] Make a guess for ${k^{\left({0}\right)}}$ and
+%		${F}^{\left({0}\right)}{(x)}$.
+%		\item [{Outer Iteration} 1:] Calculate fission source using 
+%		Eq.~(\ref{eq:fiss_src}). 
+%		\begin{enumerate}[{Inner Iteration} 1:]
+%			\item Make a guess for ${{\phi}_{g}^{\left(0\right)}({x})}$.  Now knowing
+%			${k^{\left(n\right)}}$, ${\phi^{\left(0\right)}_{g}}$, and ${F^{\left(n\right)}}$,
+%			Eq.~(\ref{eq:plnr_crit_full_disc}) can be written in the form of
+%			Eq.~(\ref{eq:lin_sys1}) and Richardson iteration may be performed
+%			for each group scalar flux.
+%			\item Applying boundary conditions, solve Eq.~(\ref{eq:lc1}),
+%			Eq.~(\ref{eq:lc2}), and Eq.~(\ref{eq:lc3}) to obtain
+%			${{\psi}_{i,g,m}^{\left({l+1},{n}\right)}}$ for all ${i}$, ${g}$, and ${m}$.
+%			\item Perform the Gaussian integration over angle given in 
+%			Eq.~(\ref{eq:ang_int}) to find ${{\phi}_{i,g}^{\left({l+1,n}\right)}}$.
+%			\item If ${|{{\phi}_{i,g}^{\left({l+1,n}\right)}}-{{\phi}_{i,g}^{\left({l,n}\right)}}|}<
+%			\epsilon_{\phi}$, where ${\epsilon_{\phi}}$ is a specified convergence
+%			tolerance, the inner iterations have converged.  If not, update scattering
+%			source (Eq.~(\ref{eq:scat_src})), increment ${l}$, and return to Inner Iteration
+%			1.
+%		\end{enumerate}
+%		\item [{Outer Iteration} 2:] With ${{\phi}_{i,g}^{\left({n+1}\right)}}$ and 
+%			${{\phi}_{i,g}^{\left({n}\right)}}$, Eq.~(\ref{eq:plnr_crit_full_disc}) can be
+%			written in the form of Eq.~(\ref{eq:lin_sys2}) and power iteration may be 
+%			performed.  Calculate the new estimate of the eigenvalue ${k^{\left({n+1}\right)}}$
+%			using Eq.~(\ref{eq:k_new2}) and normalize the fission source.
+%		\item [{Outer Iteration} 3:] If ${{|{k^{\left({n+1}\right)}}-{k^{\left({n}\right)}}|}<
+%			{\epsilon_{k}}}$ and ${{|{F^{\left({n+1}\right)}{(x)}}-
+%			{F^{\left({n}\right)}{(x)}}|}<{\epsilon_{F}}}$ where ${\epsilon_{k}}$ and
+%			${\epsilon_{F}}$ are specified convergence tolerances, the outer iterations
+%			have converged.  If not, return to Outer Iteration 1.
+%	\end{enumerate}
+	
+\noindent
+	\indent When the system is dominated by the scattering interaction with the background
+	medium in any group, the problem can become intractable due to the large computational
+	expense it may take to converge the inner iterations.  The next section contains a discussion
+	and derivation of the diffusion synthetic accelearation equations used to improve
+	Eq.~(\ref{eq:lin_sys1}) improving the convergence rate of the inner, Richardson iteration 
+	for diffusive systems.
+	
+%==================%
+% SubSubSection:   %
+%    Diffusion Synthetic Acceleration %
+%==================%
+\subsubsection{Diffusion Synthetic Acceleration}
+\label{sec:Transport-RichPow-DSA}
+
+\noindent
+	\indent Richardson iteration is unconditionally stable and convergent when particle
+	interaction with the background material is not dominated by scattering, or, when ${c}$
+	of Eq.~(\ref{eq:scat_rat}) is ${< 1}$.  The number of Richardson iterations needed in 
+	order to converge to a solution increases as ${c\rightarrow1}$.  When
+	considering moderate to highly scattering systems, accelerating the inner Richardson
+	iterations for each group scalar flux is necessary.  As  briefly discussed in Section
+	\ref{sec:Transport-RichPow}, the diffusion equation makes a good choice of preconditioner
+	for the inner iterations (Eq.~(\ref{eq:plnr_crit_full_disc})) because the slowest converging
+	modes are relatively flat spatially and nearly isotropic in angle~\cite{Ada:04}.  Diffusion
+	synthetic acceleration (DSA) has been used widely in the nuclear engineering community
+	with great success.  
+	
+\noindent
+	\indent A procedure for the derivation of the DSA equations for a discontinuous finite
+	element spatial discretization is given in~\cite{Ada:92}.  These DSA equations
+	can be used to accelerate Richardson iterations
+	with a linear characteristics spatial discretization since both the linear characteristics and 
+	linear discontinuous finite element spatial discretization schemes have the same diffusion
+	limit~\cite{Ada:98}.  Using these DSA equations to precondition the Richardson iteration vastly
+	reduces the number of iterations and will yield the same solution as in the unaccelerated case.
+	
+\noindent
+	\indent Eq.~(\ref{eq:plnr_crit_full_disc}) written with a spatially discretized fission source (as
+	given in Eq.~(\ref{eq:fiss_src})), and quadrature integration for the scalar flux is,
+	\begin{equation}
+		\mu_{m}\frac{\partial{{\psi}_{i,g,m}^{\left({l+1/2},{n}\right)}}}{\partial{x}}+
+		{\sigma}_{i,g}{{\psi}_{i,g,m}^{\left({l+1/2},{n}\right)}} = 
+		\frac{1}{2}{\sum^{g}_{g^{'}=1}}
+		{\sigma}_{s,i,g^{'}\rightarrow{g}}{{\sum^{N}_{m=1}
+		\emph{w}_{m}\psi_{i,g^{'},m}^{\left({l},{n}\right)}}}+
+		\frac{\chi_g}{2{k^{\left({n}\right)}}}{F}_{i}^{\left(n\right)},
+	\label{eq:Trans-Iter}
+	\end{equation}
+	where ${\left({\chi_{g}}/2{k^{\left(n\right)}}\right)}{F}_{i}^{\left(n\right)}$ does not change
+	with each inner iteration (${l}$), as it is updated as part of the outer iteration, given by
+	index (${n}$).  If ${\Psi_{i,g,m}}$ is defined to be the converged discrete angular flux at each
+	point in space (${i}$), in each energy group (${g}$), and in each angle (${m}$), the converged
+	discretized equation for inner iteration (${l}$) is given as,
+	\begin{equation}
+		\mu_{m}\frac{\partial{{\Psi}_{i,g,m}}}{\partial{x}}+
+		{\sigma}_{i,g}{{\Psi}_{i,g,m}} = 
+		\frac{1}{2}{\sum^{g}_{g^{'}=1}}
+		{\sigma}_{s,i,g^{'}\rightarrow{g}}{{\sum^{N}_{m=1}
+		\emph{w}_{m}\Psi_{i,g^{'},m}}}+
+		\frac{\chi_g}{2{k^{\left({n}\right)}}}{F}_{i}^{\left(n\right)},
+	\label{eq:Trans-Converged}
+	\end{equation}
+	Subtracting Eq.~(\ref{eq:Trans-Iter}) from Eq.~(\ref{eq:Trans-Converged}) gives an equation 
+	for the inner iteration error:
+	\begin{multline}
+		\mu_{m}\frac{\partial{{f}_{i,g,m}^{\left({l+1/2}\right)}}}{\partial{x}}+
+		{\sigma}_{i,g}{{f}_{i,g,m}^{\left({l+1/2}\right)}} = \\
+		\frac{1}{2}{\sum^{g}_{g^{'}=1}}
+		 \left[ {\sigma}_{s,i,g^{'}\rightarrow{g}}{{\sum^{N}_{m=1}
+		\emph{w}_{m}\Psi_{i,g^{'},m}}}-
+		{\sigma}_{s,i,g^{'}\rightarrow{g}}{{\sum^{N}_{m=1}
+		\emph{w}_{m}\psi_{i,g^{'},m}^{\left({l}\right)}}}\right],
+	\label{eq:Trans-Error}
+	\end{multline}
+	where, 
+	\begin{equation}
+		{f}_{i,g,m}^{\left(l+1/2\right)} = \Psi_{i,g,m} - \psi_{i,g,m}^{\left(l+1/2\right)}.
+	\label{eq:psi_error}
+	\end{equation}
+	Substituting Eq.~(\ref{eq:psi_error}) in for ${\Psi_{i,g,m}}$ in Eq.~(\ref{eq:Trans-Error})
+	gives,
+	\begin{multline}
+		\mu_{m}\frac{\partial{{f}_{i,g,m}^{\left({l+1/2}\right)}}}{\partial{x}}+
+		{\sigma}_{i,g}{{f}_{i,g,m}^{\left({l+1/2}\right)}} - 
+		\frac{1}{2}{\sum^{g}_{g^{'}=1}}
+		 {\sigma}_{s,i,g^{'}\rightarrow{g}}{{\sum^{N}_{m=1}
+		\emph{w}_{m}{f}_{i,g^{'},m}^{\left({l+1/2}\right)}}} = \\
+		 \frac{1}{2}{\sum^{g}_{g^{'}=1,}}\left[ {\sigma}_{s,i,g^{'}\rightarrow{g}}
+		{{\sum^{N}_{m=1}\emph{w}_{m}\psi_{i,g^{'},m}^{\left(l+1/2\right)}}}-
+		{\sigma}_{s,i,g^{'}\rightarrow{g}}{{\sum^{N}_{m=1}
+		\emph{w}_{m}\psi_{i,g^{'},m}^{\left({l}\right)}}}\right].
+	\label{eq:Trans-Error2}
+	\end{multline}
+	The scalar flux, ${\phi}$, is defined as the integral of ${\psi}$ over angle, so 
+	Eq.~(\ref{eq:Trans-Error2}) can be rewritten as,
+	\begin{multline}
+		\mu_{m}\frac{\partial{{f}_{i,g,m}^{\left({l+1/2}\right)}}}{\partial{x}}+
+		{\sigma}_{i,g}{{f}_{i,g,m}^{\left({l+1/2}\right)}} - 
+		\frac{1}{2}{\sum^{g}_{g^{'}=1}}
+		 {\sigma}_{s,i,g^{'}\rightarrow{g}}{{\sum^{N}_{m=1}
+		\emph{w}_{m}{f}_{i,g^{'},m}^{\left({l+1/2}\right)}}} = \\
+		 \frac{1}{2}{\sum^{g}_{g^{'}=1}}\left[  {\sigma}_{s,i,g^{'}\rightarrow{g}}
+		 \left({\phi_{i,g^{'}}^{\left({l+1/2}\right)}}-{\phi_{i,g^{'}}^{\left({l}\right)}}\right)\right].
+	\label{eq:Trans-Error3}
+	\end{multline}
+	As mentioned in Section \ref{sec:Intro} and in Section \ref{sec:Transport-Discret-Spc}, in
+	this study only downscatter is considered. The inner iteration over each energy group always
+	starts with the highest energy group (group 1) and continues to lower energy groups.  Therefore,
+	higher energy groups than the current group are already converged.
+	
+	Recalling that ${\Psi}_{i,g,m}$ is the converged group scalar flux and examination of the third term
+	on the left-hand-side of Eq.~(\ref{eq:Trans-Error3}) will reveal that the sum over energy
+	groups of the error term reduces to,
+	\begin{multline}
+		\frac{1}{2}{\sum^{g}_{g^{'}=1}}{\sigma}_{s,i,g^{'}\rightarrow{g}}
+		{{\sum^{N}_{m=1}\emph{w}_{m}{f}_{i,g^{'},m}^{\left({l+1/2}\right)}}} =
+		\frac{1}{2}\left[\Upsilon_{g-1}
+		+ {{\sigma}_{s,i,g\rightarrow{g}}{{\sum^{N}_{m=1}
+		\emph{w}_{m}{\Psi}_{i,g,m}}}}
+		\right] \\ - \frac{1}{2}\left[\Upsilon_{g-1}
+		+ {{\sigma}_{s,i,g\rightarrow{g}}{{\sum^{N}_{m=1}
+		\emph{w}_{m}\psi_{i,g,m}^{\left(l+1/2\right)}}}} \right]
+		= \frac{1}{2}{\sigma}_{s,i,g\rightarrow{g}}{\sum^{N}_{m=1}\emph{w}_{m}}
+		{f}_{i,g,m}^{\left({l+1/2}\right)},
+	\label{eq:Trans-Error4}
+	\end{multline}
+	where, 
+	\begin{equation}
+		\Upsilon_{g-1} = {\sum^{g-1}_{g^{'}=1}}{\sigma}_{s,i,g^{'}\rightarrow{g}}{{\sum^{N}_{m=1}
+		\emph{w}_{m}{\Psi}_{i,g^{'},m}^{\left({l+1/2}\right)}}},
+	\end{equation}
+	is the converged scalar flux for all groups higher than the current group iteration.
+	Making this substitution into Eq.~(\ref{eq:Trans-Error3}) gives,
+	\begin{multline}
+		\mu_{m}\frac{\partial{{f}_{i,g,m}^{\left({l+1/2}\right)}}}{\partial{x}}+
+		{\sigma}_{i,g}{{f}_{i,g,m}^{\left({l+1/2}\right)}} - 
+		\frac{1}{2}{\sigma}_{s,i,g\rightarrow{g}}{\sum^{N}_{m=1}\emph{w}_{m}}
+		{f}_{i,g,m}^{\left({l+1/2}\right)} = \\
+		\frac{1}{2}{\sum^{g}_{g^{'}=1}}\left[  {\sigma}_{s,i,g^{'}\rightarrow{g}}
+		\left({\phi_{i,g^{'}}^{\left({l+1/2}\right)}}-{\phi_{i,g^{'}}^{\left({l}\right)}}\right)\right].
+	\label{eq:Trans-Error5}
+	\end{multline}
+	A similar argument can be made for the term on the right-hand-side of Eq.~(\ref{eq:Trans-Error5})
+	reducing the equation further to,
+		\begin{multline}
+		\mu_{m}\frac{\partial{{f}_{i,g,m}^{\left({l+1/2}\right)}}}{\partial{x}}+
+		{\sigma}_{i,g}{{f}_{i,g,m}^{\left({l+1/2}\right)}} - 
+		\frac{1}{2}{\sigma}_{s,i,g\rightarrow{g}}{\sum^{N}_{m=1}\emph{w}_{m}}
+		{f}_{i,g,m}^{\left({l+1/2}\right)} = \\
+		\frac{1}{2}{\sigma}_{s,i,g\rightarrow{g}}
+		\left({\phi_{i,g}^{\left({l+1/2}\right)}}-{\phi_{i,g}^{\left({l}\right)}}\right).
+	\label{eq:Trans-Error6}
+	\end{multline}
+\noindent
+	\indent The above equation is a transport equation for the iteration error term, ${f}$, with a source
+	equal to the residual error term between current and previous scalar flux, ${\phi}$,
+	iterates.  Eq.~(\ref{eq:Trans-Error6}) will be spatially discretized according to the discontinuous
+	finite element scheme~\cite{Ada:92}.  Instead of slope-average notation, the two spatial unknowns
+	per zone are written as a coupled set of left and right spatial unknowns.  The zeroth spatial
+	moments of Eq.~(\ref{eq:Trans-Error6}) are taken by multiplying by the
+	cardinal linear weight and basis functions~\cite{Ada:04},
+\begin{subequations}
+	\begin{equation}
+		{w_{L,i}} = 1; \quad {b_{L,i}} = \left(\frac{x_{i+1/2}-x}{\Delta{x_{i}}}\right)
+		\eqspace,
+	\end{equation}
+	\begin{equation}
+		{w_{R,i}} = 1; \quad {b_{R,i}} = \left(\frac{x-x_{i+1/2}}{\Delta{x_{i}}}\right),
+	\end{equation}
+\end{subequations}
+	where the range of the basis function is:
+\begin{equation}
+	x_{i-1/2} < x < x_{i+1/2},
+\end{equation}
+	and integrating over a spatial zone (assuming the ${(l+1/2)}$ notation unless 
+	explicitly stated otherwise), yielding,
+\begin{subequations}
+	\begin{multline}
+		\mu_{m}\left[\left(\frac{{f_{i,g,m,L}}+{f_{i,g,m,R}}}{2}\right)-{f_{i-1/2,g,m}}\right]
+		+{\sigma}_{i,g}{\Delta{x}_{i}}\left[{\frac{{f_{i,g,m,L}}}{3}}+
+		{\frac{{f_{i,g,m,R}}}{6}}\right] - \\
+		\frac{{\sigma}_{s,i,g\rightarrow{g}}{\Delta{x}_{i}}}{2}
+		\left[{\frac{{F_{i,g,L}}}{3}}+{\frac{{F_{i,g,R}}}{6}}\right] = 
+		\frac{{\sigma}_{s,i,g\rightarrow{g}}{\Delta{x}_{i}}}{2}
+		\left[R_{i,g,L}\right]
+		\eqspace,
+	\end{multline}
+	\begin{multline}
+		\mu_{m}\left[{f_{i+1/2,g,m}}-\left(\frac{{f_{i,g,m,L}}+{f_{i,g,m,R}}}{2}\right)\right]
+		+{\sigma}_{i,g}{\Delta{x}_{i}}\left[{\frac{{f_{i,g,m,L}}}{6}}+
+		{\frac{{f_{i,g,m,R}}}{3}}\right] - \\
+		\frac{{\sigma}_{s,i,g\rightarrow{g}}{\Delta{x}_{i}}}{2}
+		\left[{\frac{{F_{i,g,L}}}{6}}+{\frac{{F_{i,g,R}}}{3}}\right] = 
+		\frac{{\sigma}_{s,i,g\rightarrow{g}}{\Delta{x}_{i}}}{2}
+		\left[R_{i,g,R}\right],
+	\end{multline}
+	\label{eq:error-disc}
+\end{subequations}
+	where,
+\begin{subequations}
+	\begin{equation}
+		{f_{i,g,m,(L,R)}} = {f_{i,g,m,(L,R)}^{\left(l+1/2\right)}}
+		\eqspace,
+	\end{equation}
+	\begin{equation}
+		{F_{i,g,(L,R)}} = {\sum^{N}_{m=1}\emph{w}_{m}}{f}_{i,g,m,(L,R)}^{\left({l+1/2}\right)}
+		\eqspace,
+	\end{equation}
+	\text{and,}
+	\begin{equation}
+		R_{i,g,L} = \left[\left({\frac{\phi_{i,g,L}^{\left(l+1/2\right)}}{3}}+
+		{\frac{\phi_{i,g,R}^{\left(l+1/2\right)}}{6}}\right)-
+		\left({\frac{\phi_{i,g,L}^{\left(l\right)}}{3}}+
+		{\frac{\phi_{i,g,R}^{\left(l\right)}}{6}}\right)\right]
+		\eqspace,
+	\label{eq:residual-term-L}	
+	\end{equation}
+	\begin{equation}
+		R_{i,g,R} = \left[\left({\frac{\phi_{i,g,L}^{\left(l+1/2\right)}}{6}}+
+		{\frac{\phi_{i,g,R}^{\left(l+1/2\right)}}{3}}\right)-
+		\left({\frac{\phi_{i,g,L}^{\left(l\right)}}{6}}+
+		{\frac{\phi_{i,g,R}^{\left(l\right)}}{3}}\right)\right]
+		\eqspace.
+	\label{eq:residual-term-R}	
+	\end{equation}
+\end{subequations}
+	The closure for the linear discontinuous finite element spatial discretization is given as,
+\begin{subequations}
+	\begin{equation}
+		{f}_{i+1/2,g,m}^{\left(l+1/2\right)} = \left\{
+		\begin{array}{lll}
+		{{f}_{i,g,m,R}^{\left(l+1/2\right)}}, & \mu > 0 \\
+		{{f}_{i+1,g,m,L}^{\left(l+1/2\right)}}, & \mu < 0
+		\end{array}
+		\right.
+		\eqspace,
+	\end{equation}
+	\begin{equation}
+		{f}_{i-1/2,g,m}^{\left(l+1/2\right)} = \left\{
+		\begin{array}{lll}
+		{{f}_{i-1,g,m,R}^{\left(l+1/2\right)}}, & \mu > 0 \\
+		{{f}_{i,g,m,L}^{\left(l+1/2\right)}}, & \mu < 0
+		\end{array}
+		\right.
+		\eqspace.
+	\end{equation}
+	\label{eq:closure}
+\end{subequations}
+	Redefining the error terms as a two-term Legendre polynomial expansions in angle,
+\begin{equation}
+	{f_{i\pm1/2,g,m}^{\left(l+1/2\right)}}\approx \frac{1}{2}
+	F_{i\pm1/2,g}^{\left(l+1/2\right)}+\frac{3}{2}\mu_{m}J_{i\pm1/2,g}^{\left(l+1/2\right)}
+	\label{eq:expansion}
+\end{equation}
+	where,
+\begin{equation}
+	J_{i\pm1/2,g}^{\left(l+1/2\right)}={\sum^{N}_{m=1}\mu_{m}\emph{w}_{m}}
+	{f}_{i+1/2,g,m}^{\left(l+1/2\right)},
+\end{equation}
+	the DSA equations can now be derived.
+	
+\noindent
+	\indent Inserting Eq.~(\ref{eq:expansion}) into Eq.~(\ref{eq:error-disc}) and taking
+	the zeroth angular moment yields, 
+\begin{subequations}
+	\begin{multline}
+		\left[\left(\frac{{J_{i,g,L}}+{J_{i,g,R}}}{2}\right)-{J_{i-1/2,g}}\right]
+		+{\sigma}_{i,g}{\Delta{x}_{i}}\left[{\frac{{F_{i,g,L}}}{3}}+
+		{\frac{{F_{i,g,R}}}{6}}\right] - \\
+		{\sigma}_{s,i,g\rightarrow{g}}{\Delta{x}_{i}}
+		\left[{\frac{{F_{i,g,L}}}{3}}+{\frac{{F_{i,g,R}}}{6}}\right] = 
+		{\sigma}_{s,i,g\rightarrow{g}}{\Delta{x}_{i}}
+		\left[R_{i,L}\right]
+		\eqspace,
+	\end{multline}
+	\begin{multline}
+		\left[{J_{i+1/2,g}}-\left(\frac{{J_{i,g,L}}+{J_{i,g,R}}}{2}\right)\right]
+		+{\sigma}_{i,g}{\Delta{x}_{i}}\left[{\frac{{F_{i,g,L}}}{6}}+
+		{\frac{{F_{i,g,R}}}{3}}\right] - \\
+		{\sigma}_{s,i,g\rightarrow{g}}{\Delta{x}_{i}}
+		\left[{\frac{{F_{i,g,L}}}{6}}+{\frac{{F_{i,g,R}}}{3}}\right] = 
+		{\sigma}_{s,i,g\rightarrow{g}}{\Delta{x}_{i}}
+		\left[R_{i,R}\right].
+	\end{multline}
+	\label{eq:zeroth-mom}
+\end{subequations}
+	Defining the removal cross section as,
+\begin{equation}
+	\sigma_{r,i,g} = \sigma_{i,g} - \sigma_{s,i,g\rightarrow{g}}
+\end{equation}
+	Eqs.~(\ref{eq:zeroth-mom}) can be rewritten as, 
+\begin{subequations}
+	\begin{multline}
+		\left[\left(\frac{{J_{i,g,L}}+{J_{i,g,R}}}{2}\right)-{J_{i-1/2,g}}\right]
+		+{\sigma}_{r,i,g}{\Delta{x}_{i}}\left[{\frac{{F_{i,g,L}}}{3}}+
+		{\frac{{F_{i,g,R}}}{6}}\right] = \\ 
+		{\sigma}_{s,i,g\rightarrow{g}}{\Delta{x}_{i}}
+		\left[R_{i,L}\right]
+		\eqspace,
+		\label{eq:zeroth-mom2a}
+	\end{multline}
+	\begin{multline}
+		\left[{J_{i+1/2,g}}-\left(\frac{{J_{i,g,L}}+{J_{i,g,R}}}{2}\right)\right]
+		+{\sigma}_{r,i,g}{\Delta{x}_{i}}\left[{\frac{{F_{i,g,L}}}{6}}+
+		{\frac{{F_{i,g,R}}}{3}}\right] = \\ 
+		{\sigma}_{s,i,g\rightarrow{g}}{\Delta{x}_{i}}
+		\left[R_{i,R}\right].
+		\label{eq:zeroth-mom2b}
+	\end{multline}
+	\label{eq:zeroth-mom2}
+\end{subequations}
+	Inserting Eq.~(\ref{eq:expansion}) into Eq.~(\ref{eq:error-disc}) and taking
+	the first angular moment gives, 
+\begin{subequations}
+	\begin{equation}
+		\frac{1}{3}\left[\left(\frac{{F_{i,g}^{L}}+{F_{i,g}^{R}}}{2}\right)-{F_{i-1/2,g}}\right]
+		+{\sigma}_{i,g}{\Delta{x}_{i}}\left[{\frac{{J_{i,g}^{L}}}{3}}+
+		{\frac{{J_{i,g}^{R}}}{6}}\right] = 0
+		\eqspace,
+	\end{equation}
+	\begin{equation}
+		\frac{1}{3}\left[{F_{i+1/2,g}}-\left(\frac{{F_{i,g}^{L}}+{F_{i,g}^{R}}}{2}\right)\right]
+		+{\sigma}_{i,g}{\Delta{x}_{i}}\left[{\frac{{J_{i,g}^{L}}}{6}}+
+		{\frac{{J_{i,g}^{R}}}{3}}\right] = 0.
+	\end{equation}
+	\label{eq:first-mom}
+\end{subequations}
+
+\noindent
+	\indent Replacing the zeroth moment of the correction term at the cell edges in
+	Eqs.~(\ref{eq:first-mom}) with the nearest within-cell zeroth moment of the correction,
+\begin{subequations}
+	\begin{equation}
+		F_{i-1/2,g} = F_{i,g,L}
+		\eqspace,
+	\end{equation}
+	\begin{equation}
+		F_{i+1/2,g} = F_{i,g,R}
+		\eqspace,
+	\end{equation}
+	\label{eq:m4step-approx}
+\end{subequations}
+	Inserting Eqs.~(\ref{eq:m4step-approx}) into Eqs.~(\ref{eq:first-mom}) yields two Fick's Law
+	equations,
+\begin{subequations}
+	\begin{equation}
+		{J_{i,g,L}} =  \frac{1}{3{\sigma}_{i,g}{\Delta{x}_{i}}}
+		\left[{F_{i,g,L}}-{F_{i,g,R}}\right]
+		\eqspace,
+	\end{equation}
+	\begin{equation}
+		{J_{i,g,R}} =  \frac{1}{3{\sigma}_{i,g}{\Delta{x}_{i}}}
+		\left[{F_{i,g,L}}-{F_{i,g,R}}\right]
+		\eqspace.
+	\end{equation}
+	\label{eq:first-mom2}
+\end{subequations}
+	Finally, inserting Eq.~(\ref{eq:expansion}) into Eq.~(\ref{eq:closure}) and taking the
+	first angular moment yields,
+\begin{subequations}
+	\begin{equation}
+		J_{i+1/2,g}=\frac{1}{4}F_{i,g}^{R}-\frac{1}{4}F_{i+1,g}^{L}+\frac{1}{2}J_{i+1,g}^{L}
+		+\frac{1}{2}J_{i,g}^{R}
+		\eqspace,
+	\end{equation}
+	\begin{equation}
+		J_{i-1/2,g}=\frac{1}{4}F_{i-1,g}^{R}-\frac{1}{4}F_{i,g}^{L}+\frac{1}{2}J_{i,g}^{L}
+		+\frac{1}{2}J_{i-1,g}^{R}
+		\eqspace.
+	\end{equation}
+	\label{eq:close-moment}
+\end{subequations}	
+
+\noindent
+	\indent The combination of Eqs.~(\ref{eq:zeroth-mom2}), Eqs.~(\ref{eq:first-mom2}),
+	and Eqs.~(\ref{eq:close-moment}) yields the DSA equations,
+\begin{subequations}
+	\begin{multline}
+		\left[D_{i-1,g}\right]F_{i-1,g,L} + \left[C_{i-1,g}\right]F_{i-1,g,R} + 
+		\left[A_{i,g}\right]F_{i,g,L} + \left[B_{i,g}\right]F_{i,g,R} = \\
+		{\sigma}_{s,i,g\rightarrow{g}}{\Delta{x}_{i}}
+		\left[R_{i,L}\right]
+		\eqspace,
+	\end{multline}
+	\begin{multline}
+		\left[B_{i,g}\right]F_{i,g,L} + \left[A_{i,g}\right]F_{i,g,R} + 
+		\left[C_{i+1,g}\right]F_{i+1,g,L} + \left[D_{i+1,g}\right]F_{i+1,g,R} = \\
+		{\sigma}_{s,i,g\rightarrow{g}}{\Delta{x}_{i}}
+		\left[R_{i,R}\right]
+		\eqspace,
+	\end{multline}
+	\label{eq:DSA}
+\end{subequations}
+	where,
+\begin{subequations}
+	\begin{equation}
+		A_{i,g} = \left[\frac{1}{6\sigma_{i,g}{\Delta{x}_{i}}}+\frac{1}{4}+
+		\frac{\sigma_{r,i,g}{\Delta{x}_{i}}}{3}\right]
+		\eqspace,
+		\label{eq:DSA-termA}
+	\end{equation}
+	\begin{equation}
+		B_{i,g} = \left[\frac{\sigma_{r,i,g}{\Delta{x}_{i}}}{6}-
+		\frac{1}{6\sigma_{i,g}{\Delta{x}_{i}}}\right]
+		\eqspace,
+		\label{eq:DSA-termB}
+	\end{equation}
+	\begin{equation}
+		C_{i,g} = \left[\frac{1}{6\sigma_{i,g}{\Delta{x}_{i}}}-\frac{1}{4}\right]
+		\eqspace,
+	\end{equation}
+	\begin{equation}
+		D_{i,g} = \left[-\frac{1}{6\sigma_{i,g}{\Delta{x}_{i}}}\right]
+		\eqspace.
+	\end{equation}
+	\label{eq:DSA-terms}
+\end{subequations}
+\noindent
+	\indent When solved these equations yield the correction terms to the scalar fluxes at the
+	current iteration level in left-right notation.  These corrections are then translated into 
+	slope-average notation so that they can be added to ${\phi_{g,i}^{(l+1/2)}}$ and 
+	${\phi_{g,i}^{x(l+1/2)}}$ in each cell.  This translation takes the form:
+\begin{subequations}
+	\begin{equation}
+		F_{i,g} = \frac{1}{2}\left[F_{i,g,L}+F_{i,g,R}\right] 
+		\eqspace,
+	\end{equation}
+	\begin{equation}
+		F_{i,g}^{x} = \frac{1}{2}\left[F_{i,g,R}-F_{i,g,L}\right] 
+		\eqspace.
+	\end{equation}
+	and, redefining the left and right residual terms of Eq.~(\ref{eq:residual-term-L}) and 
+	Eq.~(\ref{eq:residual-term-R}) in terms of slope-average scalar fluxes,
+	\begin{multline}
+		R_{i,L} = \left[\left(\frac{\phi_{i,g}^{\left(l+1/2\right)}-
+		\phi_{i,g}^{x\left(l+1/2\right)}}{3}+
+		\frac{\phi_{i,g}^{\left(l+1/2\right)}+
+		\phi_{i,g}^{x\left(l+1/2\right)}}{6}\right)
+		\right. -\\
+		\left.\left(\frac{\phi_{i,g}^{\left(l\right)}-
+		\phi_{i,g}^{x\left(l\right)}}{3}+
+		\frac{\phi_{i,g}^{\left(l\right)}+
+		\phi_{i,g}^{x\left(l\right)}}{6}\right)
+		\right]
+		\eqspace,
+		\label{eq:translate-R_L}
+	\end{multline}
+	\begin{multline}
+		R_{i,R} = \left[\left(\frac{\phi_{i,g}^{\left(l+1/2\right)}-
+		\phi_{i,g}^{x\left(l+1/2\right)}}{6}+
+		\frac{\phi_{i,g}^{\left(l+1/2\right)}+
+		\phi_{i,g}^{x\left(l+1/2\right)}}{3}\right)
+		\right. -\\
+		\left.\left(\frac{\phi_{i,g}^{\left(l\right)}-
+		\phi_{i,g}^{x\left(l\right)}}{6}+
+		\frac{\phi_{i,g}^{\left(l\right)}+
+		\phi_{i,g}^{x\left(l\right)}}{3}\right)
+		\right]
+		\eqspace.
+		\label{eq:translate-R_R}
+	\end{multline}
+	\label{eq:translate}
+\end{subequations}
+	The group correction terms are then added to the group scalar flux slope and average for each
+	spatial zone:
+\begin{subequations}
+	\begin{equation}
+		\phi_{i,g}^{\left(l\right)} = \phi_{i,g^{'}}^{\left(l+1/2\right)} + F_{i,g}^{\left(l+1/2\right)} 
+		\eqspace,
+	\end{equation}
+	\begin{equation}
+		\phi_{i,g}^{x\left(l\right)} = \phi_{i,g^{'}}^{x\left(l+1/2\right)} + F_{i,g}^{x\left(l+1/2\right)}. 
+	\end{equation}
+\end{subequations}
+
+%==================%
+% SubSubSubSection:   %
+%    Diffusion Synthetic Acceleration %
+%==================%
+\subsubsection{Accelerated Reflecting Boundary Conditions}
+\label{sec:Transport-RichPow-DSA-Reflect}
+
+\noindent
+	\indent If vacuum boundary conditions (Eqs.~(\ref{eq:bc-vacuum})) are used on both edges of the
+	system, no additional acceleration is needed.  However, if specular reflection boundary
+	conditions (Eqs.~(\ref{eq:bc-reflect})) are used, then a guess is needed for the incident angular
+	flux on one edge of the slab.  This guess has to accelerated or the effectiveness of the
+	preconditoner is greatly reduced or can cause the iterative solution to diverge~\cite{Yav:88}.  
+	
+\noindent
+	\indent In the case of unaccelerated Richardson iteration, a guess is used for the incident angular
+	flux on the edges of the system on the first iteration in order to perform a single sweep,
+\begin{subequations}
+	\begin{equation}
+		 {\psi_{g,m,1_{inc}}^{(1)}} = {\psi_{g,m,1/2}^{(1)}} = 0,
+	\end{equation}
+	\begin{equation}
+		 {\psi_{g,-m,X_{inc}}^{(1)}} = {\psi_{g,-m,I+1/2}^{(1)}} = 0,
+	\end{equation}
+\end{subequations}
+	given ${I}$ spatial zones.  After the sweep is performed in each direction, the exiting flux on each
+	system edge is reflected back in according to Eqs.~(\ref{eq:bc-reflect}).  This is done until
+	convergence, but from the above discussion, it is known that this can be prohibitively slow
+	computationally for diffusive systems.
+
+\noindent
+	\indent In the accelerated case, an initial guess is made for the incident flux on the left edge,
+\begin{equation}
+	 g_m = {\psi_{g,m,1/2}^{(1)}} = 0,
+\end{equation}
+	and the exiting angular flux on the right edge is reflected back in according to
+	Eq.~(\ref{eq:bc-reflect-R}).  The next left edge angular flux guess ${g_m^{(l+1/2)}}$ can be
+	updated after the~right-to-left sweep to give a better guess as to the reflected incident flux at ${(l)}$.
+	This guess contains
+	more information about specular reflection on the particular edge of the problem and a correction
+	term for the scalar flux on the edge, thus accelerating the iteration.  This extra information is
+	calculated after a slight modification to Eqs.~({\ref{eq:zeroth-mom2}) in the first and last zone of
+	the system, containing the system edges.  For the first zone on the left edge of the system,
+	Eq.~(\ref{eq:zeroth-mom2a}) becomes,
+\begin{multline}
+	\left[\left(\frac{{J_{1,g,L}}+{J_{1,g,R}}}{2}\right)\right]
+	+{\sigma}_{r,1,g}{\Delta{x}_{1}}\left[{\frac{{F_{1,g,L}}}{3}}+
+	{\frac{{F_{1,g,R}}}{6}}\right] = \\ 
+	{\sigma}_{s,1,g\rightarrow{g}}{\Delta{x}_{1}}
+	\left[R_{1,L}\right] + {J_{1/2,g}}
+	\eqspace.
+\end{multline}
+	Recalling the definition of the current from Eq.~(\ref{eq:ang_int2}), the correction term for the net
+	current on the left edge is known exactly as,
+\begin{equation}
+	J_{1/2,g} = 0 - \sum^{N}_{m=1}\mu_{m}\emph{w}_{m}\psi_{g,m,1/2},
+\end{equation}
+	in the case of a reflecting boundary, since it is known that the net current on the system
+	boundaries must converge to zero.  This changes the terms in the first row of the matrix given in
+	Eq.~(\ref{eq:DSA-termA}) and Eq.~(\ref{eq:DSA-termB}) to,
+\begin{subequations}
+	\begin{equation}
+		A_{1,g}^{*} = \left[\frac{1}{3\sigma_{1,g}{\Delta{x}_{1}}} +
+		\frac{\sigma_{r,1,g}{\Delta{x}_{1}}}{3}\right]
+		\eqspace,
+	\end{equation}
+	\begin{equation}
+		B_{1,g}^{*} = \left[\frac{\sigma_{r,1,g}{\Delta{x}_{1}}}{6} -
+		\frac{1}{3\sigma_{1,g}{\Delta{x}_{1}}}\right]
+		\eqspace,
+	\end{equation}
+\end{subequations}
+	
+\noindent
+	\indent At the right system edge, Eq.~(\ref{eq:zeroth-mom2b}) becomes,
+\begin{equation}
+	\left[\left(\frac{{J_{I,g,L}}+{J_{I,g,R}}}{2}\right)\right]
+	+{\sigma}_{r,I,g}{\Delta{x}_{I}}\left[{\frac{{F_{I,g,L}}}{6}}+
+	{\frac{{F_{I,g,R}}}{3}}\right] =
+	{\sigma}_{s,I,g\rightarrow{g}}{\Delta{x}_{I}}
+	\left[R_{I,R}\right].
+\end{equation}
+	The correction term ${J_{I+1/2,g}}$ of Eq.~(\ref{eq:zeroth-mom2b}) is exactly zero on this side
+	since perfect reflection of the exiting angular flux
+	is done at the beginning of each right-to-left sweep, forcing the net current at the right system 
+	edge to zero.  The terms in the last row of the matrix given in 
+	Eq.~(\ref{eq:DSA-termA}) and Eq.~(\ref{eq:DSA-termB}) become,
+\begin{subequations}
+	\begin{equation}
+		A_{I,g}^{**} = \left[\frac{1}{3\sigma_{I,g}{\Delta{x}_{I}}} +
+		\frac{\sigma_{r,I,g}{\Delta{x}_{I}}}{6}\right]
+		\eqspace,
+	\end{equation}
+	\begin{equation}
+		B_{I,g}^{**} = \left[\frac{\sigma_{r,I,g}{\Delta{x}_{I}}}{3} -
+		\frac{1}{3\sigma_{I,g}{\Delta{x}_{I}}}\right]
+		\eqspace,
+	\end{equation}
+\end{subequations}
+	After the correction terms are solved for and added to the group scalar flux slope and average,
+	${\phi_{g,i}^{(l+1/2)}}$ and ${\phi_{g,i}^{x(l+1/2)}}$, the correction is made to the guess for the left
+	edge incident angular flux,
+\begin{equation}
+	g_m^{(l+1/2)} = {\psi_{g,-m,1/2}^{(l+1/2)}} + \frac{1}{2}F_{1,g,L} + 
+	\frac{3}{2}\mu_m\sum^{N}_{m=1}\mu_{m}\emph{w}_{m}\psi_{g,m,1/2}.
+\end{equation}
+	This method of acceleration for the boundary conditions allows the same rapid rate of convergence
+	that is realized implementing DSA with vacuum boundaries on both system edges.  
+
+\noindent
+	\indent For ${(I)}$ total spatial zones in the problem, Eqs.~(\ref{eq:DSA}) will 
+	form a $({2I})$x$({2I})$ pentadiagonal matrix (with alternating zero entries on the upper and lower
+	bands) and Eq.~(\ref{eq:translate-R_L}) and Eq.~(\ref{eq:translate-R_R}) form the $({2I})$ source
+	vector.  The computational
+	construction cost of this matrix and vector, and subsequent cost of solution for the correction
+	terms by a banded solver, is completely insignificant compared to the overall speed-up for
+	highly diffusive systems.  The overall computational cost is also reduced for systems dominated
+	by absorption, but by a smaller factor.
+
+\belowSubSecSkip
+
+%=====================================================================%
+% SubSection:                        	                              %
+%     Transport: Summary %
+%=====================================================================%
+\subsection{Summary}
+\label{sec:Transport-Summary}
+
+\noindent
+	\indent In this chapter the analytic Boltzmann transport equation for a general geometry 
+	eigenvalue problem has been introduced.  An example of the specific eigenvalue problem of
+	interest was given to clarify the scope of this thesis.  Simplifying assumptions were then made
+	to reduce the phase space to steady-state, planar geometry transport.  A discretized form of
+	this simplified analytic transport equation was derived which is amenable to numerical solution
+	techniques.  The discretization schemes employed were ${S_N}$ in angle, multigroup in energy,
+	and linear characteristics in space, yielding a system of discrete equations.  The nested iterative
+	procedure for solving the discretized system of equations to obtain an 
+	eigenvalue-eigenvector solution was then outlined.  Since systems which may be highly diffusive
+	are of interest but are computationally intractable with Richardson iteration alone, diffusion
+	synthetic acceleration was derived.  This system of acceleration equations were
+	derived for the linear discontinuous spatial discretization, and made to accelerate the system
+	of equations for the linear characteristic discretization.  In the following chapter, it will be
+	explained how the above deterministic calculation procedure is integrated into the Monte Carlo 
+	algorithm for performing radiation transport calculations in a stochastic background medium.
+
+%       Below was successful in importing a .pdf figure.	
+%\begin{figure}[hbtp]
+%  \centering 
+%  \includegraphics[width=0.9\textwidth]{./pdf-example}
+%  \includegraphics[width=5\textwidth]{./pdf-example} % for a really big version!
+%  \caption{An example PDF diagram. It can be infinitely re-scaled without loss of quality while retaining a small file size (try it and see!).}
+%  \label{fig:pdf}
+%\end{figure}
+%
+%       Below was successful in importing a .pdf figure made from an Excel Document.	
+%\begin{figure}[hbtp]
+% \centering 
+% \includegraphics[width=0.9\textwidth]{./k_eig}
+%  \caption{This is a sample probability distribution function for the k-eigenvalue.}
+%  \label{fig:pdf}
+%\end{figure}

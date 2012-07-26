@@ -1,0 +1,75 @@
+%=================%
+% Section: %
+%   LC_DSA
+%=================%
+
+\begin{center}
+\section*{\mdseries{DSA Derivation for 1-D Linear Characteristics Method Using The Modified 4-Step Method}}
+\label{sec:LC_DSA}
+\end{center}
+
+\thispagestyle{empty}
+
+\noindent
+	\indent Start with writing the exact, in-group, Transport Equation
+	
+	\begin{equation}
+		\mu\frac{\partial{\psi_g}}{\partial{x}}+\sigma_t{\psi_g}=\frac{\sigma_{s,g}}{2}
+		\, \int_{-1}^{1}{\psi_g}d{\mu}+\frac{1}{k}F
+	\end{equation}
+	
+\noindent
+	\indent This is the equation for the error:
+
+	\begin{equation}
+		\mu_{m} \frac{\partial{f}}{\partial{x}}+\sigma_{t,i}{f}-
+		\, \frac{\sigma_{s,i}}{2}\int_{-1}^{1}{f}{d\mu}=\frac{\sigma_{s,i}}{2}\left(
+		\, \phi-\phi^{(n)}\right)
+	\end{equation}
+
+\noindent
+	\indent Where 
+	\begin{equation}
+			f\left({x},{\mu}\right)=\psi\left({x},{\mu}\right)-\psi\left({x},{\mu}\right)^{(n-\frac{1}{2})}
+	\end{equation}
+
+\noindent
+	\indent Cutting to the chase...I get for the Zeroth Angular Moment
+ 	\begin{equation}
+			\left[\left(\frac{J_{L,i}+J_{R,i}}{2}\right)-J_{L,i-\frac{1}{2}}\right]+
+			\, \sigma_{a,i}\triangle{x_{i}}\left[\frac{F_{L,i}}{3}+\frac{F_{R,i}}{6}\right]=
+			\, R_{L,i}
+	\end{equation}
+	\begin{equation}
+			\left[J_{L,i+\frac{1}{2}}-\left(\frac{J_{L,i}+J_{R,i}}{2}\right)\right]+
+			\, \sigma_{a,i}\triangle{x_{i}}\left[\frac{F_{L,i}}{6}+\frac{F_{R,i}}{3}\right]=
+			\, R_{R,i}
+	\end{equation}
+
+\noindent
+	\indent And for the First Angular Moment
+	\begin{equation}
+		\left[\frac{J_{L,i}}{3}+\frac{J_{R,i}}{6}\right]=\frac{1}{6\sigma_{t,i}\triangle{x_{i}}}
+		\, \left[F_{L,i}-F_{R,i}\right]
+	\end{equation}
+	\begin{equation}
+		\left[\frac{J_{L,i}}{6}+\frac{J_{R,i}}{3}\right]=\frac{1}{6\sigma_{t,i}\triangle{x_{i}}}
+		\, \left[F_{L,i}-F_{R,i}\right]
+	\end{equation}
+
+\noindent
+	\indent And for the First Moment of the Closure
+\begin{equation}
+		J_{i+\frac{1}{2}}=\frac{F_{R,i}}{4}-\frac{F_{L,i+1}}{4}+\frac{J_{L,i+1}}{2}+
+		\, \frac{J_{R,i}}{2}
+\end{equation}
+\begin{equation}
+		J_{i-\frac{1}{2}}=\frac{F_{R,i-1}}{4}-\frac{F_{L,i}}{4}+\frac{J_{L,i}}{2}+
+		\, \frac{J_{R,i-1}}{2}
+\end{equation}
+
+\newpage
+
+ \end{document}
+
+ 

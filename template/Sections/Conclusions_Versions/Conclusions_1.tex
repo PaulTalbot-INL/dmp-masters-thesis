@@ -1,0 +1,248 @@
+%=================================================%
+% Section:                        	              %
+%    Conculsions %
+%=================================================%
+
+\begin{center}
+\section{CONCLUSIONS}
+\label{sec:Conclusions}
+\end{center}
+
+%====================================================================%
+% SubSection:                        	                             %
+%    Conclusions: Introduction %
+%====================================================================%
+\aboveSubSecSkip
+
+\subsection{Introduction}
+\label{sec:Conclusions-Intro}
+
+\noindent
+	\indent In this chapter, the results presented in Chapter~\ref{sec:Results} are discussed.
+	In particular, the behavior of the ensemble average~k-eigenvalue, the ensemble average
+	group flux, and the accuracy of the atomic approximation as a model for neutron transport
+	in a binary stochastic multiplying medium are analyzed.  Some overall conclusions, as well
+	as some recommendations for further research for benchmarking and modeling
+	development for stochastic media transport are given.
+			
+\belowSubSecSkip
+
+%=====================================================================%
+% SubSection:                        	                              %
+%     Conclusions: k-Eigenvalue%
+%=====================================================================%
+\subsection{k-Eigenvalue}
+\label{sec:Conclusions-k}
+
+\noindent
+	\indent With an increase in ${k_{\infty}}$ with a constant ${c^{fuel}}$ there was a
+	non-linear increase in both the ensemble average~k-eigenvalue and standard deviation.
+	This factor of increase is not as great for the standard deviation as it is for the ensemble
+	average.  This effect is shown by a decreasing relative standard deviation with increasing
+	${k_{\infty}}$.  The effect of an increase in the ensemble average~k-eigenvalue is expected
+	with an increased probability of fission per absorption, achieved with the increase
+	in ${k_{\infty}}$.  
+	
+\noindent
+	\indent Changes in 
+	${c^{fuel}}$ do not significantly impact the ensemble average~k-eigenvalue or standard
+	deviation for the two smallest values (${c^{fuel} < 0.5}$) for constant ${k_{\infty}}$.
+	There is a small but noticeable increase in these two quantities for the largest value of
+	${c^{fuel}}$.  For fixed ${\sigma_{a,1}^{fuel}}$, an increase 
+	in ${\sigma_{s,1\rightarrow1}^{fuel}}$ increases ${\sigma_{1}^{fuel}}$, giving an increased
+	probability of overall interaction.  Of this probability of interaction, ${90\%}$ of the interactions
+	will be within-group scattering.  This allows more fast neutrons born in the fuel 
+	to escape the fuel and enter the moderator, where they can thermalize and subsequently
+	cause more fission.
+	
+\noindent
+	\indent The trends discussed above were evident in both sets of mixing statistics considered.
+	The ensemble average~k-eigenvalue in the Set 2 mixing statistics is greater than that in
+	Set 1.  In Sets 1 and 2, the same fuel mean segment length is used, but the Disk distribution
+	has a significantly smaller (factor of ${\approx3.52}$) standard deviation than the Markovian
+	distribution.  In the case of the Markovian distribution, the 
+	fuel segment lengths can be arbitrarily large or small.  The Disk distribution has a finite
+	maximum fuel segment length.  The Disk fuel distribution gives a more optimal reactor
+	configuration, indicated by the higher ensemble average~k-eigenvalue.  This is due to smaller 
+	segment lengths of fuel overall, causing less fast absorption and more moderation.  This effect
+	causes more fission and an increase in the ensemble average~k-eigenvalue. 
+
+\noindent
+	\indent The shape of the~k-eigenvalue PDF is similar to a Gaussian distribution with a
+	truncated tail on the side of the highest~k-eigenvalue.  This is the same qualitative shape
+	witnessed by Williams~\cite{Wil:00a} - \cite{Wil:01}, obtained with the FGH method.  
+	The shape can never be exactly Gaussian as there exists a minimum and
+	maximum~k-eigenvalue for any random system~\cite{Wil:00a}.  This truncated Gaussian-like
+	shape indicates the optimal configuration (highest k), is a low probability event.  Any deviation
+	from this optimal configuration causes a rapid decrease in the k-eigenvalue, yielding the
+	Gaussian-like peak roughly centered about the ensemble average.
+
+\noindent
+	\indent The impact of an increasing ${k_{\infty}}$ causes a broadening in the PDF toward
+	larger~k-eigenvalues as a consequence of the higher probability of fission per absorption
+	in the fuel.  This 
+	broadening is noticeable for the largest value of ${c^{fuel}}$ because of the increased 
+	probability of moderation and subsequent fission.  The shapes of these broadened PDF's 
+	are relatively unchanged, resembling a skewed Gaussian distribution.
+	The mixing statistics do impact the shape of the~k-eigenvalue PDF.  The smaller standard
+	deviation of the fuel segment length in the case of the Disk 
+	distribution of Set 2, causes the PDF to take on a more normal shape.  
+
+\noindent
+	\indent The addition of reflecting boundaries causes an increase in
+	the~k-eigenvalue, with no real noticeable affect on the shape of the~k-eigenvalue PDF.
+
+\belowSubSecSkip
+
+%=====================================================================%
+% SubSection:                        	                              %
+%     Conclusions: Scalar Flux%
+%=====================================================================%
+\subsection{Scalar Flux}
+\label{sec:Conclusions-flux}
+
+\noindent
+	\indent The ensemble average and standard deviation of the flux exhibit trends
+	opposite those of the~k-eigenvalue.  An increase in ${k_{\infty}}$ for fixed values of ${c^{fuel}}$,
+	causes a decrease in the group flux.  The group flux is
+	decreased by a factor of the increase in the ensemble average~k-eigenvalue.  There is
+	also a corresponding decrease in the standard deviation.  The relative standard deviation
+	of the group fluxes also decreases with increasing ${k_{\infty}}$.
+	
+\noindent
+	\indent The fast group scalar flux has a much lower relative standard deviation 
+	than the thermal group scalar flux.  This indicates less variation in the fast group
+	scalar flux profile from realization to realization.  The cross sections in the fast group are
+	such that the mean free path of neutrons is larger.  Greater interaction probabilities in the
+	thermal group result in steeper gradients in the flux profile.  Averaging over the
+	ensemble of these realizations, gives a larger standard deviation in the thermal group.
+	
+\noindent
+	\indent In the case of Set 1 with vacuum boundaries, the group flux profile has the
+	cosine shape characteristic of a homogeneous medium.  In the case of reflecting
+	boundaries the shape takes on a flatter profile.  Since the segment length distributions
+	are the same in each material for Set 1, the flux profiles of each realization average 
+	together nicely, illustrating this homogeneous medium shape.
+	
+\noindent
+	\indent In the case of Set 2 with vacuum boundaries, the group flux profile also has this
+	characteristic cosine shape with a small asymmetry on the left-hand side of the system.
+	In the case of reflecting boundaries, this small asymmetry is also present.  This asymmetric
+	behavior is caused by the small segment length standard deviation in the fuel material when using
+	the disk distribution rather than the Markovian distribution.  The algorithm for randomly
+	populating the system proceeds from left to right, and as a result, the~left-hand side is the most
+	ordered part of the system.  Further into the slab, the material at any given point is
+	much more random, as it is dependent upon the random material segments that have come
+	before it.
+	This increased variation with the distance into the system is due mostly to the large variation of the 
+	moderator material segment length.  Recalling Eq.~(\ref{eq:trans-prob}), and considering
+	mean chord lengths of ${0.746 \ cm }$ and ${1.153 \ cm}$ used in the fuel and moderator materials,
+	respectively, the probability of a fuel segment appearing as the first material segment
+	of the system is ${\approx39\%}$.  Fuel segment lengths are much less variable than the
+	moderator segment lengths.  Therefore, if a fuel segment is chosen as the first material segment
+	on the left-hand side
+	of the system, it will be of a less variable size than if a moderator segment is chosen.  If a
+	moderator segment is chosen and is small it will be followed by a fuel segment of a less variable
+	size.  The flux profile will look similar in this scenario to the flux profile if a fuel segment was
+	chosen as the first material segment.  If a large moderator segment
+	is chosen, the adjoining fuel segment will be far away from the edge, in a more random
+	area of the system.  The ensemble average flux profile appears to preferentially have a fuel 
+	segment on or near the left edge, giving a small fast flux peak and small thermal flux depression at
+	this location.  
+	
+\noindent
+	\indent The addition of reflecting boundaries has no appreciable effect on the
+	relative standard deviation of the fast group scalar flux.  The relative standard deviation
+	of the thermal group scalar flux is increased greatly.  This is again due to the choice of cross
+	sections.
+	Since no neutrons leak out of the system, and there is a small amount of abosorption
+	in the fast group (only in the fuel) compared to the amount of absorption in the 
+	thermal group (fuel and moderator) neutrons will be preferentially absorbed in the thermal
+	group, resulting in steeper gradients for individual realization and an overall larger standard
+	deviation for reflecting boundaries.
+ 
+
+\belowSubSecSkip
+
+%=====================================================================%
+% SubSection:                        	                              %
+%     Conclusions: Atomic Mix%
+%=====================================================================%
+\subsection{Atomic Mix}
+\label{sec:Conclusions-am}
+
+\noindent
+	\indent The atomic mix approximation gives very inaccurate predictions of ensemble
+	average quantities.  In current modeling practices of nuclear reactors, the~k-eigenvalue
+	and scalar flux are very accurately predicted.  Atomic mix predictions, with their large
+	relative errors
+	in both the flux magnitude and k-eigenvalue, are 
+	unacceptably high.  The approximation is anywhere from ${\approx3 - 6\%}$ better in the
+	case of Disc-Markov mixing statistics since the standard deviation of the segment
+	length distribution is a factor of ${\approx3.52}$ lower.  Only when both the mean and
+	standard deviation of the material segment lengths is very small can atomic mix be 
+	expected to be a reasonable approximation.
+
+\noindent
+	\indent This result is consistent with previously published results.  The research 
+	conducted on the development of models for transport in binary stochastic media indicate that
+	in order for a model to reasonably predict the behavior of a stochastic media system,
+	it must take into account the mean and standard deviation of the material distributions.
+	Atomic mix only takes into account the mean segment length of the material distributions.
+	Since the same material mean segment lengths are used, the atomic mix approximation
+	gives the same result for each set of mixing statistics considered.
+	
+\noindent
+	\indent The atomic mix approximation can only predict ensemble average 
+	quantities.  A more useful model of stochastic media transport will not only accurately
+	predict ensemble average quantities, but will also include predictions of higher statistical 
+	moments such as the standard deviation.  For transport in stochastic media, only this 
+	type of solution will be meaningful.  
+
+\belowSubSecSkip
+
+%=====================================================================%
+% SubSection:                        	                              %
+%     Conclusions: Overall Conclusions and Future Work%
+%=====================================================================%
+\subsection{Overall Conclusions and Future Work}
+\label{sec:Conclusions-over}
+
+\noindent
+	\indent This results of this study are in agreement with past observations of the qualitative
+	shape of
+	the~k-eigenvalue PDF.  This shape has been observed for~k-eigenvalue problems in 
+	binary stochastic media simulated with very different techniques.  Statistical moments
+	of the flux solution were also investigated, revealing a large standard deviation.
+	Asymmetric benchmark flux solutions may result when using different segment distributions
+	in the materials.  This is an effect of the simulation and is likely not physical.  
+	Further benchmarking is necessary to research variability in other system parameters.
+	The systems with vacuum boundaries considered in this study are, for the most part, leakage
+	dominated.  This may smooth out the effect of random fuel segments compared to a more
+	absorption dominated system.
+	
+	
+\noindent
+	\indent Accurate models of stochastic medium~k-eigenvalue problems must reproduce
+	those trends observed here for both the~k-eigenvalue and the group scalar flux.  These models
+	will definitely need to take into account both the mean and standard deviation of the 
+	segment length distributions. They also should produce accurate predictions of both
+	ensemble average and the standard deviation of benchmark quantities in order to 
+	give statistically meaningful results for neutron transport problems in a stochastic medium.
+
+\noindent
+	\indent Simulations of neutron transport in stochastic media will have to be extended into 
+	multi-dimensions to determine a more real effect of spatial randomness of the medium
+	components.  Assembly level parameterization of random ``assemblies'' can be compiled in
+	order to determine if a modeling treatment such as the widely used nodal method could 
+	be applied to a stochastic medium.  
+
+
+
+
+
+
+
+
+
+

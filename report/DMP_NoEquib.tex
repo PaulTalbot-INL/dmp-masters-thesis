@@ -1,0 +1,82 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath}
+\usepackage{fullpage}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{graphics}
+\usepackage{url}
+\usepackage{textcomp}
+
+%opening
+\title{Expanding the Discrete Maximum Principle}
+\author{Paul W. Talbot$^*$, Allan B. Wollaber$^+$\\ \small
+	\texttt{talbotp@engr.orst.edu, wollaber@lanl.gov} \\ \\
+	\small\emph{$^*$NERHP Department, Oregon State University, Corvallis
+		OR, 87544}\\\small
+	\emph{$^+$Los Alamos National Laboratory, P.O. Box 1663, MS D409, Los
+Alamos NM, 87545}}
+
+%\includeonly{DMP_NoEquib_implement,DMP_NoEquib_Discretize}
+%Research Questions: 
+%  How does the DMP need to be modified in order to become general in out-of-
+%    equilibrium conditions?
+%  How does the DMP need to be modified to consider multiple temperature
+%    gradients?
+%  How does the DMP need to be approximated to be implemented in use code?
+
+\begin{document}
+
+\maketitle
+
+%\begin{abstract}
+%In recent papers regarding the Discrete Maximum Principle (DMP) for the 
+%Implicit Monte Carlo equations, a model problem is considered for the 
+%first time-step under the assumption that the initial temperatures in 
+%the radiation field and coupled material are in equilibrium.   In this 
+%work, we have removed the equilibrium assumption and introduced 
+%approximations to allow computation of the DMP at the beginning of each 
+%time step.  An additional generalization is performed that allows the 
+%DMP to apply to each cell, not just the boundary cell.  We have 
+%integrated these calculations, along with unit tests, into Jayenne 
+%project software as a step toward generating a physics-based time-step 
+%limiter for the IMC equations.
+%\end{abstract}
+
+
+%\setcounter{secnumdepth}{2}
+\include{DMP_NoEquib_startmatter}
+% \section{Radiative Transport }
+% \section{Fleck Factor}
+% \section{Discrete Maximum Principle}
+\include{DMP_NoEquib_discretize}
+% \section{Discretization}
+%   \subsection{Time, Part I}
+%   \subsection{Space}
+%   \subsection{Time, Part II}
+%     \subsubsection{Uncollided Intensity}
+%     \subsubsection{Collided Intensity}
+\include{DMP_NoEquib_implement}
+% \section{Implementing the DMP}
+%   \subsection{Approximating $\tilde R$}
+%     \subsubsection{Temperature}
+%     \subsubsection{Time Step}
+%     \subsubsection{Numerical Comparison}
+%     \subsubsection{$\tilde R$ by Parts} (multiple sections)
+\include{DMP_NoEquib_propagate}
+%   \subsection{Propagating DMP}
+%\include{DMP_No_Equib_code}
+%   \subsection{Coding DMP in clubimc}
+\include{DMP_NoEquib_results}
+%   \section{Results}
+\include{DMP_NoEquib_conclusion}
+% \section{Conclusions}
+
+
+\bibliographystyle{amsplain}
+\bibliography{imcref}
+
+\appendix
+\include{DMP_appx_En}
+\include{DMP_appx_Multigroup}
+\include{DMP_appx_fleck}
+\end{document}

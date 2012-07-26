@@ -1,0 +1,12 @@
+\vspace {-24.0pt}
+\contentsline {table}{\numberline {1}{\ignorespaces Constants used for all calculations}}{48}
+\contentsline {table}{\numberline {2}{\ignorespaces Problem specifications used for the Su and Olson purely absorbing grey Marshak wave problem (Problem 1.1)}}{49}
+\contentsline {table}{\numberline {3}{\ignorespaces Problem specifications used for Problem 1.2.}}{52}
+\contentsline {table}{\numberline {4}{\ignorespaces Spatial refinements for Problem 1.2a}}{52}
+\contentsline {table}{\numberline {5}{\ignorespaces Temporal refinements for Problem 1.2b}}{54}
+\contentsline {table}{\numberline {6}{\ignorespaces Opacities used to construct the opacity distribution for the frequency dependent IMD results.}}{58}
+\contentsline {table}{\numberline {7}{\ignorespaces Problem specifications used for the Su and Olson purely absorbing grey Marshak wave problem at $\tau =1.0$ (Problem 3.1).}}{60}
+\contentsline {table}{\numberline {8}{\ignorespaces Problem specifications used for the frequency dependent temporal and spatial refinement. (Problem 3.2)}}{64}
+\contentsline {table}{\numberline {9}{\ignorespaces Problem specifications used for the frequency dependent IMD with various numbers of groups. (Problem 3.3)}}{67}
+\contentsline {table}{\numberline {10}{\ignorespaces Problem specifications used for the frequency dependent difference formulation tests. (Problem 4.1)}}{68}
+\contentsline {table}{\numberline {11}{\ignorespaces The percentages of the material temperature used for the difference formulation temperature. (Problem 4.1)}}{68}

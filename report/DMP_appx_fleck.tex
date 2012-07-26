@@ -1,0 +1,98 @@
+\section{Equations \ref{be_rad} and \ref{be_mat} to Equation \ref{time_start}}
+\label{flcm}
+This transition involves a significant amount of algebra and is the means by
+which Fleck and Cummings \cite{FleckCumm} identified the Fleck factor to
+linearize the thermal radiative transport equations. We begin
+with repeating the two basic equations here:
+\begin{subequations}
+\begin{equation}
+ \frac{1}{c}\frac{\partial}{\partial t}I(r,\Omega,\nu,t) +
+   \vec\Omega\cdot\nabla I(r,\Omega,\nu,t) + \sigma(r,\nu)I(r,\Omega,\nu,t) =
+  \sigma(r,\nu)B(r,\Omega,\nu)\tag{\ref{be_rad}}.
+\end{equation}
+\begin{equation}
+\frac{\partial}{\partial
+t}c_vT=\int_\infty\int_{4\pi}\sigma(r,\nu)\Big[I(r,\Omega,\nu,t)-2\pi
+  B(r,\nu)\Big]\ d\Omega\ d\nu \tag{\ref{be_mat}}.
+\end{equation}
+\end{subequations}
+Moving to a one-dimensional system in the $x$-direction, and removing the
+dependency notation, Eq.\ \eqref{be_rad} becomes
+\begin{equation}
+ \frac{1}{c}\frac{\partial}{\partial t}I +
+   \mu\frac{\partial I}{\partial x} + \sigma I = \frac{1}{2}\sigma
+B\label{apx_rad_1d}.
+\end{equation}
+Analyzing the right-hand side of Eq.\ \eqref{apx_rad_1d}, $B$ is separable
+into the normalized Planck spectrum $b$ and the equilibrium radiation energy
+density variable $u_r$:
+\[b \equiv \frac{15a}{\pi^4T^4}\ \frac{\nu^3}{e^{\nu/T}-1}, \]
+\[u_r = aT^4, \]
+\begin{equation}
+B=bcu_r. \label{apx_newB}
+\end{equation}
+We then rearrange Eq.\ \eqref{be_mat}, in one dimension and without
+dependencies,
+\begin{equation}
+\frac{\partial u_r}{\partial t} = \beta\iint\sigma Id\nu\ d\mu
+    -\int_\infty\sigma Bd\nu, \label{apx_mat_1d}
+\end{equation}
+using the definitions in Eqs.\ \eqref{defs} as well as
+\[\beta^{-1} \equiv \frac{\partial u_m}{\partial u_r},\]
+\[u_m=c_vT,\]
+\[\frac{\partial c_vT}{\partial t} = \frac{\partial u_m}{\partial t} = 
+  \frac{1}{\beta}\frac{\partial u_r}{\partial u_t}\]
+
+Substituting Eq.\ \eqref{apx_newB} into Eq.\ \eqref{apx_mat_1d}: 
+\begin{equation}
+\frac{\partial u_r}{\partial t}=\beta\iint\sigma I\ d\nu\ d\mu -
+\beta c\sigma_pu_r
+\end{equation}
+and integrating
+over a time step $t^n$ to $t^{n+1}$,
+\[u_r^{n+1}-u_r^n= \int_{t^n}^{t^{n+1}}dt\ \bar\beta\iint\sigma Id\nu\ d\mu -
+  c\int_{t^n}^{t^{n+1}}dt\beta\sigma_pu_r,\]
+\begin{equation}
+u_r^{n+1}-u_r^n\approx\bar\beta\Delta_t\iint\bar\sigma\bar Id\nu d\mu -
+  \bar\beta\Delta_tc\bar\sigma_p\left[\alpha u_r^{n+1}+(1-\alpha)u_r^n\right].
+\end{equation}
+Here $\alpha$ is a term created by Fleck and Cummings to handle the
+``implicitness'' of the problem.  $\alpha$ ranges from 1/2 to 1, with the
+most implicit form being $\alpha=1$.
+  Taking $\bar\sigma$  and, as a result, $\bar\sigma_p$ and $\bar\beta$ at the
+beginning of the time step $t_n$ (acknowledging the significant approximation
+this introduces) and solving for $\bar u_r = \alpha u_r^{n+1} + (1-\alpha)u_r^n$
+gives
+\begin{equation}
+\bar u_r \approx \frac{\alpha\beta^n c\Delta_t}{1+\alpha\beta^n
+c\Delta_t\sigma_p^n}\iint\sigma^n Id\nu d\mu +  cu_r^n\frac{1}{1+\alpha\beta^n
+c\Delta_t\sigma_p^n}.\label{bar u}
+\end{equation}
+At this point we introduce the Fleck factor
+\begin{equation}
+f\equiv\frac{1}{1+\alpha\beta c\Delta_t\sigma_p},
+\end{equation}
+and substitute it into Eq.\ \eqref{bar u}:
+\begin{equation}
+\bar u_r=\frac{1-f^n}{\sigma_p^n}\iint\sigma^n Id\nu d\mu+cu_r^nf^n.
+\end{equation}
+Using this definition to expand the rightmost term in Eq.\ \eqref{apx_rad_1d}
+at time step $t_n$,
+\begin{align}
+\frac{1}{2}\sigma B &\approx b^nc\bar u_r \nonumber \\
+      &=\frac{1}{2}b^n\sigma\left[\frac{1-f^n}{\sigma_p^n}
+           \iint\sigma^n Id\nu d\mu + cu_r^nf^n\right]\nonumber \\
+      &= \frac{1-f^n}{2}\ \frac{\sigma^n b^n}{\sigma_p^n}\iint\sigma^n Id\nu
+           d\mu + 2\pi f^n\sigma B^n, \label{apx solved}
+\end{align}
+where we note
+\[bcu_r^n = 4\pi B^n.\]
+Replacing Eq.\ \eqref{apx solved} into Eq.\
+\eqref{apx_rad_1d} and setting $n=0$, we obtain Eq.\
+\eqref{time_start_1}:
+\begin{equation}
+\frac{1}{c}\frac{\partial I}{\partial t} + \mu\frac{\partial I}{\partial x}
++\sigma I =
+  \frac{1-f_0}{2}\frac{\sigma_0b_0}{\sigma_p}\int_0^\infty\int_{-1}^1
+  \sigma_0 I\ d\mu\ d\nu + \sigma_0 f_0 2\pi B_0.\tag{\ref{time_start_1}}
+\end{equation}

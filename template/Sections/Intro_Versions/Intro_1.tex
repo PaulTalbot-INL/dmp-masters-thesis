@@ -1,0 +1,111 @@
+%=================%
+% Section:        %
+%    Introduction %
+%=================%
+
+\ResetSingleSpace
+
+\begin{center}
+{\textbf{
+THE k-EIGENVALUE FROM MULTI-ENERGY GROUP PARTICLE TRANSPORT
+IN BINARY STOCHASTIC MEDIA IN PLANAR GEOMETRY
+}}
+\end{center}
+
+\ResetDoubleSpace
+
+\vskip0.25in
+
+\begin{center}
+\section{INTRODUCTION}
+\label{sec:Intro}
+\end{center}
+
+\setcounter{page}{1}
+\thispagestyle{empty}
+
+\vskip-0.1in
+
+\noindent
+	\indent In recent years, a relatively new field of study has emerged in the radiation 
+	transport community focused on the interaction of particles moving through a stochastic
+	or random heterogeneous background medium.  The background medium is stochastic
+	or random for this class of problems due since the precise location in space of any one
+	of the constituents of the medium is unknown.  In most historical Nuclear Engineering
+	applications, the background media is fixed and has known spatial location.  
+	Very accurate modeling practices have been developed for particle transport
+	and diffusion calculations by dividing a heterogeneous background media of this
+	type into compositions of sub-sections.  These sub-sections of the medium are chosen
+	to be a size where the microstructure contained in them have an average size on the 
+	order of a mean free path of the particle and can be homogenized with an acceptable
+	loss of accuracy.
+		
+\noindent
+	\indent Since engineering time and computation speed are of the utmost importance, 
+	adequate solutions can be obtained in some cases by homogenizing some of the 
+	heterogeneous microstructure of the medium.  This means that during the lifetime of a
+	particle as it traverses the medium, it can encounters all of the constituents 
+	of the medium with equal probability.  In reality, this might not be the case.  The particle
+	may encounter 	pockets of distinctly different material in the microstructure of the material
+	causing profound bulk particle flow effects at the macroscopic level than would be
+	predicted by a homogeneous medium.  In these cases, the microstructure has to be given
+	some specific treatment.
+	
+\noindent
+	\indent A large body of work now exists for modeling particle transport in stochastic media,
+	but this area of research is still far from mature.  According to (reference~\cite{Lew:93}) the
+	original interest in these problems was generated to accurately describe radiative transfer 
+	through Rayleigh-Taylor mixed regions of immiscible fluids found in a capsule undergoing
+	the implosion, and subsequent explosion, in inertial confinement fusion.  This is a problem
+	where the background medium of the radiative transfer has drastically different densities
+	and homogenization leads to solutions with unacceptable error.  Since then, focus has 
+	been turned to other problems, spanning many different disciplines, where treatment of
+	the microstructure as homogenous at the atomic level leads to unacceptable solutions.
+	The above example extends to modeling of astrophysical phenomena, such as the interior
+	stars.  Modeling properties of the microstructure is also necessary in global climate 
+	modeling, where radiation transport must be preformed through heterogeneous clouds,
+	or in oceanography models of radiative transfer through murky ocean layers.  Explicitly
+	modeling heterogeneities is necessary in some nuclear reactor applications such as
+	the thermohydraulic and neutron population coupling in boiling water reactors where 
+	the neutrons traverse a bubbly flow, or through fuel and void regions in pebble bed
+	reactors.  Common materials used in radiation shielding may have to be treated as
+	stochastic media, such as cement, where particles may interact with large regions of
+	constituents with very different neutron interaction probabilities.
+	
+\noindent
+	\indent All materials are heterogeneous in nature, and the size of a single component, 
+	referred to as a transition length or chord length, of a heterogeneous material can be
+	variable.  Any given chord length of any material in the composition depends on some
+	measured (or assumed known) statistical distribution.  Each material can depend on
+	separate statistical distributions.  The complete set of statistical distribution functions
+	describing the chord lengths of each material in the mixture gives the mixing statistics for
+	the medium.  Most of the work to date has been in the development of models for the particle
+	flux in a medium composed of two or more components whose material chord lengths are
+	assumed to be well represented by a Markovian distribution.  Most of this work has been for
+	problems of the boundary value variety, where the flux of particles in the interior of a
+	stochastic medium is the sought after quantity driven by a particle flux incident on the medium
+	from its exterior.  Since the location of the materials composing the medium are only known in
+	this statistical sense, then the particle flux in such a material can only be described as a
+	function of space with statistical moments.  A major goal has been to derive computationally
+	inexpensive deterministic models for the average of an ensemble of individual flux solutions
+	from individual realizations of the mixing statistics of the materials in the composite, and higher
+	order statistical moments such as the variance.  After it is understood (or assumed) how the
+	individual materials are mixed in the system, one can develop deterministic models for the
+	statistical system.  Pomeraning in reference ?? developed a model for the ensemble average
+	scalar flux and variance assuming Markovian mixing statistics.  The ensemble average scalar
+	flux has been thoroughly numerically tested with different closures in 1-D with various results.
+	Adams, Larsen, and Pomeraning derived a transport equation for arbitrary mixing statistics in
+	refernce ??.
+
+	The systems studied above have all been systems that were driven by an incident beam 
+	of particles on an edge or edges of the system.  Another system which is of interest is the 
+	critical system, which is an eigenvalue problem.
+
+	
+	
+	
+	
+	
+	
+	
+	

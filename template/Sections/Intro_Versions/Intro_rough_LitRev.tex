@@ -1,0 +1,877 @@
+%=================%
+% Section:        %
+%    Introduction %
+%=================%
+
+\ResetSingleSpace
+
+\begin{center}
+{\textbf{
+THE k-EIGENVALUE FROM MULTI-ENERGY GROUP NEUTRON TRANSPORT
+IN BINARY STOCHASTIC MEDIA IN PLANAR GEOMETRY
+}}
+\end{center}
+
+\ResetDoubleSpace
+
+\vskip0.25in
+
+\begin{center}
+\section{INTRODUCTION}
+\label{sec:Intro}
+\end{center}
+
+\setcounter{page}{1}
+\thispagestyle{empty}
+
+\vskip-0.1in
+
+\noindent
+	\indent In recent years, great interest has been generated in the radiation transport
+	community on the interaction of particles with a stochastic or random
+	heterogeneous background medium.  The background medium is considered stochastic
+	or random for this class of problems since the precise location of any one of the constituents
+	of the medium is not explicitly known.  In most nuclear engineering applications, the 
+	background media has a known location and is fixed.  Further, it is common practice to treat
+	material mixtures as homogenous at the atomic level by averaging the elemental 
+	properties by their respective volume fractions.  This is a reasonable approximation when
+	the microstructure of the mixture has a size less than a mean free path of the particle.
+	Very accurate modeling techniques have been developed for particle transport and
+	diffusion calculations for which the components of the background material are fixed and
+	can be considered homogenous mixtures. 
+
+\noindent	\indent  All materials encountered in nature have some degree of heterogeneity. 
+	The assumption that a medium is a homogenous mixture of its components can have 
+	various effects on modeling the interaction of the particle with the medium.  As a particle
+	traverses a homogenous medium, it encounters all of the constituents of the medium
+	with equal probability during its lifetime.  In reality, this might not be the case.  The
+	particle may encounter pockets of distinctly different material in the microstructure of the
+	medium, causing profoundly different bulk particle flow effects	than would be predicted
+	by a homogeneous model.  In these cases, the heterogeneous microstructure has to be
+	given specific treatment.	
+\noindent
+	\indent A large body of work now exists for modeling particle transport in stochastic media,
+	but this area of research is still very active.  According to ~\cite{Pom:91b} and
+	~\cite{Lew:93}  the original interest in these problems was generated in an attempt 
+	to accurately describe radiative transfer in a capsule undergoing the implosion stage in
+	inertial confinement fusion.  This is a system where there is radiative transfer through a
+	medium composed of two fluids of drastically different densities, accelerated toward one
+	another by the propagation front of the implosion shock wave~\cite{Cha:61}.  The lighter
+	fluid pushes on and accelerates the denser fluid, causing a thin layer of turbulent mixing of
+	these two immiscible materials by a Rayleigh-Taylor type instability.  If this layer is modeled as
+	a homogeneous mixture, the radiation transport solutions in this medium include large error.  
+	
+\noindent
+	\indent Since then, focus has been turned to other problems spanning a diverse set of disciplines
+	with interest in particle transport, where a stochastic treatment of the background medium is
+	necessary. The above example extends to larger scale modeling of astrophysical phenomena,
+	such as core collapse supernovae, where the thermonuclear ignition after the death of a 
+	massive star is still not well understood through available numerical models ~\cite{Mezz:04}. 
+	Explicitly modeling heterogeneities may become necessary in fully understanding radiation
+	transport and modeling errors in some already mature applications.  This may include the
+	thermohydraulic and neutron density coupling in boiling water reactors where the neutrons
+	traverse a bubbly flow (water-void mixtures).  Common materials used in radiation shielding
+	may be treated more accurately as stochastic media, such as cement, where particles may
+	interact with large regions of constituents with different neutron interaction probabilities.
+	
+\noindent
+	\indent Explicit modeling of the microstructure is also necessary in global climate modeling.
+	Clouds are heterogeneous mixtures of water vapor and ice.  Their composition, coverage,
+	and vertical thickness dictate how much sunlight is reflected back into space and how much is
+	absorbed and subsequently reemitted to the Earth's surface.  An understanding of cloud structure
+	and the bulk radiative transport effects through them are fundamental to accurate atmospheric
+	and oceanic circulation models.  Since radiative transport through a cloudy atmosphere still is not
+	well understood, global climate models produce unacceptably erroneous solutions in the oceanic
+	transport of heat, and predict global warming with uncertainty ranges which have not improved
+	much in over two decades~\cite{Ste:02}.
+
+\noindent
+	\indent (FIX THIS PARAGRAPH WITH A GOOD REF) Radiation Transport must be preformed through in
+	oceanography models of radiative transfer through murky ocean layers, or ocean layers that
+	consists of water mixed with dissolved organic and inorganic materials.  The type, location,
+	and amount of these dissolved materials are unknown precisely ~\cite{Mcco:04}.  Pebble
+	bed reactors have at least three levels of stochasticity.  The fuel pebble itself is a random
+	mixture of smaller fuel spheres in a graphite matrix used for moderation.  These pebbles are
+	tightly packed and randomly mixed in the core region surrounded by gaseous coolant.  An
+	additional layer of stochasticity is introduced after the reactor has been in operation for some
+	time and the fuel in each pebble is depleted by the fission process at variable rates as they
+	migrate through the core.  
+	
+\noindent
+	\indent Radiation transport in nuclear reactor systems in which the fuel and moderator
+	are a stochastic mixture is the focus of this thesis.  Quantifying the impact of randomness in
+	these systems is important from a reactor operations and safety analysis standpoint. 
+	The problems characteristic of nuclear reactor systems are eigenproblems, where the
+	eigenvalue is an indication of how the neutron population is changing with successive
+	generations, or the criticality, and the associated eigenvector, or neutron flux.  There are
+	two types of eigenproblems commonly of interest in nuclear reactor analysis: transient and
+	steady-state eigenproblems.  
+	
+\noindent
+	\indent When evaluating nuclear reactor systems, changes in the reactivity of the system
+	causes transient behavior of the neutron population in the limit of prompt neutron lifetimes
+	in a typical power reactor (${<} {\approx}{10}^{-4}$ seconds) which constitute the bulk of
+	the neutron population (~\cite{Dud:76}).  This does not include the ${<}$ 1 \% of delayed
+	neutrons from the decay of fission fragments, photon-neutron reactions, or neutron
+	absorption into nuclides leading to neutron emission.  Criticality can also be
+	evaluated for steady state conditions in the limit of ``long'' times in a typical power reactor, 
+	($\gg {10}^{-4}$ seconds), preceding some change in reactivity.  In the first case the
+	nuclear engineer may be considering a problem where a given reactor is operating steadily
+	at some initial power, when at a later time the reactor undergoes some change in the
+	reactivity, causing a spike in the reactor power.  This can
+	occur during normal operation through the movement of control rods, neutron ÒpoisonsÓ
+	added to the reactor chemistry, or burnable poisons placed in the fuel for control purposes.
+	The buildup and decay of fission products such as Iodine and Xenon or Promethium and
+	Samarium, is common during startup and shutdown which adds or removes reactivity.
+	Accident scenarios such as loss of coolant or loss of pressure can cause reactivity
+	fluctuations for which robust safety systems have been designed in all modern nuclear
+	reactors.  This type of reactor criticality scenario in the context of a stochastic background
+	medium, is not the subject of this thesis, although some of these problems, such as
+	burnable poisons with somewhat random location in a modern fuel pellet, are excellent
+	candidates for potential stochastic media transport research.  The stochastic reactor
+	criticality problem which is the subject of this thesis are those problems where there are
+	given distributions of fuel and moderator loading for a reactor, and the system behavior is
+	evaluated in the limit of ``long'' reactor times given random placement of the reactor material
+	according to this distribution.
+
+\noindent
+	\indent This behavior of a stochastic nuclear reactor system in planar geometry is 
+	investigated by the evaluation of the steady-state eigenproblem describing this 
+	stochastic media system.  The neutron energies are restricted to exist only in certain
+	energy ranges, for scattering events to cause only either no change in energy or a
+	decrease in energy, as well as for scattering to be isotropic.  The remainder of the introduction
+	is a literature review in the following section, which gives an overview of some of the
+	published literature on radiation transport and diffusion for stochastic media to date, followed
+	by an overview of the remaining sections of the thesis in Section \ref{sec:Intro-Overview}.
+
+%====================================================================%
+% SubSection:                        	                             %
+%    Introduction: Literature Review %
+%====================================================================%
+\aboveSubSecSkip
+
+\subsection{Literature Review}
+\label{sec:Intro-LitRev}
+	
+\noindent
+	\indent There has been two basic components of research in stochastic media: models and 
+	benchmarks.   As discussed in Section \ref{sec:Intro}, the statical nature of a stochastic media
+	transport problem enters through the random mixing of the components of the background
+	medium.  For
+	any given point in space in the mixture, a particle could encounter one of the components or an
+	interface
+	between components with probabilities governed by the mixing statistics.  Benchmark modeling of
+	radiation transport in a stochastic media is straightforward and computationally expensive, while 
+	models approximating benchmark solutions are complicated to derive but ideally should yield
+	approximations which are accurate, simple, and computationally inexpensive.  The benchmark
+	type calculations for stochastic
+	media are done by populating the geometry with segments of each of the 
+	constituents of some size
+	according to known or assumed statistical distributions, and then performing a transport 
+	calculation.  This is
+	known as a single realization of the statistics.  Many realizations are performed, with each
+	transport solution contributing to a statistical solution comprised of an average and
+	higher order statistical moments for the ensemble.  At least thousands, if not millions, of
+	realizations are performed to ensure that the distributions have been well sampled, and
+	that statistical ensemble solutions have converged.  
+	
+\noindent
+	\indent If the mixing statistics are known with any certainty, a particle transport solution can
+	be generated for an individual realization of the medium as well as statistical ensemble
+	quantities.  However, it is clear how the
+	computational expense of this type of calculation can quickly become prohibitive as one
+	contemplates calculations in two or three dimensions, considering~multi-material mixtures, with
+	full temporal, energy, and angular dependence.  Since the derivation of an analytical solution is
+	not
+	possible except for very simple systems, approximate models must be derived.
+	The accuracy of the models is then unknown except in certain limits.  Benchmark calculations
+	provide an ``exact'' answer, acting as a metric against which models can be compared.
+	Insight and understanding gained from benchmark calculations has been used to derive 
+	models which predict ensemble quantities and improve the accuracy of their predictions.
+	
+\noindent
+	\indent At the beginning of the research effort for radiation transport in stochastic media, it was the 
+	deterministic models that were developed first from physical understanding of radiation transport in 
+	certain types of simple stochastic media systems.  When approximations 
+	were introduced into these early models to expand their capacity to predict the ensemble
+	behavior of a wider variety of systems, benchmarks were then needed to ascertain the effect of
+	these approximations on the accuracy of these models.  From that point both benchmarks and
+	models started to be
+	developed that included more physics and more complicated stochastic media systems.
+	
+\noindent 
+	\indent This research has centered around two important types of particle transport
+	problems:
+	boundary value problems of the form $\underline{\underline{\mathbf{A}}} \
+	\underline{\psi}=\underline{\mathbf{q}}$ and eigenproblems of the form
+	$\underline{\underline{\mathbf{A}}}\ \underline{\psi}=\lambda\underline{\psi}$.  Even
+	though the 
+	subject of this thesis is eigenproblems for stochastic media transport, there is a rich history of
+	research and acquired understanding regarding the nature of particle transport stochastic media
+	from the analysis of boundary value
+	problems which is necessary to discuss.  What has been learned for these problem types can be
+	carried over for modeling and benchmarking for eigenproblems.
+
+%==================%
+% SubSubSection:   %
+%    Boundary Value Problems in Stochastic Media %
+%==================%
+\subsubsection{Boundary Value Problems in Stochastic Media}
+\label{sec:Intro-LitRev-BVP}  
+
+\noindent
+	\indent Most of the work to date regarding boundary value problems for particle transport in
+	stochastic media has considered source free, isotropic scattering, monoenergetic
+	transport in rod or planar geometry.  Rod geometry is meant to imply that particles are
+	constrained to move along a line in either the positive or negative direction.  For isotropic
+	scattering, particles can scatter into one of these directions with equal probability of
+	(1/2)~\cite{Ada:89}.  Boundary value problems are driven by a particle flux incident on the 
+	medium from its exterior.  Solutions have included the amount of transmission and reflection, as
+	well as the particle flux profile in the interior of the medium.
+	
+\noindent
+	\indent The most well known, easiest to implement, and consequently, most widely used model
+	is known as atomic mix.  This approximation has been used continually in the past for fixed
+	media applications and ignores the stochastic nature of material constituents.  The atomic mix
+	approximation effectively homogenizes a mixture by volume averaging the characteristics of its
+	constituents. This is a reasonable approximation for media with constituent sizes
+	that are small compared to a mean free path of the transported particle~\cite{Mal:92}, or in the
+	small correlation length limit.  For constituent sizes on the order of a particle mean free path or
+	longer, the atomic mix approximation has been shown to overestimate the absorption as a
+	general trend (\cite{Mal:92}, \cite{Mil:01}, and~\cite{Dav:04}).
+	
+\noindent 
+	\indent Much of the
+	work to date has been centered around deriving accurate models for benchmark calculations in 
+	which the material segments or transition lengths are exponentially distributed or Markovian.  
+	In~\cite{Pom:91b}, \cite{Pom:98}??, it is
+	shown that a Markovian process is usually associated with a ``no-memory'' initial value problem 
+	where, if the solution is known at some time $({t})$, then the solution is defined uniquely for
+	some later
+	time $({t^{'}})$, where $({t^{'} > t})$.  This is known as a no-memory process as it is unnecessary 
+	to know a solution before $({t})$ to determine solutions at $({t})$ and $({t^{'}})$.
+	
+\noindent
+	\indent The Boltzmann transport equation governing particle flow (see Section ??) in a purely
+	absorbing medium where there is no time dependence is a 
+	spatial Markovian process.  Such a system with assumed Markovian mixing statistics
+	describes a joint Markov process, and the Liouville master
+	equation applies.  For a binary mixture, this results in two coupled partial 
+	differential equations for the stochastic transport problem with four unknowns: the volumetric
+	angular flux and interface angular flux in each material.  Some relation is needed to close this
+	system of 
+	equations, which have come to be known as the~Levermore-Pomraning equations.  If the
+	interface angular flux is set equal to the volumetric angular flux, the~Levermore-Pomraning 
+	equations are exact
+	for time independent problems in purely absorbing, binary stochastic media, with Markovian
+	mixing statistics.  This is similar to the upwind closure scheme and will hereafter be referred to
+	as the ``classic'' model.  Exact equations can be written for higher order statistical
+	moments of the classic model such as the variance~\cite{Pom:96} for the same restricted class
+	of problems.  Statistical moments greater than the average, like the variance, should be
+	included as part of a complete and more meaningful statistical solution for particle transport in
+	a stochastic medium.
+	
+\noindent 
+	\indent The assumption of Markovian mixing statistics is not purely for academic purposes.  It
+	has been shown that in the case of a binary stochastic medium in which disks or spheres are
+	distributed in a background material, that the assumption of Markovian statistics in the
+	background material is a valid one (\cite{Su:93} and \cite{Ols:03}).  Results 
+	from~two-dimensional hydrodynamic calculations indicate that fluid segment lengths in a 
+	turbulently mixed, binary stochastic media are Markovian in nature, as well as fragment sizes
+	in rock~\cite{Pom:90b}.
+	
+\noindent 
+	\indent Separate derivations have lead
+	to this same coupled set of equations given by the classic model, including the method
+	of smoothing, using the Liouville master equation, making the assumption that the particle
+	trajectories are uncorrelated, using reactor noise techniques, and from a particle balance
+	standpoint~\cite{Pom:91c}.  The classic model also goes to the atomic mix model when the
+	transition lengths become vanishingly small, and goes to the standard transport equation
+	for transition lengths which increase without bound~\cite{Mal:92}.    
+	
+\noindent
+	\indent There are other models which are exact for binary stochastic media, but  in a limited
+	scope or result in very complicated expressions.  Two independent sets of kinetic equations
+	have been developed which independently and exactly describe time-dependent particle
+	transport with arbitrary mixing statistics in the full three-dimensional setting including the scattering
+	interaction~\cite{San:89}.  Unfortunately, each set of equations does not close resulting in an
+	infinite system of coupled equations and, while providing a theoretical basis for construction of
+	approximate models, are not amenable to application.  The theory of alternating renewal
+	processes has yielded four coupled, exact transport equations also for a purely absorbing, binary
+	stochastic medium without the restriction of Markovian statistics, but including Markovian statistics
+	as a special case (\cite{Pom:89}, and \cite{Fri:90}, \cite{Pom:98}).  Exact equations for higher
+	statistical moments can be written for this model as well.  An extension of this model has been
+	recommended as an approximation to systems including time dependence and
+	scattering~\cite{Pom:89}.  For a time-independent, purely scattering binary stochastic medium in
+	rod geometry, an exact model has been formulated using, what has been called, the invariant
+	imbedding method~\cite{Van:89} and using a more general formalism~\cite{Pom:88}.   
+	
+\noindent
+	\indent These exact equations are for specialized cases and it is unknown how to extend them
+	rigorously as a general model or they are not easily solvable as a general model.  Also, purely
+	scattering media restricted to rod geometry or purely absorbing media or are almost never
+	encountered in practical application, so more generalized models had to be derived and 
+	investigated.  In many
+	applications of particle transport, it is common for the background material to be modestly to highly
+	scattering.  Therefore, to model radiation transport in realistic binary stochastic media, a model
+	which is useful in application must also be accurate for scattering media.  As mentioned, the
+	classic model is known to be exact in time-independent, purely absorbing media, but its ability
+	to predict ensemble flux behavior for the boundary value problem was unknown if it was extended
+	as an approximation to systems in which scattering was allowed.  When compared against early
+	benchmark studies in which scattering was allowed in one or both of the materials in a binary 
+	stochastic medium, the classic model was shown to underestimate the reflection probability and
+	overestimate the transmission probability in both the rod and planar geometries in systems that 
+	were sufficiently long (\cite{Ada:89}, \cite{Zuc:94}, and~\cite{Mil:01}).  It has been shown that the
+	effective cross section for purely scattering media goes through a pronounced minimum in at
+	some system length (\cite{Su:95}, \cite{Pom:??}, and~\cite{Van:89}).  This ``transmission
+	window'' is not predicted by the classic model as the system length increases, but predicts that
+	the effective cross section monotonically decreases as a function of system length.  Overall,
+	the classic model gave solutions that were qualitatively correct.
+
+\noindent
+	\indent Different deterministic models have come about through research in employing a different
+	closure for the~Levermore-Pomraning equations to include the scattering interaction.  It seems
+	impossible to derive a set of closure equations relating the volumetric material angular flux to the
+	interface material angular flux which result in an exact, general model~\cite{Su:95}.  More complex
+	closure terms which include some scattering approximation has been the subject of much 
+	research (\cite{Ada:89}, \cite{Pom:91c}, \cite{Su:94}, and~\cite{Su:95}).  
+
+\noindent
+	\indent Two additional low order closures were developed from a small 
+	material transition length analysis (small segment lengths in one or both of the materials)
+	in an attempt to develop a closure that goes to the atomic mix limit~\cite{Su:94}.  While these
+	closures were more complex in approximating scattering, they were algebraic and thus considered
+	low order closures.  Moreover, it was unclear how to determine these closure relationships in
+	other than an \emph{ad hoc} way.  These two closures resulted in two models which are useful
+	only for certain systems.  The new closures show only slight improvement to, or can be worse than,
+	the classic model.  Both of the additional low order closures do not predict the transmission
+	window and therefore none of the low order closure models (including the classic model) are well
+	suited as a general model (\cite{Su:94} and~\cite{Su:95}).  
+	
+\noindent
+	\indent A higher order closure was developed from a ``balance like'' equation for the angular
+	flux at the interface of
+	two materials in a binary stochastic medium~\cite{Pom:91b}.  This yielded two
+	transport equations for the interface fluxes in each material coupled to the volumetric fluxes in
+	each material described by the~Levermore-Pomraning equations; four coupled transport
+	equations overall.  Pomraning called this model incorporating the higher order closure
+	the ``Interface'' model.  Solving these four transport equations did 
+	result in significant improvement over the classic model in approximating the reflection
+	and transmission probabilities given in a particular benchmark when considering time
+	independent, source-free, monoenergetic, isotropic scattering in rod geometry.  However, there
+	seems to be no obvious way to extend this closure to general geometries and statistics.  The
+	Interface model was tested against atomic mix, a decoupled form of the classic model
+	(infinite correlation length model), the classic model, and three other models which
+	were approximations to the classic model~\cite{Mal:92} using cross section data
+	from~\cite{Ada:89} for rod geometry.  The overall conclusion of this study was that more
+	complex models lead to more accurate solutions.
+	
+\noindent
+	\indent One of the additional low order closures from~\cite{Su:94} was used in
+	approximating~time-dependent grey radiation transport in a purely absorbing binary
+	stochastic media where the transport was coupled to the matter.~\cite{Mil:01}.  The assumption
+	of a~source-free, purely absorbing media was made with a linear form of the material
+	temperature equation.  The binary stochastic medium was purely absorbing, but the coupling
+	to the matter can be thought of as a scattering source, where the thermal radiation absorbed can
+	be reemitted isotropically with some probability.  Atomic mix, the low order model
+	from~\cite{Su:94}, and the classic model were compared against the benchmark.  As expected
+	from the above
+	discussion, the low order~\cite{Su:94} model produces a much more accurate answer than
+	the classic model, since the closure takes into account some scattering.  The atomic mix
+	approximation overestimated the absorption as predicted.  The cases considered
+	were also in the small transition length limit which, from the above discussion, is the assumption
+	under which the low order closure of~\cite{Su:94} was derived.  Therefore, this was 
+	a good closure choice for the~Levermore-Pomraning equations, to obtain an accurate for this
+	particular application.
+
+\noindent
+	\indent A linear combination of the Interface model and the classic model was also 
+	developed~\cite{Su:95}.  It was found that the Interface model gave more accurate 
+	reflection and transmission probabilities compared to the classic model, but sometimes
+	could give unphysical flux profiles for some systems, which is a curious
+	characteristic.  The Interface model has been 
+	the only closure capable of predicting the transmission window with any accuracy.  The 
+	classic model was linearly combined in an \emph{ad hoc} way such as to preserve the
+	best qualities of each model.  For purely
+	absorbing media the combined model goes to the classic model, which is exact.  For purely
+	scattering systems, the combined model goes to the Interface model which is the best prediction
+	of these systems.  This was tested for isotropic scattering, monoenergetic, systems in rod and
+	planar geometry.  Numerical tests against benchmark solutions revealed that the combined
+	model was both robust and yielded accurate results.  There were a few specific systems where
+	the combined model can be inaccurate.  However, since the 
+	combination of the classic and Interface model was done in an \emph{ad hoc} way, the
+	model can be tuned to specific problems and obtain very accurate results.  Therefore, the
+	combined model was recommended as a replacement for both the classic model and the 
+	Interface model for source free, isotropically scattering, monoenergetic, binary mixtures in
+	rod and planar geometry, but is not a general model~\cite{Su:95}. 
+ 	
+\noindent
+	\indent Some benchmark and modeling studies have been done for non-Markovian statistics.
+	Considering six different mixing statistics in rod geometry, it was found that the different statistics
+	do impact the ensemble flux profile~\cite{Su:93}.  For those statistics chosen in the evaluation,
+	Markovian seemed to give a fair prediction of the ensemble average flux profile.  It was also noted
+	that the standard deviation of the reflection and transmission probabilities were the greatest for
+	Markovian statistics.  This result is logical since, of those statistical distribution considered,
+	only the Markovian distribution allows an arbitrarily long segment, and has the greatest 
+	standard deviation about the mean of any distribution.
+	
+\noindent
+	\indent Similar findings were reported when considering eight different mixing statistics,
+	including Markovian in planar geometry.  It was shown that the probability of transmission was
+	more statistics dependent than the probability of reflection~\cite{Zuc:94} for systems of sufficient
+	length.  This result seems reasonable for slabs which are long enough to contain many
+	alternating segments of each material.  Particles would tend to encounter more of the possible
+	variation present in the slab than those particles which partially penetrate the slab and reflect
+	back out.  Another important result of this study is that different mixing statistics produce different
+	results in the flux distribution.  Furthermore, the mean and variance of the statistical distribution
+	describing the mixing statistics indicate the influence on the transport problem.  For the different
+	unimodal statistical distributions evaluated, the material and ensemble average scalar fluxes
+	are insensitive to statistical moments higher than the second, this being especially true in the
+	case of well mixed systems (small transition lengths relative to the system length)
+	(\cite{Lev:88} and \cite{Zuc:94}).  These studies also revealed that the mean segment length from
+	a given distribution alone was insufficient statistical information for modeling purposes.  This has
+	significant impact on modeling particle transport in stochastic media since one can choose any
+	unimodal distribution with an equivalent mean and variance of the unimodal distribution being
+	modeled, and get reasonably accurate results.  This is not necessarily the case for modeling
+	particle transport in a stochastic medium with arbitrary mixing statistics.
+	
+\noindent
+	\indent Models have been developed to predict the ensemble behavior of binary stochastic
+	mixtures with non-Markovian statistics.  The aforementioned classic and Interface model were
+	tested against a model based on averaging the integral form of the transport equation resulting
+	in ``renewal-like'' equations for the ensemble average flux, aptly named the
+	Renewal model.  A correction factor was applied to the Interface model as suggested
+	in~\cite{Lev:88}.  All three models are exact for time-independent, purely absorbing stochastic
+	mixtures with Markovian statistics.  The Renewal model is also exact for non-Markovian
+	mixing statistics.  As expected from the above conversation, the classic model which was 
+	derived strictly for Markovian mixtures is the least accurate of the models for non-Markovian
+	mixtures.  The non-Markov corrected Interface model was found to be very accurate for the
+	transmission and reflection probabilities, but could give unphysical flux profiles for some cases 
+	as was the result of comparison to benchmarks for Markovian mixtures.  The Renewal model
+	could robustly predict the qualitative behavior of the flux and the reflection and transmission
+	probability~\cite{Zuc:94}.
+	
+\noindent
+	\indent The correction factor suggested in~\cite{Lev:88} was also adapted to the combined
+	model given in~\cite{Su:95} (discussed above) and tested as a prediction of a benchmark
+	solutions for two kinds of mixing
+	statistics other than Markovian.  The combined model was shown to be a robust model in the
+	case of~non-Markovian mixing statistics.  The combined model lost some accuracy for small
+	systems, but was shown to be more accurate for long systems than the classic
+	model~\cite{Su:95}.
+
+\noindent
+	\indent Other models and benchmarks in stochastic media have been developed.  This includes
+	a flux-limiting model for particle transport in a binary stochastic medium with Markovian mixing
+	where a flux-limited diffusion approximation was made for the classic model resulting in two 
+	coupled non-linear diffusion equations, which have been shown to be a more accurate diffusion
+	approximation than classical isotropic diffusion in the non-stochastic case (\cite{Sam:91} and
+	\cite{Pom:??}) (NEED MORE HERE)
+	
+\noindent
+	\indent So far only deterministic models which have been developed for particle transport in
+	stochastic media has been summarized.  There has been some benchmarking and modeling
+	research done for particle transport in 
+	stochastic media using the Monte Carlo method (see Section ??).  A chord length sampling (CLS) 
+	and limited chord length sampling algorithm (LCLS) was adopted into a standard Monte Carlo
+	calculation as a model for neutral particle transport in a two dimensional geometry for
+	a binary stochastic medium of a fixed number of disks randomly placed in a matrix
+	material (\cite{Don:03a} and \cite{Don:03b}.  This was performed as a boundary value problem
+	with a monodirectional beam incident on one face of a rectangle defining the system boundaries.   
+	The CLS algorithm samples from the mixing statistics of the respective materials to determine 
+	whether or not a particle leaves a material or not, instead of determining if the particle enters a 
+	different material by choosing the shortest distance between escape, collision, and distance to a 
+	material boundary based on its current position and direction.  This models the stochastic mixture
+	by assuming that the mixing statistics are a particle characteristic and not a material characteristic,
+	sampling the mixing statistics in an approximated way as the particle traverses the medium.  This 
+	can be much less computationally expensive than the benchmark calculation.
+	This CLS algorithm was shown to be equivalent to the classic model.  The CLS algorithm assumes
+	a Markovian transition length distribution in the matrix material and a distribution describing chord
+	lengths in a disk for the disk material.  This assumption is not necessarily a reasonable one for
+	particles which penetrate the surface of the disk, since this distribution will give an overestimation
+	of the distance to escape from the disk to any particle whose position is in the disks interior.      
+	
+\noindent
+	\indent The LCLS algorithm was developed which performed CLS in the 
+	matrix material and traditional Monte Carlo in the disk material.  When considering reflection
+	on the system incident flux boundary, and transmission on the other three system boundaries,
+	both the CLS and LCLS algorithms were found to be within the statistics of the benchmark
+	calculation for purely absorbing systems.  When scattering is introduced both algorithms become
+	approximate with varying degrees of accuracy, with LCLS being the most accurate in general.  
+	As in the case of the classic model, it was shown that the CLS algorithm underestimates
+	reflection and overestimates transmission.  CLS and LCLS show a dramatic increase in
+	computational efficiency relative to the Monte Carlo benchmark, except for a purely scattering
+	case where CLS is much less efficient.
+	
+\noindent 
+	\indent Another interesting Monte Carlo model was introduced which uses the Monte Carlo 
+	method implementing Perlin noise functions as part of an alternative algorithm to the standard 
+	Monte Carlo algorithm called the Woodcock algorithm~\cite{Tic:04}.  Like the CLS and LCLS
+	algorithms the Woodcock algorithm assigns material characteristics to the particle reducing the 
+	computational expense relative to the benchmark calculation.  However, in the case of the 
+	Woodcock algorithm it is unnecessary to compute the distance to material interfaces.  When the
+	algorithm determines a point of interaction, the Perlin noise function is evaluated to determine
+	what material is assigned to that interaction point.  This model was shown to accurately
+	predict experimentally measured fluorescent X-ray intensity from a granular Cu${_2}$S sample
+	excited with a $^{238}$Pu source.  Furthermore, it was shown that this model can be extended to
+	include models which could potentially simulate a broad variety of complicated stochastic media
+	systems.  
+
+\noindent
+	\indent Modeling and benchmarking strategies have been summarized for boundary value
+	problems for particle transport problems in stochastic media . The subject of this thesis is
+	eigenvalue problems in binary stochastic media, but the research that has been performed
+	for boundary value problems is valuable for future work in modeling and benchmarking
+	eigenvalue problems.  A detailed summary and complete list of references of the research efforts
+	to obtain exact models, closures for approximate models, as well as benchmarks
+	for certain types of binary stochastic media systems are given in~\cite{Pom:98} and 
+	in~\cite{Pom:??}. 
+	   
+\belowSubSecSkip
+
+%==================%
+% SubSubSection:   %
+%    Eigenvalue Problems in Stochastic Media %
+%==================%
+\subsubsection{Eigenvalue Problems in Stochastic Media}
+\label{sec:Intro-LitRev-Eig}
+	
+\noindent
+	\indent Relative the bulk of research that has been done for the boundary value problem
+	for stochastic media transport, only a small amount of research has been devoted to the 
+	development of benchmarks and models concerning stochastic nuclear reactors.
+	In the stochastic nuclear reactor, at least one component of the background mixture is a 
+	multiplying component.  If a neutron interacts with such a component the reemission factor
+	can be greater than unity from the fission process, where it would be unity for a pure scattering 
+	component.  Much of this research has used diffusion theory as the basis for analysis, which
+	does not adequately capture the complicated aspects of particle transport in a random
+	multiplying medium.  Furthermore, the effect of randomness on the ensemble average criticality
+	of a stochastic nuclear reactor can be ambiguous.  This is contrary to the particle flux, where 
+	the ensemble average can easily be envisioned, as in the boundary value problem.
+	
+\noindent 
+	\indent It is difficult, if not impossible, to infer the general effect of ``randomness'' on 
+	``criticality''~\cite{Pom:91a}.  Using a perturbation about a non-stochastic reactor as a reference
+	case while preserving the average total fuel loading and monenergetic diffusion theory, it was
+	shown that general conclusions cannot be drawn regarding the effect of randomness on 
+	criticality without specifically defining the indication of criticality and how randomness is introduced
+	into the system.  Given the same perturbation from the reference
+	reactor, it is possible to show that the ensemble average criticality of the system will increase,
+	decrease, or stay constant, based on what is used as the indication of criticality, and how this
+	criticality indicator is averaged.  The overall conclusion of this study was that neutron transport
+	in a stochastic multiplying medium is far too complicated to make a general statement about
+	the effect of random fluctuations in fuel density on the criticality of the system using a single
+	ensemble averaged number.  Characterizations of a system as subcritical or supercritical may be
+	too simple, and higher statistical moments of the criticality indicator may be necessary for a more
+	meaningful solution. 
+
+\noindent
+	\indent  Steady-state, monoenergetic, planar geometry transport for a bare stochastic reactor has 
+	also been considered~\cite{Jah:98}.  
+
+\noindent
+	\indent Consistent with~\cite{Jah:98}, when the eigenvalue is used as the specific indication of
+	reactivity, it was found using the monoenergetic diffusion equation describing a Markovian
+	binary stochastic reactor that the ensemble averaged reactivity is always greater than the 
+	nonstochastic reference case~\cite{Pom:99}.  Randomness was introduced into the problem
+	through fluctuations of the mean number of secondaries per collision about the ensemble average
+	of this quantity.  This result was found to true only for rods of sufficient length and is dependent on
+	what mode of the eigenvalue of interest.  If higher modes are considered the opposite conclusion
+	can be drawn on the effect of randomness on criticality.  Thus, this conclusion was shown to be
+	mode dependent.  Usually, the fundamental mode is the only mode considered, but the
+	aforementioned conclusion is a complete one.
+	
+
+
+\noindent 
+	\cite{Wil:00a}
+	\indent Simulation based on the Feinberg-Galanin-Horning (FGH) method for heterogeneous
+	reactors.  Used approximation for fuel as point sources and sinks.
+	
+	FGH uses a single group for the thermal neutrons and a slowing down kernel for the fast 
+	neutrons.  Epithermal absorption is neglected.  Done for planar geometry, diffusion. 
+	$^{235}$U fuel and graphite moderator where the fuel is considered thin plates separated by some 
+	pitch.  And an approximate slowing down kernel, and segments of any width.
+	FGH-
+	where fuel elements are replaced by point, line, or plane sinks of thermal neutrons and 
+	sources of fast neutrons resulting in a set of discrete linear equations from the diffusion equation
+	giving the flux at each fuel element (a two group slowing down model) with random fuel placement
+	from a uniform distribution (important!) or fuel elements with a fixed mean position in a regular
+	lattice but can vary randomly around the mean, constant fuel and moderator loading.  With an
+	ordered arrangement of fuel plates, found
+	number of plates yielding critical size, then randomized the locations for these same number of
+	plates.    
+	
+	age diffusion theory for the slowing down kernel.
+	
+	showed that if groupings of plates were near the reactor center, a maximum would occur, with
+	some optimum plate grouping, determined by simulation.  Plates grouped at the reactor edges
+	gave minimum criticality.  Showed a skewness in the probability distribution function of k-
+	eigenvalues Showed that the greatest probability is that of a supercritical reactor
+	(55.7 \%).   
+	
+	Also looked pdf of k-eigenvalue if plates were again arranged in the critical lattice and allowed
+	to be shifted by a small perturbation about a mean value of 10 \% of the lattice pitch.  Resulted in 
+	an almost Gaussian about criticality.  These experiments were not done analytically, but as 
+	benchmarks.
+	
+\noindent
+	\cite{Wil:00b}
+	\indent The above FGH source-sink method was extended to include discrete resonance
+	absorption assuming that the fuel lumps are additional sinks of neutrons assuming the resonance
+	absorption is globally a weak effect.  Assumed that all resonance absorption takes place at one
+	energy.  Infinite medium slowing down kernel.  
+	
+	1) Plate positions are fixed and values of enrichment are determined such that the reactor is 
+	critical for reactors containing a variable number of fuel plates.
+	2) Plates of identical enrichment are placed randomly with a uniform distribution in the reactor.
+	3) Fixed positions with the enrichments of each plate chosen at random from a uniform distribution
+	from 0 to 2y${_c}$, where y${_c}$ is the enrichment of each of the N plates from 0 to 16 yielding
+	a critical reactor.  This yields an average enrichment that would result in a critical reactor on
+	average.
+	4) Both plate position and enrichment is random
+	
+	Does not know what type of error he is making as a function of realization number. 
+	
+	Conclusions: This paper extended the work of the above paper by including resonance 
+	absorption and variable enrichment of the fuel plates.  The effect on the k${_{eff}}$ can 
+	be studied for random plate positions with fixed enrichment, randomly enriched plates 
+	with fixed positions, and both enrichment and plate position is random.  When the number of
+	plates becomes large, the structure of the eigenvalue pdf becomes Gaussian-like, but never
+	exactly Gaussian since there is a minimum and maximum value of the eigenvalue.  Research
+	to date with one-speed diffusion theory for rod and planar geometry has shown that an increase
+	in the ensemble average k-eigenvalue occurs for the stochastic reactor relative to a
+	non-stochastic case.  When including resonance absorption into this model for a fuel mixture of
+	natural uranium with some enrichment, the ensemble average k-eigenvalue is less than that
+	of the non-stochastic case.  For fuel plates containing a mixture of ${^{235}}$U and ${^{27}}$Al
+	there exists
+	reactors which are subcritical and supercritical for a given number of plates in the reactor.  The 
+	subcritical cases could possibly be attributed to realization error, since they are only slightly 
+	subcritical and with a greater number of realizations could result in a critical or supercritical reactor.
+	Therefore, any conclusions that can be drawn indeed depend upon how the randomness of the 
+	system is defined and the fuel loading of the ensemble of reactor configurations.
+	Variance in the ensemble average k is decreases as the number of plates in the reactor increases, 
+	which is an expected result. 
+	
+\noindent
+	\cite{Wil:02}
+	\indent Like in \cite{Wil:00a}, considerations are for random placement of a fixed number of plates,
+	or a small
+	perturbation from a mean position.  This continues for this paper in which various numbers of 
+	spherical fuel elements, approximated by point sources and sinks, are encased in a cube.  
+	Diffusion theory is again used and spheres approximated by point sources but allowed to move
+	around a box (this is the three-dimensional treatment).  The spheres are modeled as point sources
+	and sinks, but with some radius in order to avoid a singularity in the definition of the FGH equation
+	for the k${_{eff}}$ involving a Green's function.  The sphere coordinates are chosen from a uniform
+	distribution.  All of the spheres are assumed to be the same size and consist of a homogeneous
+	mixture of ${^{235}}$U and ${^{27}}$Al as in \cite{Wil:00b} but with random volume fraction of
+	${^{235}}$U sampled from a uniform distribution.  A reflector was also used on all sides of the
+	bounding box which was taken to be finite and infinite.  The following is studied:
+	1) Fixed positions for spheres, random volume fractions
+	2) Fixed volume fraction, random position for spheres
+	3) Small random movements of spheres about some fixed position.  
+	
+	Disadvantages to the source-sink method:
+	1) diffusion
+	2) fuel lumps have to reasonably small so that they can be modeled by the Dirac delta function, 
+	while the absorption of the lump is constant for the lattice whereas in reality it would depend on
+	the number an location of the neighboring spheres to determine whether or not it could be
+	regarded as isotropic over the sphere surface. 
+	
+	Just talk about how the above work was an extension of the 1-D stuff and that construction of 
+	the PDF was done.  PDF construction and studies were not done relative to a non-stochastic
+	critical reference case in this study.  Structure is examined for different numbers of spheres 
+	populating the bounding box for different reactors with different reflectors (graphite or water). 
+	
+\noindent \cite{Wil:03a}
+	\indent PDF from one speed, integral transport for small spheres in an infinite bulk medium where
+	 the
+	total cross sections in the spheres and matrix material is the same and small spheres in a 
+	void or purely absorbing medium but with different total cross sections in the sphere and matrix
+	material.  The spheres are contained in a bounding box.  This is just like what was done 
+	above.  Diffusion theory results are also calculated to determine errors made in diffusion.  
+	An infinitely reflected system is considered.  The spheres are a homogeneous mixture of 
+	${^{235}}$U and some non-fissile material, where the enrichment of the sphere is variable, but
+	keeping the total cross section of the sphere and background material the same, choosing v
+	from a uniform random distribution between a maximum and minimum limit.  Total cross section
+	is spatially constant for each realization, but variable enrichment.  Assumptions for the scattering
+	term as volume averaged first flight collision probabilities were also made. 
+	
+	spheres with greater separation distance act more independently and thus the k-eigenvalue 
+	solution has a greater variance.  
+	
+	As the number of spheres randomly placed increases, a continuous PDF starts to take shape
+	become narrower as a large number of spheres makes sphere positions decreasingly random.
+	
+	For the problem with a constant cross section in the sphere and matrix material with random
+	sphere positions, diffusion predicted the shape of the eigenvalue PDF well.  Diffusion
+	did give the qualitatively correct shape of the PDF but was shifted in magnitude, always
+	underpredicting the magnitude of the PDF.  Diffusion is not well suited for some problems like
+	the spheres in the void background matrix.  PDF's from transport were constructed for the
+	variable parameters showing the range of values the k-eigenvalue can be.  
+	
+\noindent  \cite{Wil:03b}
+	\indent Source-Sink method is used with a graphite moderator and reflector of varying thickness
+	with a variable number of plates.  As the reflector thickness increases, the ensemble 
+	average k gradually increases and the relative standard deviation decreases.  The minimum
+	eigenvale
+	is show a greater increase in value than the maximum as the leakage is decreased, but the 
+	PDF becomes narrower. 	Any fine structure in the PDF from preferred values of the k-eigenvalue
+	are smoothed out with the introduction of a thicker reflector.  This was also shown for a 
+	water reflector, but as in \cite{Wil:02}, the water reflector showed no fine structure as in the 
+	graphite case because of the relative smallness of the slowing down and diffusion lengths 
+	relative to the system size.  
+	
+\noindent \cite{Wil:01}
+	\indent This paper compares a simulation of source-sink theory with a perturbation method used
+	as a model for the source-sink theory benchmark.  Two group theory was again used for the 
+	one-dimensional plate reactor.  For a given number of plates, the plate absorbing strength is 
+	taken to be random sampled uniformly from an upper and lower limit moderated by graphite with
+	fixed plate positions.  The mean absorbing strength makes the system of plates just critical.  Again
+	as the number of plates increase, the shape becomes more Gaussian.  This particular study
+	suggests that a random absorbing strength yields a mean k-eigenvalue less than unity, meaning it
+	tends to decrease reactivity.  As the number of plates increases the variance decreases as 
+	expected.  Perturbation theory applied to the source-sink method lends itself well as a prediction
+	of the variance in this particular  problem.  As the randomness increases in the absorption
+	strength, the perturbation approximation
+	of the variance gets worse.  This result is expected.  The approximation gets better as the number
+	of plates increases due to the fact that the distribution becomes more Gaussian-like as the
+	number of plates increases. 
+	
+\noindent \cite{Wil:03c}
+	\indent Obtained an analytical expression for the probability density function of the k-eigenvalue
+	for an array of fissile spheres placed randomly from its initial position.  This was done for 
+	spheres in a infinite background medium in which the total cross section in the sphere and
+	moderator is the same and for spheres in a void.  Collision probabilities are used as interactions.
+	The conclusion is that for a sufficient number of spheres, a Gaussian distribution well 
+	represents the k-eigenvalue distribution.  Using integral transport theory from \cite{Wil:02} for 
+	a variable number of spheres moved a small, uniformly random amount from their mean positions
+	in a bounding box.  Perturbation theory is applied to this integral transport theory equation resulting
+	in an equation for the perturbed k-eigenvalue.  The range of perturbation is examined to
+	understand where the approximation can be used.  The assumption of constant cross section
+	damps out much transport effects making diffusion a reasonable approximation (important!!) and 
+	transport effects are indeed essential in many applications.  
+	
+\noindent \cite{Jah:98}
+	\indent For planar geometry, time-independent, one-speed transport, three different components
+	to a stochastic
+	reactor were allowed to be randomly placed inside a constant width, bare slab.  The components 
+	included a pure scatterer, pure absorber, and purely fissile materials.  The reference case 
+	includes a uniform loading of these same components, which is critical.  Vacuum boundary
+	conditions are the
+	same in both the reference and stochastic case.  The composition is one of two types being a 
+	homogeneous mixture of the aforementioned three components.  The probability of finding 
+	either of the two materials at some random point in the slab is equal, namely, 1/2.  Both a binomial
+	and
+	exponential distribution of a variable number of even-integer segments are sampled from to 
+	determine which material resides at any given point in the slab.  
+	The slab is divided into a variable number of equal length segments of each component.
+	Therefore, the exact number of perturbations is known based on the number of segments
+	allowed in the binomial distribution.  When the component lengths are determined from the
+	exponential distribution, the slab is terminated if either of the materials is exhausted, and 
+	realizations run until the average k-eigenvalue converges.  The material loading in the 
+	reactor is conserved by performing a calculation for each realization twice; one starting with 
+	material 1 the other with material 0, since their respective probabilities are equal to 1/2.  This
+	was done for different mean chord lengths as a fraction of the slab length.  
+	
+	The results of the two distribution types show that as the segment lengths decrease, the 
+	ensemble average k-eigenvalue approach unity strictly from above for varying reemission values 
+	varying from 1 to ${\nu}$.  
+	
+	This is to say that as the segment lengths become smaller that the eigenvalue approaches that
+	of the homogenous reference reactor of unity.
+		
+	For these monoenergetic slabs of constant material loading, the 
+	increase in the ensemble average k-eigenvalue relative to the critical reference reactor is a 
+	function of the segment size and allowed reemission.  The departure from the reference 
+	reactor is largest when the slab has little or no scattering interaction.  The reverse is true 
+	when the slab is highly scattering.  The random structure impacts the ensemble averaged
+	k-eigenvalue the greatest for highly absorbing slabs because particles travel a short distance
+	on average.  When the slab is highly scattering, the effect of the random structure is reduced,
+	since the scattering interaction will ``smooth out'' the random structure.  Thus, the reactor which
+	is purely absorbing and the reactor which is highly scattering give the bounds for the maximum
+	and minimum change in the eigenvalue.  It is unknown a priori if the ensemble average of the 
+	k-eigenvalue from random realizations of these respective reactor types will be greater than, less
+	than, or equal to the reference case.  Another way to look at 
+	the overall result of an increase in the k-eigenvalue for random slabs is that atomic mix of 
+	a random slab will result in an underestimation in the ensemble average k-eigenvalue, 
+	which is important from a reactor safety standpoint. 
+	
+\noindent \cite{Jah:01}
+	\indent Binomial statistics are again used in this study as in \cite{Jah:98}, giving fixed segment
+	lengths of each of the two materials randomly distributed a reactor of fixed length, but 
+	preserving the material loading.  The deterministic discrete ordinates code (ANISN) is used to
+	evaluate the eigenvalue and gives excellent agreement with the Monte Carlo results of
+	\cite{Jah:98}.  Detailed examination of the results shows that there is close to a fixed fraction
+	of k-eigenvalues which contribute to the ensemble average which are less than critical while 
+	predominantly the behavior is a supercriticality.  Those eigenvalues less than unity have a smaller
+	negative negative reactivity addition than those above critical.  
+	
+	A general conclusion is that any distribution that does not distribute fissile isotopes to the boundary
+	of the reactor will increase the ensemble averaged eigenvalue relative to the homogeneous
+	reference reactor.  Also, it is apparent that segregation of the material species increases the
+	average importance of interactions leading to particle production while decreasing the importance
+	of interactions leading to particle loss.
+	
+	The work of \cite{Jah:98} has been extended to include multinomial distributions where a 
+	cross section is discretized into m values.  A set of m equations can be generated for the bounding
+	conditions of this type of system, allowing for realizations which preserve the material loading.  
+	Same overall behavior as in the binomial case when using multinomial statistics.
+	
+\noindent
+	\indent What hasn't been done:
+	1) Transport in a true 1-D stochastic medium with variable energy dependence
+	2) Modeling of this problem (we will look at atomic mix).
+	
+	
+\belowSubSecSkip
+
+%=====================================================================%
+% SubSection:                        	                              %
+%     Introduction: Thesis Overview %
+%=====================================================================%
+\subsection{Thesis Overview}
+\label{sec:Intro-Overview}
+
+\noindent
+	\indent The remainder of the thesis has been written in sections to describe the steady-state,
+	eigenproblem for stochastic media being solved.  The assumptions and restraints on
+	the system studied are given with the corresponding equations, along with the input data and
+	how it was generated.  The solutions obtained from the performed calculations are given and
+	analyzed and the resulting conclusions drawn from those results are discussed Finally, what
+	can be said about transport calculations for stochastic media in general from the examined
+	system is discussed and work remains in this important and interesting research area.
+	An outline of the rest of the thesis is given below, including a brief description of the content 
+	of each section in general.
+	
+	\begin{enumerate}
+		\item[Chapter II{.}]  This chapter introduces the general geometry, analytic Boltzmann 
+		transport equation;
+		a representation of the transport of neutral particles in any arbitrary medium.  The
+		restrictions made on this equation are described to arrive at an analytic transport 
+		equation for planar geometry.  The discretization scheme used to discretize each 
+		of the independent variables in planar geometry transport is introduced, and the 
+		iteration equations are provided.  The iteration techniques are then described 
+		in which this discretized transport equation is solved, resulting in a neutron flux and 
+		criticality solution.  A description of the derivation of the equations used in the diffusion
+		synthetic acceleration used to improve the rate of convergence of the iterative solution
+		procedure is then given.  
+		\item[Chapter III{.}] This chapter describes different techniques in modeling stochastic
+		media for radiation transport calculations.  The chosen Monte Carlo process for modeling
+		the randomness of a stochastic media in this study is described.  A description is given of
+		the system of interest, the different components of the system, and how the system is
+		random.  Further, the distributions of chord lengths for this system is described and how
+		these distributions were determined and sampled from is outlined.  Finally, the integration
+		of this Monte Carlo modeling method for the described stochastic media system into the
+		iterative deterministic transport calculation procedure of Chapter II is provided.  
+	\end{enumerate}
+	
+	
+
+
+
+
+
+
+
+

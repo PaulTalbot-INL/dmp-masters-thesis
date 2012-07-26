@@ -1,0 +1,100 @@
+%=================================================%
+% Section:                        	              %
+%    Conclusions %
+%=================================================%
+
+\begin{center}
+\section{Conclusions}
+\label{sec:Conclusions}
+\end{center}
+
+%====================================================================%
+% SubSection:                        	                             %
+%    Conclusions: Introduction %
+%====================================================================%
+\aboveSubSecSkip
+
+\subsection{Introduction}
+\label{sec:Conclusions-Intro}
+
+\noindent
+	\indent This chapter will discuss the results presented in Section \ref{sec:Results}. This includes an analsis of the results of the Implicit Monte Carlo Diffusion frequency dependent and grey solutions compared to their associated semi-analytic benchmarks, presented by Su and Olson[Su 1996][Su 1999]. Stability, variance, and accuracy will all be discussed based on the material temperature, because it is generally the most important quantity, particularly in multiphysics applications. The conclusions that can be drawn from the spatial and temporal refinements of the frequency dependent and grey methods will be explained. Similarly, the impact of group refinement on the frequency dependent methods will be be analyzed. The performance of the difference formulation on the benchmark problems will be discussed. The overall variance reduction will be quantified for the frequency dependent IMD method with the difference formulation, including some statements on the stability/instability of the difference formulation and potential problems in its use. 
+			
+\belowSubSecSkip
+
+
+
+%=====================================================================%
+% SubSection:                        	                              %
+%     Conclusions: IMD with the difference Formulation
+%=====================================================================%
+\subsection{Implicit Monte Carlo Diffusion without the Difference Formulation}
+\label{sec:Conclusions-Non-Grey-IMD}
+
+\noindent
+	\indent The development of the grey IMD method was completed for initial testing of the difference formulation. Working with a grey system is simpler then a multigroup system because there is no need to distribute the differenced energy among frequency groups. It can simply be subtracted and added to the total photon energy density. Similarly, there is no need to randomly sample from the frequency distribution of the streaming source obtained from the difference formulation. Though the grey system is a good platform for initial testing it is not a realistic physical model of any radiative transfer applications. The multigroup method was initially tested for on a grey problem by setting the opacity equal to a single value for every frequency.
+
+	The results of Problem 1.1 (Figures \ref{fig:Grey_MW_No_DF_L=50} and \ref{fig:Grey_MG_MW_No_DF_L=50}) show that both IMD codes can accurately reproduce the Su and Olson purely absorbing grey benchmark result[Su 1996]. Both codes, grey and multigroup, produce a significant amount of noise in the low energy regions of the solution. This is related to the relatively small number of particles created in these regions because of the comparative low contribution to the total energy of the system. 
+
+	The results generated from the standard IMD method for Problem 3.1 (Figure \ref{fig:NG-SO}) show that the frequency dependent IMD code can accurately reproduce the results of the semi-analytic picket fence opacity benchmark defined by Su and Olson[Su 1999]. The photon energy density associated with the large opacity (large census $\sigma={200\over{101}}$) is underestimated in the regions between x=2 and the front of the Marshak wave because not enough particles are created in that region to get an accurate distribution of the thermal emission frequencies. There is significantly more noise in the cold region of the problem due to the low overall contribution of energy in those cells.
+
+	The results from Problem 1.2a (Figure \ref{fig:Grey-Spatial-Refinment}) and Problem 3.2a (Figure \ref{fig:NG-Refine-Space}) show the effect of spatial resolution on the accuracy of the material energy density solution. With a relatively coarse spatial mesh, very little shape resolution is lost and the solution remains stable. As the number of particles used to solve the matrix via Monte Carlo approaches infinity, the solution approaches that of the linear system. As a result the Monte Carlo solution will have a spatial accuracy dependent on the discretization scheme used to generate the linear system. 
+
+	The results from Problem 3.2b (Figure \ref{fig:NG-Refine-time1} and Figure \ref{fig:NG-Refine-time2}) show the effect of the time step size on the multigroup IMD method. The results from Problem 1.2b (Figure \ref{fig:Grey-Tempral-Refinment1} and Figure \ref{fig:Grey-Tempral-Refinment2}) indicate a similar effect on the grey IMD method. As the temporal discretization is refined, the penetration distance of the Marshak wave is reduced. This is an effect of the discretization and not the solution method. As the size of the time step increases, the streaming terms become unphysically dominate. This causes the numerically simulated wave front to progress too far into the problem, effectively smearing out the wave front. The changes in the numerical solution from the temporal refinement are also expected to be more drastic (than those seen from the spatial refinement) because the spatial refinement is second order and the temporal refinement is first order.
+
+	It is known that the cost of solving the matrix deterministicly scales linearly with the number of groups used. This is because for every group a new matrix must be solved. This is not the case for the Monte Carlo method. The frequency dependence of the Monte Carlo method is determined via the random sampling from the frequency distribution functions. Figure \ref{fig:NG-MG} shows the computational cost as a function of the number of groups used. The cost per group curve has a slope equal to 1/2 compared to a deterministic method, which would be nearly one. Only a single matrix solution takes place and the frequency distribution is defined by the particle frequency distribution.  
+	
+	Using a Monte Carlo method for solving the matrix has advantages and disadvantages. The major advantage is there is no need to solve the matrix for each group. However, the solution to the linear system of equations using Monte Carlo takes much longer than the deterministic solution. The goal of developing IMD was to couple it with IMC. Using a Monte Carlo method to solve the diffusion equation has the advantage that it is much easier to couple to the IMC method. Using the criteria defined by Densmore et al, it is possible to transition particles from IMD (or DDMC) to IMC[Den 2007]. For the deterministic solution, the spatial domain must be decomposed and the deterministic solution could only be coupled to the IMC solution at the end of every time step.
+
+	
+
+	
+
+\belowSubSecSkip
+%=====================================================================%
+% SubSection:                        	                              %
+%     Conclusions: IMD without the difference formulation
+%=====================================================================%
+\subsection{Implicit Monte Carlo Diffusion with the Difference Formulation}
+\label{sec:Conclusions-Grey-IMD}
+
+\noindent
+	\indent Figure \ref{fig:Grey_MW_DF_L=50} shows the solution to Problem 1.1 using the grey IMD method and the difference formulation. A significant reduction in the variance occurs in the region of the problem where the material is near thermal equilibrium. In fact, on the right side of the Marshak wave no particles are actually transported and the variance incurred from the Monte Carlo method in this region is equal to zero. The energy is simply subtracted off at the beginning of the time step during the initial differencing of the problem. It is then added directly back into the problem at the end of the time step. Like most variance reduction techniques, this reduction in variance comes at a cost. Without the difference formulation, the IMD system defined in this work is unconditionally stable. This is not true for the system with the difference formulation. In standard IMD, there are no negatively weighted particles created. This means that the total energy in any cell can never become less than zero. Equations \ref{leftStreamingSource} and \ref{rightStreamingSource}, which represent the streaming source terms created from the difference formulation, indicate that negative particles will indeed be created. This means that it is possible for more negative weight than positive weight to be deposited into a single cell, causing the overall material temperature to become less than zero. One way to alleviate this is to use absorption and census supression with a very low weight cutoff. These problems demonstrated how unstable the difference formulation can be even for the grey case. The stability appears to be strongly dependent on the number of particles that are used and the spatial gradient of the energy density. When the difference formulation failed, it was at the leading edge of the Marshak wave. It never failed in the large near equilibrium back end of the Marshak wave or the cold portion of the material at thermal equilibrium. In fact even if a vacuum boundary is set on the cold side of the problem, well away from the head of the Marshak wave front, the system was stable. The figure of merit was not determined for the grey case because it would be much higher than that of the frequency dependent difference formulation. The estimation of computational efficiency of the difference formulation was limited to the frequency dependent case.
+
+	The stability of the frequency dependent IMD method with the difference formulation was explored. Problem 4.1 (Figures \ref{fig:NG-DF-10},\ref{fig:NG-DF-30}, and \ref{fig:NG-DF-50}) shows the ability of the frequency dependent IMD method with the difference formulation to solve the Su and Olson picket fence opacity benchmark result[Su 1999]. Figure \ref{fig:DF-NG-MaterialEnergyDensity} shows that three difference formulation solutions with various match the solution without the difference formulation. The variance is reduced as the percentage of the material temperature used for the difference formulation is increased. This will be explored in greater detail later in this section.
+
+	The Problem 4.1 results for the difference formulation with the difference temperature equal to that of the material temperature were not included because of numerical instability. There was also an instability in the cumulative distribution function used to calculate the frequency distribution (equations \ref{CDF_q_d_j-1} and \ref{CDF_q_d_j+1}). This instability exists because the subtraction of two nearly equal numbers when the Plankian distribution for a frequency group is low for both temperatures creating a large roundoff error. Also, if the Planck integral expansion is not accurate, the Planckian for a higher temperature at a given frequency can be lower than that of a lower temperature. This is unphysical because it is known that the Planckian at a higher temperature is larger at every frequency the the Planckian at a lower temperature.
+
+	The relative standard deviation of the material energy density was quantified to determine the effectiveness of the difference formulation at reducing the variance. The relative standard deviation is a measure of the uncertainty of the solution compared to its mean. The relative standard deviation for Problem 4.1 is shown in Figure \ref{fig:DF-NG-RelSTD50}. This figure shows that with the exception of the leading edge of the Marshak wave, the relative standard deviation is consistently lower for the majority of the difference formulation temperatures. This is especially true for the portions of the problem that are near equilibrium (either ahead or behind of the wave front).
+
+% 	To quantify the computational cost of the difference formulation versus the reduction in the variance, the relative figure of merit is calculated as a function of the material energy density location. For any value of the relative figure of merit greater than one there is a performance increase. For any value less than one there is a performance decrease. It can be seen from Figure \ref{fig:DF-NG-FigMerit50} that an increase in the figure of merit is primarily seen in the region of the problem that are near equilibrium and initial very cold. It should be noted that though there was a reduction in the relative standard deviation for the difference formulation, the cost is so expensive that there is an overall performance decrease. This is due impart to the fact that the variance was initially very low in this region of the problem already.
+
+	The total figure of merit is the sum of the material energy density figure of merit overall cells. The increase in the total figure of merit can then be expressed as the total figure of merit of the calculation with the variance reduction technique divided by the total figure of merit without the variance reduction technique. Figure \ref{fig:DF-NG-TotalFigMerit} shows the relative increase in the figure of merit as a function of the percent of the material temperature used for the difference formulation. This figure shows that there is a strong increase in the figure of merit as the percent of the material termperature for the difference formulation is increased. 
+
+% 	Figure \ref{fig:DF-NG-AveFigMerit} demonstrates the increase in the average figure of merit over the problem. The average figure of merit over the problem is simply the average figure of merit over all the cells. The increase in the average figure of merit is simply the average figure of merit with a variance reduction technique divided by the average figure of merit without the variance reduction. It can be seen from this figure that the increase in the average figure of merit is lower than that of the total figure of merit, but is still far greater than one for each case. The increase in the average figure of merit is about half of the increase in the total figure of merit over the problem. This could be linked to the poor increase in the relative figure of merit for the cells on the back side of the Marshak wave front. In looking at figrue \ref{fig:DF-NG-TotalFigMerit} it can be seen that the relative figure of merit for the cells behind the wave front decreases as the difference formulation temperature is increased towards that of the material temperature. This is the opisite of what happens for the regions in front of the wave. There is an overall gain in the relative figure of merit for these cells as the difference formulation temperature is increased towards that of the material temperature. 
+
+\belowSubSecSkip
+%=====================================================================%
+% SubSection:                        	                              %
+%     Conclusions: Overall Conclusions and Future Work%
+%=====================================================================%
+\subsection{Overall Conclusions and Future Work}
+\label{sec:Conclusions-over}
+
+\noindent
+	\indent This research shows that frequency dependent IMD can be used to accurately reproduce solutions to the frequency dependent radiative transfer equations where the diffusion approximation is valid. It also shows that frequency dependent IMD is stable if the spatial and temporal discretizations used to generate the linear system are stable. Though this frequency dependent system is solved via IMD, frequency dependent DDMC should also be possible. The primary difference between DDMC and IMD is the treatment of the temporal discretization.
+	
+	The difference formulation was shown to have some significant advantages and disadvantages when used with IMD. Implimentation of the difference formulation significantly increases the figure of merit in regions of the problem where the system is near equilibrium. However, the difference formulation did become unstable in regions containing sharp gradients. This was associated with the creation of large negatively weighted particles from the streaming source of the difference formulation. These instabilities can be reduced by using a lower temperature for the difference formulation. This reduces the size of the negatively weighted particles being produced by the difference formulation source and it increases the amount of positively weighted particles created by the thermal emission source. 
+	
+	Several improvements to IMD are left for future work, including the extention of the method on orthogonal meshes beyond one dimensional and two dimensional cylindrical. It will take very little effort to extend this work toward two or three dimensional orthogonal meshes. However, unstructured polyhedral meshes which are commonly used in high density physics, pose difficult problems because of the possible creation of positive off diagonal elements in the coefficient matrix as explained in Section \ref{sec:MonteCarlo-Probabilities}, and in the work of Gentile[Gen. 2001], for the leakage probabilities to be positive the off diagonal elements of the coefficient matrix must be negative. Techniques for matrix manipulation such that all off diagonal elements will be negative will be very important. 
+
+	Improved implementations of the difference formulation should also be explored. This includes automating the use of the difference formulation in different regions of the problem. The goal is to focus the use of the difference formulation where the system is near equilibrium and reduce its use in regions of sharp gradients. More work should also be done to develop an efficient and stable algorithm for the frequency distribution function of the difference formulation streaming source. The majority of the computational work for the difference formulation is associated with the sampling of this source. 
+
+
+
+
+
+
+
+
+

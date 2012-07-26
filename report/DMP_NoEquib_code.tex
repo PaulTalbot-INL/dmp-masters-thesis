@@ -1,0 +1,83 @@
+\subsection{Coding DMP in \texttt{clubimc}}
+The real purpose of the discrete maximum principle is to determine when a
+selection of time step and spatial discretization is likely to produce
+unphysical results in an IMC code.  To demonstrate the development of the DMP
+up to this point, functionality was added to Los Alamos National
+Labratory's \texttt{clubimc} C++ library, which provides a host of tools for
+solving the IMC equations using Monte Carlo techniques.
+
+In order to implement this code, two classes were created.  The first,
+\texttt{DMP\_Helper}, serves to gather the information required to calculate the
+inequality that governs the DMP, such as material properties, local
+temperatures, neighboring temperatures, fleck factors, opacities, and the
+spatial and discretization step, as well as the multigroup or grey frequency
+information.  The second class, \texttt{DiscreteMaxPrinciple}, performs and
+retains calculation of the inequality value as well as a boolean pass/fail for
+each cell.  A further description of each class is included here.
+
+\subsubsection{\texttt{DMP\_Helper}}
+The purpose of this class is to gather the necessary information to calculate
+the discrete maximum principle for each cell on the mesh.  In its current
+incarnation, it follows the following process:
+\begin{itemize}
+ \item Dependencies within \texttt{clubimc}:
+    \begin{itemize}
+	\item cdi/CDI.hh
+	\item Mat\_State.hh
+	\item DiscreteMaxPrinciple.hh
+	\item Mat\_State.hh
+	\item mc/OS\_Mesh.hh
+	\item mc/Rage\_Mesh.hh
+	\item mc/RZWedge\_Mesh.hh
+	\item mc/Sphyramid\_Mesh.hh
+	\item mc/Topology.hh
+	\item mc/Comm\_Patterns.hh
+	\item mc/Parallel\_Data\_Operator.hh
+    \end{itemize}
+ \item member method \texttt{run\_checks}:
+     \begin{enumerate}
+	\item Collect the number of cells and frequency groups
+	\item Call \texttt{get\_Trad\_neighbors}
+	\item Create Fleck factors
+	\item Create vector of smart pointers to DiscreteMaxPrinciple objects
+	\item Compute Planckian opcacities
+	\item Initialize DiscreteMaxPrinciple calculations
+     \end{enumerate}
+ \item member method \texttt{get\_Trad\_neighbors} \\
+	This method is specialized to each mesh because of the need to
+communicate with neighboring cells.
+	\begin{enumerate}
+	\item Collect number of local cells
+	\item Determine dimensionality, number of neighboring cells
+	\item Populate vector of temperatures for each cell
+	\end{enumerate}
+\end{itemize}
+
+
+\subsubsection{\texttt{DiscreteMaxPrinciple}}
+\begin{itemize}
+ \item Dependencies within \texttt{clubimc}
+    \begin{itemize}
+	\item math.h
+	\item Opacity\_Builder\_Helper.hh
+	\item Max\_Temperature\_Mesh\_Ops.hh
+	\item Mat\_State.hh
+	\item Global.hh
+	\item mc/Constants.hh
+	\item special\_functions/ExpInt.hh
+	\item cdi/CDI.hh
+    \end{itemize}
+ \item member method \texttt{get\_inequality} \\
+Returns the value of the DMP inequality.  If this is less than 0, a violation
+is likely.
+\end{itemize}
+
+In implementing these classes into a use code, it is intended that an instance
+of the \texttt{DMP\_Helper} class be generated and checks run
+preceeding each new time step calculation. This instance will create the
+required set of \texttt{DiscreteMaxPrinciple} instances in such a way that when
+\texttt{DMP\_Helper} goes out of memory, so will the
+\texttt{DiscreteMaxPrinciple} instances.  Based on the presence of any likely
+violations, actions can be added to \texttt{DMP\_Helper} to either end the
+process, raise a warning flag, or find a $\Delta_t$ that will not cause a
+violation.

@@ -1,0 +1,72 @@
+\section{Radiative Transport }
+The transport equation governing general radiative transport is
+\small
+\begin{align}
+ \frac{1}{c}\frac{\partial}{\partial t}I(r,\Omega,\nu,t) +
+   \vec\Omega\cdot\nabla I(r,\Omega,\nu,t) + 
+   &\sigma(r,\nu)I(r,\Omega,\nu,t) = \nonumber\\
+   &j(r,\Omega,\nu,t) + 
+   \frac{1}{4\pi c}\sigma_s(r,\nu)
+     \int_{4\pi}I(r,\Omega,\nu,t)\ d\Omega \label{be_rad}.
+\end{align}
+\normalsize
+In order of appearance, $c$ is the speed of light; $I$ is the radiation
+intensity as a function of space ($r$), angle ($\Omega$), frequency ($\nu$), and
+time ($t$); $\sigma$ is the opacity of the background material; $j$ is an
+emission source; and $\sigma_s$ is a scattering term, describing the removal of
+photons from 7-dimensional space-time $dr\ d\nu\ d\Omega\ dt$ into another such
+space. Eq. \eqref{be_rad} serves as the starting point for this derivation of
+the
+discrete maximum principle.
+% Separating each term distinctly, then,
+% \small
+% \begin{center}
+%  \begin{tabular}{c|c|c|c|c}
+%   Change Rate & Streaming & Abs. Loss & Emitted In & Scatter In \\
+%   $\frac{1}{c}\frac{\partial}{\partial t}I(r,\Omega,\nu,t)$ & 
+%     $\vec\Omega\cdot\nabla I(r,\Omega,\nu,t)$ & 
+%     $\sigma(r,\nu)I(r,\Omega,\nu,t)$ &
+%     $j(r,\Omega,\nu,t)$ & 
+%     $\frac{1}{4\pi c}\sigma_s(r,\nu) \int_{4\pi}I(r,\Omega,\nu,t)d\Omega$
+%  \end{tabular}
+% \end{center}
+% \normalsize
+
+\section{Fleck Factor}
+The bulk of this derivation will closely follow Wollaber, Larsen, and
+Densmore's work in defining a discrete maximum principle \cite{WolLarDen}.  As
+is typical to radiative transfer problems, the photon scattering opacity
+$\sigma_s$ will be assumed small enough to cause the rightmost term in
+\eqref{be_rad} to be negligible.  In addition, the time frame for photon
+absorption into the material and subsequent emission is often very short, so
+short as to be within a time step.  With sufficient coarseness in time step,
+this interaction of absorption and re-emission at a different frequency is very
+similar to a scattering interaction.  Thus, a factor $f$, the Fleck factor, can
+be used to describe the level at which a particular problem can be represented
+with scattering interactions.  The term $j(r,\Omega,\nu,t)$ then becomes two
+terms, one for effective scatters and one representing absorptions that last
+longer than a single time step.  This modifies the right side
+ of Eq. \eqref{be_rad} as follows:
+\begin{equation}
+\mbox{RHS} = \frac{1-f}{2}\int_{\infty}\int_{4\pi}
+    \sigma(r,\nu)I(r,\Omega,\nu,t)\ d\Omega\ d\nu +
+  f\sigma(r,\nu)B(r,\nu),
+\end{equation}
+where the Planck function $B$ has been introduced, which is taken from the
+solution of
+the material equation associated with the radiation field equation as shown in
+Eq. \eqref{be_mat}:
+\begin{equation}
+\frac{\partial}{\partial t}c_vT=\int_\infty\int_{4\pi}\sigma(r,\nu)(1-2\pi
+  B(r,\nu))\ d\Omega\ d\nu \label{be_mat}.
+\end{equation}
+Here, the left side is the time-rate of change in the material
+energy density.  Changing  \eqref{be_mat} to be time-differenced in
+temperature gives the result arrived at by Fleck and Cummings \cite{FleckCumm}.
+
+In many treatments of the radiative transfer equations, the
+system is assumed to begin in total thermodynamic equilibrium, meaning the
+material temperarture is initially in equilibrium with the radiation
+temperature.
+ It is the intent of this writeup to derive the discrete maximum principle
+without making this assumption.

@@ -1,0 +1,21 @@
+\vspace {-24.0pt}
+\contentsline {figure}{\numberline {1}{\ignorespaces Simple one-dimensional orthogonal grid.}}{23}
+\contentsline {figure}{\numberline {2}{\ignorespaces Normalized one dimensional grey solution compared to Su and Olson result[Su 1996] at $\tau =1.0$ with no scattering and no difference formulation. (Problem 1.1)}}{50}
+\contentsline {figure}{\numberline {3}{\ignorespaces Grey IMD solution run with the multigroup IMD code compared to Su and Olson result[Su 1996]. (Problem 1.1)}}{51}
+\contentsline {figure}{\numberline {4}{\ignorespaces Material energy densities from the grey IMD code with various cell sizes. (Problem 1.2a)}}{53}
+\contentsline {figure}{\numberline {5}{\ignorespaces Material energy densities from the grey IMD code with various time step sizes. (Problem 1.2b)}}{55}
+\contentsline {figure}{\numberline {6}{\ignorespaces A closer look at the leading edge of the Marshak wave material energy densities from the grey IMD code with various time step sizes. (Problem 1.2b)}}{56}
+\contentsline {figure}{\numberline {7}{\ignorespaces Normalized one dimensional grey solution with the difference formulation compared to Su and Olson result[Su 1996] at $\tau =1.0$ with no scattering. (Problem 1.1)}}{57}
+\contentsline {figure}{\numberline {8}{\ignorespaces Normalized one dimensional frequency dependent solution compared to Su and Olson result[Su 1999] at $\tau =1.0$ with no difference formulation. (Problem 3.1)}}{59}
+\contentsline {figure}{\numberline {9}{\ignorespaces Frequency dependent IMD solution for various cell sizes. (Problem 3.2a)}}{61}
+\contentsline {figure}{\numberline {10}{\ignorespaces Frequency dependent IMD solution for various time step sizes. (Problem 3.2b)}}{62}
+\contentsline {figure}{\numberline {11}{\ignorespaces A closer view of the frequency dependent IMD solution for various time step sizes at the head of the Marshak wave. (Problem 3.2b)}}{63}
+\contentsline {figure}{\numberline {12}{\ignorespaces The material energy density determined by the frequency dependent IMD method for various numbers of groups. (Problem 3.3)}}{65}
+\contentsline {figure}{\numberline {13}{\ignorespaces Computational cost as a function of number of groups used in the calculation (Problem 3.3)}}{66}
+\contentsline {figure}{\numberline {14}{\ignorespaces Frequency dependent result without the difference formulation compared to the Su and Olson semi-analytic result[Su 1999]. (Problem 4.1a) }}{69}
+\contentsline {figure}{\numberline {15}{\ignorespaces Frequency dependent result, using the difference formulation temperature set to 10\% of the material temperature, compared to the Su and Olson semi-analytic result[Su 1999]. (Problem 4.1b) }}{70}
+\contentsline {figure}{\numberline {16}{\ignorespaces Frequency dependent result, using the difference formulation temperature set to 30\% of the material temperature, compared to the Su and Olson semi-analytic result[Su 1999]. (Problem 4.1c) }}{71}
+\contentsline {figure}{\numberline {17}{\ignorespaces Frequency dependent result, using the difference formulation temperature set to 50\% of the material temperature, compared to the Su and Olson semi-analytic result[Su 1999]. (Problem 4.1d) }}{72}
+\contentsline {figure}{\numberline {18}{\ignorespaces Non-grey result at various percentages of the material temperature for the difference formulation. (Problem 4.1)}}{73}
+\contentsline {figure}{\numberline {19}{\ignorespaces The relative standard deviation of the material energy density for the different realization of Problem 4.1.}}{74}
+\contentsline {figure}{\numberline {20}{\ignorespaces The relative total figure of merit for the difference formulation at various percentages of the material temperature. (Problem 4.1)}}{76}

@@ -1,0 +1,329 @@
+%=================%
+% Section:        %
+%    Introduction %
+%=================%
+
+\ResetSingleSpace
+
+\begin{center}
+{\textbf{
+THE k-EIGENVALUE FROM MULTI-ENERGY GROUP NEUTRON TRANSPORT
+IN BINARY STOCHASTIC MEDIA IN PLANAR GEOMETRY
+}}
+\end{center}
+
+\ResetDoubleSpace
+
+\vskip0.25in
+
+\begin{center}
+\section{INTRODUCTION}
+\label{sec:Intro}
+\end{center}
+
+\setcounter{page}{1}
+\thispagestyle{empty}
+
+\vskip-0.1in
+
+\noindent
+	\indent In recent years, a relatively new field of study has emerged in the radiation transport
+	community focused on the interaction of particles moving through a stochastic or random
+	heterogeneous background medium.  The background medium is stochastic or random for 
+	this class of problems since the precise location of any one of the constituents
+	of the medium is unknown.  In most Nuclear Engineering applications, the 
+	background media has a known location and is fixed.  Very accurate modeling
+	practices have been developed for particle transport and diffusion calculations by dividing
+	a heterogeneous background media of this type into homogenous sub-sections.  These
+	sub-sections are chosen to be those parts of the medium where the composition is (or is  
+	nearly) homogenous, or the microstructure of the composition has a size less than a mean
+	free path of the particle, and can be homogenized with an acceptable loss of accuracy.
+
+\noindent	\indent The common practice of homogenizing a heterogeneous medium has 
+	various effects on modeling the interaction of the particle with the medium.  As a particle
+	traverses a
+	homogenous medium, it encounters all of the constituents of the medium
+	with equal probability during its lifetime.  In reality, this might not be the case.  The
+	particle may encounter pockets of distinctly different material in the microstructure of the
+	medium, causing profoundly different bulk particle flow effects at the macroscopic level
+	than would be predicted by a homogeneous model.  In these cases, the microstructure
+	has to be given specific treatment.	
+\noindent
+	\indent A large body of work now exists for modeling particle transport in stochastic media,
+	but this area of research is still far from mature.  According to reference~\cite{Lew:93} and
+	reference~\cite{Lew:93}  the original interest in these problems was generated to accurately
+	describe radiative transfer in Rayleigh-Taylor mixed regions of immiscible fluids found in a
+	capsule undergoing the implosion, and subsequent explosion, in inertial confinement fusion.
+	This is a system where there is radiative transfer through a medium of drastically
+	different densities at the turbulent propagation front of the shock wave, and homogenization
+	produces solutions with unacceptable error.  Since
+	then, focus has been turned to other problems spanning a diverse set of disciplines interested
+	in particle transport, where a stochastic treatment of the background medium is necessary.
+	The above example extends to larger scale modeling of astrophysical phenomena,
+	such as the interior of stars.  Modeling properties of the microstructure is also necessary in
+	global climate modeling, where radiation transport must be preformed through
+	heterogeneous clouds, or in oceanography models of radiative transfer through murky
+	ocean, or ocean layers with vastly different densities due to temperature and pressure.
+	Explicitly modeling heterogeneities may be necessary in some nuclear reactor applications
+	such as the thermohydraulic and neutron density coupling in boiling water reactors where the
+	neutrons traverse a bubbly flow (water-void mixtures). Pebble bed reactors have at least three
+	levels of stochasticity.  The fuel pebble itself is a random mixture of smaller fuel spheres in a
+	graphite matrix used for moderation.  These pebbles are tightly packed and randomly mixed
+	in the core region surrounded by gaseous coolant.  An additional layer of stochasticity is
+	introduced after the reactor has been in operation for some time and the fuel content is
+	depleted in the pebbles.  Common materials used in radiation shielding may have to be
+	treated as stochastic media, such as cement, where particles may interact with large regions
+	of constituents with very different neutron interaction probabilities.\noindent 
+	\indent All materials are heterogeneous in nature, and the size of a single component 
+	segment, referred to as a transition length or chord length, of a heterogeneous material can
+	be variable.  Any given chord length of any material in a composition depends on some
+	measured (or assumed known) statistical distribution.  Each material chord length may 
+	depend on different
+	statistical distributions.  The complete set of statistical distribution functions describing the
+	chord lengths of each material in the medium, are the governing statistics of how the
+	microscopic, heterogeneous materials are randomly mixed to compose the macroscopic
+	medium. Since the location of the materials composing the medium are only known in this
+	statistical sense, then the particle flux in such a material can only be described as a function
+	of space with statistical moments, such as the mean flux and variance.
+
+\noindent
+	\indent Once the mixing statistics describing how the individual materials are mixed in the
+	medium are measured or assumed, one can begin developing strictly deterministic models
+	for the statistical system.  A major effort has been to derive computationally inexpensive
+	deterministic models for the ensemble average flux, and higher order statistical moments
+	such as the variance of the flux, in a stochastic medium.  Most of the work to date has been
+	in the development of models for the particle flux in a medium composed of two or more
+	components, whose material chord lengths are assumed to be well represented by a
+	Markovian distribution.  The primary focus of this work has been for problems of the
+	boundary value variety with Dirichlet boundary conditions.
+	
+\noindent
+	\indent Boundary value problems of the form $\underline{\underline{\mathbf{A}}}
+	\underline{\psi}=\underline{\mathbf{q}}$ are not the only major class of problem that can be
+	investigated that are of interest in the Nuclear Engineering community.  Another class of
+	problem that is of great interest is the eigenproblem of the form
+	$\underline{\underline{\mathbf{A}}}\underline{\psi}=\lambda\underline{\psi}$, where the
+	eigenvalue, $\lambda$, gives and indication of the criticality of the system, and the resulting
+	flux is the eigenvector, which is not unique.  When considering the criticality of the system, 
+	one can evaluate the criticality as a function of time or in the limit of “very long” reactor
+	operation times.  In the first case the nuclear engineer may be considering a problem
+	where a given
+	reactor is operating steadily at some initial power, when at some later time the reactor
+	undergoes some change in the reactivity, causing a spike in the reactor power.  This can
+	occur during normal operation through the movement of control rods, neutron “poisons”
+	added to the reactor chemistry, or burnable poisons placed in the fuel for control purposes.
+	The buildup and decay of fission products, like Iodine and Xenon or Promethium and
+	Samarium, is common during startup and shutdown which adds or removes reactivity.
+	Accident scenarios such as loss of coolant or loss of pressure can cause reactivity
+	fluctuations for which robust safety systems have been designed in all modern nuclear
+	reactors.  This type of reactor criticality scenario in the context of a stochastic background
+	medium, is not the subject of this thesis, although some of these problems, such as
+	burnable poisons with somewhat random location in the fuel, are excellent candidates for
+	potential stochastic media transport research.
+	
+\noindent
+	\indent The stochastic eigenproblem considered in this thesis are those problems where
+	there are given distributions of fuel and moderator loading for the reactor, and the criticality
+	is evaluated in the limit of “very long” reactor times without a change in this material
+	distribution.  To further
+	understand this problem it is helpful to first explore the Boltzmann transport
+	equation, followed by a simple conceptual example in transport theory, leading to an
+	understanding of the eigenproblem for criticality (adopted from reference ~\cite{Lew:93}).  A
+	complete  description of the distribution of neutrons in any medium is given by the
+	Boltzmann transport equation (~\cite{Lew:93}),
+	\begin{equation}
+		\frac{\partial{n}}{\partial{t}}+\emph{v}\mathbf{\hat{\Omega}} \!\cdot\! \mathbf{\nabla}{n}
+		 + \emph{v}\sigma{n} = \int_{4\pi} {d}\mathbf{\hat{\Omega}}^{'}\int_{0}^{\infty}{d}{E}^{'}
+		 \emph{v}^{'}\sigma_{s}({E}^{'}\rightarrow{E},\mathbf{\hat{\Omega}}^{'}\rightarrow
+		 \mathbf{\hat{\Omega}}){n}^{'}+q
+	\label{eq:transport1}
+	\end{equation}
+	where, \vspace{10pt} \\
+	\begin{tabular}{ll}
+		${t}$ \hfill = & time,  \vspace{10pt} \\
+		${E}$ \hfill = & energy, \vspace{10pt} \\
+		${E}^{'}$ \hfill = & some energy other than E, \vspace{10pt} \\
+		$\mathbf{v}$ \hfill = & neutron velocity vector,  \vspace{10pt} \\
+		$\emph{v}$ \hfill = & ${|\mathbf{v}|}$; neutron speed, \vspace{10pt} \\
+		$\emph{v}^{'}$ \hfill = & some neutron speed other than $\emph{v}$ , \vspace{10pt} \\
+		$\mathbf{\hat{\Omega}}$ \hfill = & $\frac{\mathbf{v}}{|\mathbf{v}|}$; unit vector 
+			for neutron direction of travel \\ & with both a  polar and azimuthal component,
+			\vspace{10pt} \\
+		$\mathbf{\hat{\Omega}} ^{'}$ \hfill = & some direction of travel other than
+			$\mathbf{\hat{\Omega}}$, \vspace{10pt} \\
+		$\sigma$ \hfill = & $\sigma(\mathbf{r},E)$; total cross-section, or the probability \\ &
+			that a neutron at point $\mathbf{r}$ with energy $E$ will \\& undergo some
+			interaction, \vspace{10pt} \\
+		$\sigma_s({E}^{'}\rightarrow{E},\mathbf{\hat{\Omega}}^{'}
+			\rightarrow\mathbf{\hat{\Omega}})$ \hfill = & $\sigma_s(\mathbf{r},{E}^{'}
+			\rightarrow{E}, \mathbf{\hat{\Omega}}^{'} \rightarrow\mathbf{\hat{\Omega}})$;
+			scattering cross-section, \\ & or the probability that a neutron at
+			point $\mathbf{r}$ with \\& energy ${E}^{'}$ traveling in direction
+			$\mathbf{\hat{\Omega}}^{'}$ will scatter \\ & into the energy and direction of
+			interest, ${E}$,  $\mathbf{\hat{\Omega}}$, \vspace{10pt} \\
+		${n}={n(\mathbf{r},E,\mathbf{\hat{\Omega}},t)}$ \hfill = & neutron density at point
+		$\mathbf{r}$, with energy ${E}$, moving \\ & in direction $\mathbf{\hat{\Omega}}$,  at
+		time ${t}$, \vspace{10pt} \\
+		${q}={q(\mathbf{r},E,\mathbf{\hat{\Omega}},t)}$ \hfill = & source of neutrons at point
+		$\mathbf{r}$, producing neutrons \\ & with energy ${E}$, moving in direction
+		$\mathbf{\hat{\Omega}}$,  at time ${t}$. \vspace{10pt} \\
+	\end{tabular} \vspace{10pt} \\
+
+\noindent
+	\indent Thus, the Boltzmann transport equation is an exact equation for the angular neutron
+	density through a balance of gain and loss mechanisms of neutrons in an arbitrary
+	phase space, ${(\mathbf{r},E,\mathbf{\hat{\Omega}},t)}$. Possible gain mechanisms, or
+	ways in which neutrons appear in ${(\mathbf{r},E,\mathbf{\hat{\Omega}},t)}$ include:
+
+\begin{itemize}
+	\item \textbf{Sources} into ${(\mathbf{r},E,\mathbf{\hat{\Omega}},t)}$ - fission or nuclide decay
+		resulting in a neutron
+	\item \textbf{Streaming} into ${(\mathbf{r},E,\mathbf{\hat{\Omega}},t)}$ - neutrons moving into
+	${(\mathbf{r},E,\mathbf{\hat{\Omega}},t)}$ from ${(\mathbf{r}^{'},E,\mathbf{\hat{\Omega}},t)}$
+	\item \textbf{Collision} in ${(\mathbf{r},E,\mathbf{\hat{\Omega}},t)}$ - neutrons in
+	${(\mathbf{r},{E}^{'},\mathbf{\hat{\Omega}}^{'},t)}$ colliding into
+	${(\mathbf{r},E,\mathbf{\hat{\Omega}},t)}$
+		
+	are balanced with possible loss mechanisms, where neutrons disappear from 
+	${(\mathbf{r},E,\mathbf{\hat{\Omega}},t)}$ by:
+	
+	\item \textbf{Leakage} out of ${(\mathbf{r},E,\mathbf{\hat{\Omega}},t)}$ - neutrons from 
+	${(\mathbf{r},E,\mathbf{\hat{\Omega}},t)}$ into ${(\mathbf{r}^{'},E,\mathbf{\hat{\Omega}},t)}$
+	\item \textbf{Collision} out of ${(\mathbf{r},E,\mathbf{\hat{\Omega}},t)}$ - neutrons in
+	${(\mathbf{r},E,\mathbf{\hat{\Omega}},t)}$ colliding into
+	${(\mathbf{r},{E}^{'},\mathbf{\hat{\Omega}}^{'},t)}$ or neutrons absorbed (including fission).	
+\end{itemize}
+\noindent
+	The Boltzmann transport equation is a linear, integrodifferential equation for 
+	the angular neutron density in a seven dimensional phase space,
+	($\mathbf{r}=x,y,z;{E};\mathbf{\hat{\Omega}}=\Theta,\gamma;t)$.
+
+\noindent
+	\indent Defining the angular neutron flux as a product of the angular neutron density and
+	the neutron speed, or,
+	\begin{equation}
+		\psi(\mathbf{r},E,\mathbf{\hat{\Omega}},t) = \emph{v} {n}
+			(\mathbf{r},E,\mathbf{\hat{\Omega}},t),
+	\end{equation}
+	 it is convenient to rewrite the neutron transport equation in terms of the angular neutron flux,
+	 \begin{equation}
+		\frac{\partial{\psi}}{\partial{t}}+\mathbf{\hat{\Omega}} \!\cdot\! \mathbf{\nabla}{\psi}
+		 + \sigma{\psi} = \int_{4\pi} {d}\mathbf{\hat{\Omega}}^{'}\int_{0}^{\infty}{d}{E}^{'}
+		\sigma_{s}({E}^{'}\rightarrow{E},\mathbf{\hat{\Omega}}^{'}\rightarrow
+		\mathbf{\hat{\Omega}}) \psi^{'}+q,
+	\end{equation}
+	 since the neutron scalar flux, defined as, 
+	 \begin{equation}
+		\phi(\mathbf{r},t) = \int_{4\pi} {d}\mathbf{\hat{\Omega}}^{'}\int_{0}^{\infty}{d}{E}^{'}
+		 \psi^{'}(\mathbf{r},{E}^{'},\mathbf{\hat{\Omega}}^{'},t)
+	\end{equation}
+	is often the quantity of interest as it is the simplest to conceptualize and used in
+	calculating reaction rates.  
+	
+\noindent
+	\indent With the Boltzmann transport equation defined (Eq.~(\ref{eq:transport1})), we will 
+	use it to define the eigenvalue problem we intend to investigate for a stochastic multiplying
+	background medium.  Consider the transport problem governed by Eq.~(\ref{eq:transport1})
+	where the first generation of neutrons is a pulsed neutron source given as $q_1$
+	resulting in the angular neutron density of the first generation of neutrons in a multiplying
+	medium, 
+\begin{equation}
+		\frac{\partial{n_1}}{\partial{t}}+\emph{v}\mathbf{\hat{\Omega}} \!\cdot\! \mathbf{\nabla}{n_1}
+		 + \emph{v}\sigma{n_1} = \int_{4\pi} {d}\mathbf{\hat{\Omega}}^{'}\int_{0}^{\infty}{d}{E}^{'}
+		 \emph{v}^{'}\sigma_{s}({E}^{'}\rightarrow{E},\mathbf{\hat{\Omega}}^{'}
+		 \rightarrow\mathbf{\hat{\Omega}}){n_1}^{'}+q_1.
+\end{equation}
+\noindent
+	Integrating over all time ($0\le{t}\le{\infty}$) results in the first term on the left hand side going to
+	zero, since the pulsed source is of finite duration.  Those pulsed neutrons in that generation either
+	scatter or leak out of the system, or are absorbed in the multiplying medium in either fuel or other
+	material.  We shall denote the time integrated neutron source as 
+	$\tilde{q_1}=\tilde{q_1}(\mathbf{r},E,\mathbf{\hat{\Omega}})$ and the time integrated angular
+	neutron density as $\tilde{n_1}=\tilde{n_1}(\mathbf{r},E,\mathbf{\hat{\Omega}})$ giving,
+\begin{equation}
+	\emph{v}\mathbf{\hat{\Omega}} \!\cdot\! \mathbf{\nabla}\tilde{n_1}
+		 + \emph{v}\sigma{\tilde{n_1}} = \int_{4\pi} {d}\mathbf{\hat{\Omega}}^{'}
+		 \int_{0}^{\infty}{d}{E}^{'}\emph{v}^{'}\sigma_{s}({E}^{'}\rightarrow{E},
+		 \mathbf{\hat{\Omega}}^{'}\rightarrow \mathbf{\hat{\Omega}})\tilde{n_1}^{'}+\tilde{q_1}.
+\end{equation}
+
+\noindent
+	The second generation of neutrons, $\tilde{n_2}$, are produced by those neutrons in
+	$\tilde{n_1}$ which are absorbed in fuel and cause a fission.  Thus, fission is the
+	process by which a generation of neutrons gives birth to a subsequent generation, making
+	it the event separating generations.  The source, $\tilde{q_2}$,
+	producing the generation, $\tilde{n_2}$, is given by,
+\begin{equation}
+	\tilde{q_2} = \chi({E})\int_{4\pi} {d}\mathbf{\hat{\Omega}}^{'}\int_{0}^{\infty}{d}{E}^{'}
+		 \nu{\sigma_f} \emph{v}^{'}\tilde{n_1}^{'}
+	\label{eq:src-gen2}
+\end{equation}
+	where, \vspace{10pt} \\
+	\begin{tabular}{ll}
+		${\chi}$ \hfill = & ${\chi({E})}$; the probability that a neutron produced from fission
+			will \\ & have energy ${E}$, where, ${\int_{0}^{\infty}{\chi}({E})d{E}=1}$,
+			\vspace{10pt} \\	
+		${\nu}$ \hfill = & ${\nu({E}^{'})}$; the mean number of neutrons produced by fission
+		from \\ & a neutron with energy ${E}^{'}$\vspace{10pt} \\
+		${\sigma_f}$ \hfill = & ${\sigma_f(\mathbf{r},{E}^{'})}$; fission cross section, or the
+		probability that a neutron \\ & with energy ${E}^{'}$ is absorbed at point $\mathbf{r}$
+		in fuel will fission.  \vspace{10pt} \\
+	\end{tabular} \vspace{10pt} \\
+	
+\noindent
+	Equations can be written in this manner for the ${\emph{(i)}^{th}}$ generation of neutrons
+	produced by the ${\emph{(i-1)}^{th}}$ generation or by the following recursive equation,
+\begin{multline}
+	\emph{v}\mathbf{\hat{\Omega}} \!\cdot\! \mathbf{\nabla}\tilde{n_\emph{i}}
+		 + \emph{v}\sigma{\tilde{n_\emph{i}}} = \int_{4\pi} {d}\mathbf{\hat{\Omega}}^{'}
+		 \int_{0}^{\infty}{d}{E}^{'}\emph{v}^{'}\sigma_{s}({E}^{'}\rightarrow{E},
+		 \mathbf{\hat{\Omega}}^{'}\rightarrow \mathbf{\hat{\Omega}})
+		 \tilde{n_\emph{i}}^{'} + \\
+		 \chi({E})\int_{4\pi} {d}\mathbf{\hat{\Omega}}^{'}\int_{0}^{\infty}{d}{E}^{'}
+		 \nu{\sigma_f} \emph{v}^{'}{\tilde{n}_{i-1}}^{'}.
+	\label{eq:recurs}
+\end{multline}
+
+\noindent
+	As the number of generations becomes large for Eq.~(\ref{eq:recurs}), the ratio of
+	successive generations will be a constant, or, 
+\begin{equation}
+	\lim_{i\rightarrow \infty}\frac{\tilde{n_i}}{\tilde{n}_{i-1}}=constant={k}
+\end{equation}
+\noindent
+	\indent This constant ${k}$ is known as the multiplication factor and indicates the
+	"criticality" of the system.  Calculating the multiplication factor is most
+	often approached as an eigenproblem, where ${\lambda=\frac{1}{k}}$ is the eigenvalue
+	for the system and ${\psi}$, the angular neutron flux, is the eigenvector.  In practical
+	application, the ${\nu}$ of Eq.~(\ref{eq:src-gen2}) is replaced by ${\nu/{k}}$ , or
+	${\lambda{\nu}}$, adjusting the average number of neutrons per fission to balance the
+	equation.  The maximum ${\lambda}$ (or minimum ${k}$) and resulting 
+	eigenvector (fundamental mode) are the quantities of interest.  For a system where
+	${k} < {1}$ the neutron density in successive generations is decreasing, or the number
+	of neutrons per fission, ${\nu/{k}}$, required to make the system exactly critical is larger
+	than ${\nu}$.  This is known as a subcritical system.  If ${k} > 1$ the neutron density in
+	successive generations is increasing,  or the number of neutrons per fission, ${\nu/{k}}$,
+	required to make the system exactly critical is smaller than ${\nu}$.  This is known as a
+	supercritical system.  For ${k} = 1$, the neutron density in successive generations is
+	unchanging, or the number of neutrons produced in fission, ${\nu}$, is exactly the same
+	as the number of neutrons removed from the system in each generation.  This is known
+	as a critical system.  The resulting time-independent governing equation for this
+	eigenproblem, written here in terms of the angular flux,
+\begin{multline}
+	\mathbf{\hat{\Omega}} \!\cdot\! \mathbf{\nabla}{\psi}
+		 + \sigma{\psi} = \int_{4\pi} {d}\mathbf{\hat{\Omega}}^{'}\int_{0}^{\infty}{d}{E}^{'}
+		\sigma_{s}({E}^{'}\rightarrow{E},\mathbf{\hat{\Omega}}^{'}\rightarrow
+		\mathbf{\hat{\Omega}})\psi^{'}+ \\ \frac{\chi({E})}{k} \int_{4\pi}{d}\mathbf
+		{\hat{\Omega}}^{'}\int_{0}^{\infty}{d}{E}^{'}\nu{\sigma_f}{\psi}
+	\label{eq:crit}
+\end{multline}
+\noindent is the subject of this thesis, applied to systems in which the multiplying
+	background media is stochastic.  As the literature review in the next section will reveal,
+	only very recently has research begun with the focus of investigating how criticality is
+	affected by a stochastic multiplying background medium.  In addition to this, we are not
+	aware of any published research regarding the criticality of a stochastic background
+	medium in which the energy dependence of Eq.~(\ref{eq:crit}) is included.  Most of the
+	research thus far has considered only single energy (one-speed) transport and
+	diffusion problems.  
+
+ 

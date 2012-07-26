@@ -1,0 +1,150 @@
+%=================%
+% Section:        %
+%    Introduction %
+%=================%
+
+\ResetSingleSpace
+
+\begin{center}
+{\textbf{
+Extending the Applicability of Implicit Monte Carlo Diffusion: \\ Frequency Dependence and Variance Reduction Using the Difference Formulation}}
+\end{center}
+
+\ResetDoubleSpace
+
+\vskip0.25in
+
+\begin{center}
+\section{Introduction}
+\label{sec:Intro}
+\end{center}
+
+\setcounter{page}{1}
+\thispagestyle{empty}
+
+\vskip-0.1in
+
+\noindent
+	\indent The distribution of photon energy and material energy in a system is of interest to many different fields. These fields include the field of astrophysics, glass manufacturing, stockpile stewardship, among others. In these fields, the energy in the system is generally thought to be in two primary forms; material energy and photon energy. Material energy can best be described as the vibrational energy of the atoms that compose the material. Photon energy is the energy that exists in the system in the form of photons that have not been absorbed into the material. The distribution of the energy in these systems has a significant impact on the final resulting product. The energy distributions can also be very difficult to measure and in many cases, if it is possible to measure them, the experiments themselves can be very costly to perform. 
+
+	One way to predict the energy distributions is to use the fundamental mathematical and physical processes that govern the transport of photon energy to model these systems. Using these fundamental ideas, the radiative transfer and material energy balance equations can be derived. These two differential equations describe the energy distribution in a system given the material properties, initial conditions, and boundary conditions. Initial conditions, describe the beginning energy distribution and material properties in the system. Boundary conditions describe the way in which energy enters and leaves the system.
+
+	With the energy distribution fully described by a set of equations, it is necessary to find a result. For some simple systems, these differential equations can be solved analytically. For most practical applications, however, this is not the case. If an analytical solution is not possible, it is necessary to solve the equations either using deterministic or Monte Carlo methods. Deterministic methods rely on mathematical manipulations to the differential equations to create a linear matrix, or linear equation, which can be used to solve the energy distribution in the system. Monte Carlo methods rely on the derivation of probabilities that represent the probable interactions and distribution of energy in the system. For a Monte Carlo method, a particle is created from the probabilities defining the source terms of the system. This particle then undergoes a random walk to determine where its energy will reside at the end of the time step. A random walk consists of the generation of a random number which is compared to the probabilities which describe the possible interactions of the particle with the system to determine an interaction event. If the particle undergoes scattering, the particle changes frequencies and directions and continues until death (tallied or leaks out of the system). If the particle undergoes a leakage event, that is not at the boundary of the problem, the particle is moved to the new cell and transport continues. If an infinite number of energy packets are created and transported through the system using the defined probabilities, the exact solution to the original differential equations will be calculated.
+
+	There are advantages and disadvantages to solving these equations with either Monte Carlo or deterministic methods. Monte Carlo methods are inherently parallelizable. This is because the transport of one particle does not depend on another. This is not ture for determinisic methods because the matrix solution is strongly dependent on the entirety of the matrix. However, on non-parallel processes the deterministic solution to the equations is generally faster than the Monte Carlo solution. Another drawback of Monte Carlo is that it contains statistical noise, whereas deterministic methods do not. Deterministic methods also give the results everwhere in the problems, whereas Monte Carlo methods only solve for the results specified by the user.
+
+	In time-dependent problems that are highly absorbing, it has been found that it is difficult to account for the absorption and quick reemission of photon particles for large time steps. To deal with this problem, Fleck and Cummings developed an effective scattering scheme that approximates the absorption and reemission of the photons with an effective scatter. This method was named Implicit Monte Carlo (IMC)[Fle. 1971].
+
+	If particles undergo many effective scattering events in a short distance, the system can be said to be highly scattering. In regions of systems that are highly scattering, the total length of time to perform a random walk to particle death becomes very long. This makes solving problems with large amounts of effective scattering very expensive using IMC. It also reduces the convergence rate of deterministice methods which rely on the effective scattering temporal discretization scheme. The diffusion approximation is a good estimate for the solution to the transport equation in regions that are highly scattering. This led to the development of hybrid transport-diffusion schemes to solve problems which contain both thick (many interaction in a short distance) diffuse (highly scattering) regions and thin (small number of interactions in large distances) regions. High density systems, systems with energies and pressures exceeding $10^{11} {J\over{m^3}}$ and $1 Mbar$, commonly have regions that are thick, thin, and/or diffuse.
+
+	Hybrid deterministic methods must be broken down via domain decomposition and the matrices for the diffusion domains and transport domains must be solved separately with a source term that relies on each other's solution vectors. This is not the case for Monte Carlo methods which can simply use a different random walk depending on the region of the problem they are moving through[Gen 2001]. This, combined with the other advantages of Monte Carlo, make it an ideal candidate for hybrid transport-diffusion calculations.
+
+	The IMC method received its name because it relies on the Fleck and Cummings implicit discretization of the radiative transfer equation, which creates an effective scattering term. When the radiative transfer equation is discretized using standard backward Euler time differencing, it results in a non-linear differential equation because the Planckian source contains a temperature term raised to the fourth power. A Taylor series expansion is used to approximate this non-linear term and create an effective scattering term. This makes the time differencing of the radiative transfer equation unconditionally stable even in thick diffuse systems. After the effective scattering is introduced into the equation, it can be solved either by deterministic or Monte Carlo methods[Fle. 1971].
+
+	Though IMC has been shown to produce stable and robust solutions in thick diffuse systems, it can be a very inefficient solution method, particularly in regions dominated  by effective scattering. There have been a variety of methods developed to deal with these inefficiencies[Fle. 1984][N'ka. 1991][Gen. 2001][Clo. 2003][Den. 2007].
+
+	Symbolic Implicit Monte Carlo (SIMC) attempts to improve the efficiency of IMC using a spontaneous emission source with symbolic weights. This has the drawback of requiring refined meshes in time and space to reduce teleportation error. Teleportation error occurs when the end of a particle's random walk occurs away from the center of a cell. The energy is then unphysically ``transported'' from its actual deposition or emission location to the cell center, because most methods such as SIMC approximate the source and deposition of energy at the cell centers. Teleportation error also occurs in IMC for small time steps[N'ka. 1991].
+
+	SIMC also requires the solution of a linear system of equations at the end of the Monte Carlo simulation to determine the symbolic weights used to approximate the spontaneous emission source. This can be expensive if the matrix is large, which is the case for systems with many spatial cells, or if the matrix is dense, which is the case when the system has large time steps[N'ka. 1991].
+
+	This has led researchers to investigate the solution of radiative transfer problems in thick highly ``scattering'' regions using the diffusion approximation. It is well known that the transport equation approaches the diffusion equation as the medium gets thick and highly ``scattering''. This essentially means that the boundary layers are no longer strongly coupled to the solution of the problem. The diffusion equation has been widely explored in the field of neutron transport and many other related fields. It is known that most problems in high energy density physics contain regions that are both optically thick and optically thin. This motivated the development of diffusion methods that can be easily coupled to either IMC or SIMC. 
+
+	The initial development of a ``diffuse random walk'' was one proposed way to deal with thick regions in these problems. This consisted of a standard IMC algorithm that could approximate multiple ``scatters'' with a single diffusion event in these regions. Though it did show a potential speed-up, it had a drawback; it did a poor job of accounting for the change in angle that occurs during many scatter events. This meant that a standard IMC random walk had to be performed in between all diffuse random walks[Fle. 1984]. 
+
+	The second proposed method was to couple standard SIMC and an SIMC method that solves the diffusion equation in thick regions[Clo. 2003]. This method successfully reproduced grey and frequency dependent one-dimensional benchmark solutions. Similar to standard SIMC, it is still necessary to solve a system of equations after the Monte Carlo transport, and teleportation error still accumulates for transport regions.  Thus, further research has continued. SIMC has been extended to include frequency dependence in the hybrid diffusion transport method. The difference formulation, discussed in detail below, for SIMC was also developed which has been shown to reduce variance in thick problems[Bro. 2005].
+
+	The difference formulation is a source manipulation variance reduction technique. It is applied to a system by subtracting the spatial and time derivative of a designated Planckian from both sides of the transport equation. This effectively changes the photon energy density to a new ``differenced photon energy density''. This means the transport operator remains unchanged, but the solution and source vector are changed. When a Monte Carlo method is used to solve the equations, the interaction probabilities are unchanged. If the differenced Planckian is set equal to the Planckian of the current material state, computational cost is shifted to regions only where the material and photon energy densites are out of equilibrium.  The difference formulation has been explored primarily in SIMC and has been shown to significantly increase the figure of merit compared to the standard solution[Daf. 2005][Bro. 2005]. It has also been shown to yield promising results when used with IMC[Gen. 2006], but has not been explored for Implicit Monte Carlo Diffusion (IMD)[Gen. 2001] or Discrete Diffusion Monte Carlo (DDMC)[Den. 2007].
+
+	IMD and DDMC are similar in that they both apply the diffusion approximation to the effective scattering radiative transport equation, discretize it in space, and solve the resulting linear system of equations via Monte Carlo. However, they are different in that IMD treats time discretely and DDMC treats time continuously. Both methods have, at this point in time, only been developed for grey (frequency independent) radiative transfer. In addition, the equations have only been solved in 1D slab or spherical geometry, or 2D cylindrical geometry on orthogonal or AMR grids[Gen. 2001][Den. 2007]. 
+
+	It is the purpose of this work to extend IMD to solve frequency dependent radiative transfer problems, and investigate the use of the difference formulation in grey and frequency dependent IMD. Though we have chosen to work with the IMD method, our approach can also be easily applied to the DDMC method.	
+
+% 	\indent CITATION EXAMPLES ~\cite{Pom:91b} and~\cite{Pom:90b}.  
+	
+
+%====================================================================%
+% SubSection:                        	                             %
+%    Introduction: Literature Review %
+%====================================================================%
+\aboveSubSecSkip
+
+\subsection{Literature Review}
+\label{sec:Intro-LitRev}
+	
+\noindent
+	\indent This section contains a review of the literature on the development of the Implicit Monte Carlo method, diffusion Implicit Monte Carlo methods, and the difference formulation.
+
+
+%==================%
+% SubSubSection:   %
+%    Implicit Monte Carlo %
+%==================%
+\subsubsection{Implicit Monte Carlo Methods}
+\label{sec:Intro-IMC}  
+
+\noindent
+	\indent Implicit Monte Carlo (IMC) methods were first introduced in computational physics by Fleck and Cummings in 1971. IMC was developed in the attempt to solve highly absorbing and reemitting photon transport problems. Competing Monte Carlo methods of the time were explicit in the treatment of the time discretization. These discretizations were very capable of solving optically thin problems where the radiation photon energy density was significantly out of equilibrium. However, they had difficulties solving highly absorbing and reemitting problems where the photon energy density was nearly in equilibrium with the material energy density. For these problems the explicit methods required very small time steps[Fle 1971].
+
+	Fleck and Cummings proposed the development of IMC as a solution method that would be unconditionally stable. They introduced the concept of ``effective scattering''. When the photon energy density of the system is nearly in equilibrium with the material energy density, many photons are absorbed and quickly re-emitted by the background medium. Explicit methods require very small time steps to remain stable in this limit. IMC treats the absorption and quick re-emission of these photons as a single ``effective scattering'' event.
+
+	Though Fleck and Cummings chose to solve their implicit differencing of the radiative transfer equation with matter coupling using a Monte Carlo algorithm, it can also be solved using deterministic methods. Monte Carlo methods are attractive because they are highly parallelizable by nature and are easy to couple the standard transport equation and the diffusion equation. 
+
+	IMC has been shown to be very robust and stable for problems ranging from very thin to very thick. Though IMC is capable of producing accurate results in thick diffusive regions, it reaches this solution very slowly. This is because in thick diffusive regions the photon interactions are dominated by effective scattering events. As the probability of scattering increases, the length of time for a random walk increases. This makes IMC problems unacceptably slow in thick diffusive regions. A variety of methods have been proposed to rectify this problem. 
+
+	In Symbolic Implicit Monte Carlo (SIMC) the absorption and reemission of photons is treated as a spontaneous source of photons that are created with ``symbolic weights'' which are determined at the end of every time step by solving a linear equation. This has the advantage that for a given opacity, the length of the random walk should be shorter because there is no longer an effective scattering term. This results in significant computational savings for some thick problems if the solution of the linear system of equations is not significantly more computational expensive then the transport random walk. As time steps increase in size and particles from the spontaneous source are allowed to move to many different neighboring cells, the linear systems of equations for the weights to be solved can become dense. This increases the cost of the solution of the matrix problem reducing the overall figure of merit. It is also true that the cost of the linear solve increases as the number of cells increases[Bro. 1987]. SIMC has been shown to produce much less noise than IMC for large opacities, but SIMC has a higher sensitivity to teleportation error. Teleportation error occurs when a particle's interaction is approximated to occur at the center of a cell rather than at the actual event location. In this case the probabilities of interactions between the actual event and the center of the cell are not accurately represented. IMC is not immune to teleportation error; it is just reduced by the effective scattering. The teleportation error can also be reduced by decreasing the size of the spatial cells. It is also true that when effective scattering is small ( small time steps) the teleportation error of IMC increases[McK. 2003].
+   
+\belowSubSecSkip
+
+%==================%
+% SubSubSection:   %
+%    Diffusion Implicit Monte Carlo Methods %
+%==================%
+\subsubsection{Diffusion Implicit Monte Carlo Methods}
+\label{sec:Intro-DIMC}
+	
+\noindent
+	\indent Four Monte Carlo diffusion methods have been introduced in an attempt to improve the efficiency of Monte Carlo solutions of the radiative heat transfer equations using either effective scattering (IMC) or spontaneous source emission (SIMC). The goal of each of these methods is to couple Monte Carlo transport in thin regions to a diffusion approximated solution in the thick diffusive regions. It has been shown that as a system becomes optically thick and diffusive the solution of the transport equation satisfies a diffusion equation[Lar. 1983]. Three of the methods introduced are approximations of the effective scattering transport equation and one is the approximation of the implicit transport equation with spontaneous source emission.
+
+	The first approach attempted to approximate a large amount of effective scattering in a local cell with a single advance of the coordinates and time using the diffusion approximation. We will refer to this as a ``diffuse random walk''. This approach demonstrated an increase in computational efficiency compared to the  standard IMC method, but because directional information can be lost after multiple diffuse random walks, it is necessary to have a standard IMC random walk before and after each diffuse random walks[Fle. 1984].
+
+	In 1991 N'Kaoua introduced a method that couples a standard SIMC solution with the Rosseland diffusion equation via domain decomposition. The Rosseland diffusion equation is independent of both direction and frequency. The frequency dependence is treated using a normilization of the opacity over all frequency to create a Rosseland opacity. This Rosseland opacity is is strictly dependent on temperature. This method maintains the fully implicit treatment of the temperature that exists in SIMC. Domain decomposition is used to couple the diffusion and standard transport regions. The particles are transported using either the diffusion or transport equation depending on the their current domain. The coupling equations are then used in conjunction with the diffusion and transport estimates to create the linear system to solve and determine the symbolic weights of the spontaneous emission source. Initial timing results comparing this method and standard IMC with the random walk algorithm[Fle. 1984] showed it to be about five times faster[N'Ka. 1991]. These timing results were for a spatially small system and may be very problem dependent. Results presented by Clouet and Samba showed that this hybrid method accurately calculates the solution to the Su and Olson ``picket fence'' opacity semi analytic benchmark[Clo. 2003].
+
+	Implicit Monte Carlo Diffusion (IMD) was developed in 2001 by Gentile. This method employs a diffusion approximation of the effective scattering transport equation to create an implicit diffusion equation. This diffusion equation is then discretized in time and space. The discretized equations create a coefficient matrix that is then solved via Monte Carlo, as described by Hammersly[Ham. 1964]. This method has the advantages that there is no need to solve a linear system of equations at the end of the Monte Carlo transport simulation. Discrete Diffusion Monte Carlo (DDMC) was developed by Densmore, Urbatsch, et al, with the primary goal of creating a method that is easily integrated into IMC. In coupled IMC/IMD simulations, there can be problems when transitioning particles from IMD to IMC. One reason for this is that the current time of the particle is not known when an IMD particle leaves the diffusive region. Thus, the particle is given a random time between the current time point and the next. This can result in a particle that leaves a cell before entering it, which is not physical. This does not occur in DDMC, because the particles are treated continuously in time. It is also challenging to efficiently determine when an IMC particle should become an IMD particle and vise versa. In DDMC, the asymptotic diffusion limit is used to develop the probability of transitioning from an IMD particle to a DDMC particle at cell interfaces[Gen. 2001][Den. 2007]. Neighter IMD nor DDMC have been implemented in problems with frequency dependence.
+
+\belowSubSecSkip
+
+%==================%
+% SubSubSection:   %
+%    The Difference Formulation %
+%==================%
+\subsubsection{The Difference Formulation}
+\label{sec:Intro-DIMC}
+	
+\noindent
+	\indent The difference formulation was introduced by Szoke and Brooks in 2005. The difference formulation is a variance reduction technique. It manipulates the source in the radiative transfer equation to better distribute the computational effort of the solution of the linear system via Monte Carlo. Szoke and Brooks chose to apply the difference formulation to the SIMC transport method. It has also shown to be advantageous in reducing the variance in IMC calculations[Gen. 2006]. The difference formulation involves subtracting the Planckian material energy distribution from the current photon energy intensity. This creates a new form of the photon energy intensity, referred to as the ``difference intensity''. Introducing the difference intensity, the system can be reduced to a form that closesly matches the original radiative transfer equation. The source in the equation for the difference intensity contains additional terms consisting of the spatial and time derivatives of the material Planckian used in the differencing. This new form of the radiative transfer equation still approaches the diffusion limit. This means that in thick diffusive regions the result approaches the correct solution[Szo. 2005]. The computational advantages have been explored in both grey[Daf. 2005] and frequency dependent[Bro. 2005] media for the transport equation when solved with SIMC. It was found that in semi-implicit or explicit systems the difference formulation was only conditionally stable for SIMC[Bro. 2005] and IMC[Gen. 2006]. However, if the difference formulation is treated truly implicitly in a piecewise constant discretization, it is shown to be unconditionally stable when used with SIMC. This, however, creates a non-linear system of equations that need to be solved at the end of every time step, which can be costly for large problems[Bro. 2005]. A large amount of teleportation error can occur in large thick zones when using a piecewise constant spatial discretization of the difference formulation. However, the piecewise linear treatment produces accurate and smooth results in large thick cells. The piecewise linear treatment of the difference formulation still requires the solution of a non-linear system of equations at the end of every time step[Bro. 2006].
+
+\belowSubSecSkip
+
+%=====================================================================%
+% SubSection:                        	                              %
+%     Introduction: Thesis Overview %
+%=====================================================================%
+\subsection{Thesis Overview}
+\label{sec:Intro-Overview}
+
+\noindent
+	\indent The remainder of this thesis is organized as follows:
+	
+	\begin{enumerate}
+		\item[II{.}]  In Chapter 2, the radiative transfer and material energy balance equations are introduced and discretized using backward Euler in time. This leads to the ``effective scattering'' form of the equations described by Fleck and Cummings[Fle. 1971]. Next, the well known diffusion approximation is applied to the effective scattering system which leads to the development of the implicit diffusion equation. The implicit diffusion equation with effective scattering is discretized using a second order central differencing. Albedo and incident flux boundary conditions are also derived for the diffusion problem.
+
+		\item[III{.}] Chapter 3 begins with an introduction to the basic Monte Carlo method. The discrete diffusion equation developed in Chapter 2 is manipulated into a form that can be solved using a Monte Carlo algorithm[Ham. 1964]. Both grey and frequency dependent interaction probabilities are defined. Source particle probabilities and their associated frequency distributions are also defined.
+
+		\item[IV{.}] In Chapter 4, the difference formulation is derived for the frequency dependent implicit diffusion and material energy balance equations. The implicit diffusion of Szoke and Brook for the transport equation is reproduced to introduce important concepts and terminology[Szo. 2005], including the derivation of the new source terms. The frequency distribution and sampling algorithms of these new terms are also discussed.
+
+		\item[V{.}] In Chapter 5, numerical results from the solution of grey and frequency dependent test problems are presented. Standard and difference formulation results are compared against semi-analytic solutions from Su and Olson[Su 1996][Su 1997][Su 1999]. This section also includes an investigation of the effect of spatial and temporal step size on the quality of the numerical solutions. Finally, this section includes the computational costs associated with frequency group structure and the use of the difference formulation.
+
+		\item[VI{.}] Chapter 6 contains a discussion of the IMD results with and without the difference formulation and its dependence on temporal, spatial, and group refinement. This chapter also includes recommendations for future research on both IMD and the difference formulation.
+
+	\end{enumerate}
+

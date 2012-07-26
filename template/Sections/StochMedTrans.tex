@@ -1,0 +1,604 @@
+%=================================================%
+% Section:                        	              %
+%    Neutron Transport in Stochastic Media%
+%=================================================%
+\begin{center}
+\section{NEUTRON TRANSPORT IN STOCHASTIC MEDIA}
+\label{sec:StochMedTrans}
+\end{center}
+
+%====================================================================%
+% SubSection:                        	                             %
+%    Stochastic Media Transport: Introduction %
+%====================================================================%
+\aboveSubSecSkip
+
+\subsection{Introduction}
+\label{sec:StochMedTrans-Intro}
+
+\noindent
+	\indent This chapter provides a description of the algorithm which implements the preconditioned,
+	discretized transport equations discussed in the previous chapter for a binary stochastic
+	medium.  The choice of cross section data and statistical distributions are given and the 
+	physical basis for these choices is discussed.  Finally, the sets of calculations performed 
+	are provided.
+		
+\belowSubSecSkip
+
+%=====================================================================%
+% SubSection:                        	                              %
+%     Stochastic Media Transport: Modeling Stochastic Background Media %
+%=====================================================================%
+\subsection{Modeling Stochastic Background Media}
+\label{sec:StochMedTrans-Med}
+
+\noindent
+	\indent The transport equation can be deterministically solved with great accuracy using
+	the solution method discussed in Chapter~\ref{sec:Transport} for a fixed, heterogeneous 
+	medium.  This method is integrated into an algorithm for generating transport solutions
+	for a binary stochastic medium.   Statistical distributions describe the material mixing.  Since
+	the
+	precise location of any of the components is known only in this statistical sense, the mixing
+	statistics are sampled to populate the spatial domain of the system.  Once the system has been
+	defined, a transport calculation is then performed for the single
+	fixed medium realization of the mixing statistics.  If the mixing statistics are well sampled, an
+	ensemble transport solution with an acceptable statistical error can be computed.
+	
+\noindent
+	\indent Since planar geometry is considered for this study, populating the system is a simple
+	task.  The statistical distributions which govern the segment lengths of each material and their
+	mean lengths are known 	(assumed, calculated, or measured).  The mixing statistics are
+	assumed to be homogeneous, meaning that they are not a function of space, only a function
+	of which material is considered.  Mean segment lengths for the two materials (${0}$ or ${1}$)
+	are given as,
+	\begin{equation}
+		\lambda_{\alpha}; \quad {\alpha}=0, 1.
+	\end{equation}
+	The probability of finding any given material in the system on average is then defined as a
+	material transition probability,
+	\begin{equation}
+		p_{\alpha} = \frac{\lambda_{\alpha}}{\lambda_{\alpha} + \lambda_{\beta}}; 
+			\quad {\alpha}=0,1; \quad  {\alpha}\not= {\beta}.
+		\label{eq:trans-prob}
+	\end{equation}
+	A random number generator is utilized to sample each segment length distribution,
+	populating a system of length ${(X)}$ with alternating material segments of random
+	size from~left-to-right~\cite{Ada:89}.
+	The algorithm for constructing a single realization of the mixing statistics
+	using random numbers (${\xi}$) is outlined in Figure~\ref{fig:Flow-Realz}. 
+	\begin{figure}[htbp]
+		\unitlength1in
+		\begin{center}
+			\begin{minipage}[t]{4in}
+			\centering
+			\begin{picture}(3.04,6.18)
+%	            	{\includegraphics[width=3.04in,height=6.18in]{Flow_Chart2}}
+			\end{picture}
+			\caption{\label{fig:Flow-Realz} Flow Chart of Realization Construction}
+			\end{minipage} %\hfill
+		\end{center}
+	\end{figure}
+	After the realization is generated, the transport algorithm of Figure~\ref{fig:Flow-Iters} is invoked.  The
+	mean and standard deviation
+	are calculated for the~k-eigenvalue and group scalar flux.  The group scalar flux and~k-eigenvalue from each
+	realization contribute to an ensemble average group scalar flux and~k-eigenvalue over the total
+	number of realizations
+	(${R}$).  The mean is defined as the first statistical moment, or,
+	\begin{equation}
+		\bar{x} = \int_{-\infty}^{\infty} dx x f(x),
+		\label{eq:Mean-Def}
+	\end{equation}
+	where ${x}$ is a random variable and ${f(x)}$ is a probability distribution function with the
+	property (${\int_{-\infty}^{\infty}f(x) = 1}$)~\cite{Lew:93}.  The ensemble
+	average~k-eigenvalue and group flux can be approximated with a large number of realizations, 
+	\begin{subequations}
+		\begin{equation}
+			\bar{\phi}_{i,g} = \frac{1}{R} \sum^{R}_{r=1} \phi_{i,g,r}
+		\end{equation}
+		\begin{equation}
+			\bar{k} = \frac{1}{R} \sum^{R}_{r=1} k_{r}
+		\end{equation}	
+		\label{eq:Mean}
+	\end{subequations}
+	Standard deviation is related to the square-root of the second statistical moment about the mean:
+		\begin{subequations}
+		\begin{equation}
+			\bar{x^2} = \int_{-\infty}^{\infty} dx x^2 f(x),
+		\end{equation}
+		\begin{equation}
+			\sigma{(x)} = \sqrt{\bar{x^2}-\bar{x}^2}.
+		\end{equation}	
+		\label{eq:Std-Dev-Def}
+	\end{subequations}
+	The standard deviation of the ensemble average~k-eigenvalue and group fluxes can also be
+	approximated with a large number of realizations,
+	\begin{subequations}
+		\begin{equation}
+			\sigma_{\phi_{i,g}} = \sqrt{\left(\frac{1}{R} \sum^{R}_{r=1} \phi_{i,g,r}^{2}\right) - \bar{\phi}_{i,g}^2}
+		\end{equation}
+		\begin{equation}
+			\sigma_{k} = \sqrt{\left(\frac{1}{R}\sum^{R}_{r=1} k_{r}^{2}\right) - \bar{k}^2}.
+		\end{equation}	
+		\label{eq:Std-Dev}
+	\end{subequations}
+
+\noindent
+	\indent The complete algorithm consists of three nested iteration loops, shown in
+	Figure~\ref{fig:Flow-Chart3}.  Using preconditioned Richardson iteration in a transport calculation
+	for any given 
+	realization, accuracy is increased with each iteration.  In the case of the statistical ensemble
+	calculations averaged over all realizations, the error decreases as 1/${\sqrt{R}}$ and is governed by
+	the central limit theorem~\cite{Lew:93}.  This
+	theorem states that as ${R \rightarrow \infty}$ the statistical solution approaches a normal distribution,
+	and the mean and variance of the solution will converge to their exact values.  The central limit theorem
+	is only valid in the limit of a large number of realizations.  Therefore, a statistically significant minimum
+	number of realizations is chosen before convergence is tested (${R^*}$ in Figure~\ref{fig:Flow-Chart3}).
+	The mean and standard deviation are compared every ${10^{th}}$ realization thereafter to 
+	determine if the solution has converged.  An example of the statistical convergence of the relative error
+	of ensemble quantities as a function of realization is given in Figure~\ref{fig:Rel-Err}.  
+	
+	\begin{figure}[htbp]
+		\unitlength1in
+		\begin{center}
+			\begin{minipage}[t]{4in}
+			\centering
+			\begin{picture}(3.92,3.68)
+%	            	{\includegraphics[width=3.92in,height=3.68in]{Flow_Chart3}}
+			\end{picture}
+			\caption{\label{fig:Flow-Chart3} Flow Chart of Complete Algorithm}
+			\end{minipage} %\hfill
+		\end{center}
+	\end{figure}
+	
+	\begin{figure}[htbp]
+		\unitlength1in
+		\begin{center}
+			\begin{minipage}[t]{6in}
+			\centering
+			\begin{picture}(\width,\height)
+%                            {\includegraphics[width=\imgwidth,height=\imgheight]{converge}}
+			\end{picture}
+			\caption{\label{fig:Rel-Err} Relative Error of Ensemble Quantities as a Function of
+				Realization}
+			\end{minipage} %\hfill
+		\end{center}
+	\end{figure}	
+%	\vspace{-0.25in}
+	
+\belowSubSecSkip
+
+%=====================================================================%
+% SubSection:                        	                              %
+%     Stochastic Media Transport: Mixing Statistics %
+%=====================================================================%
+\subsection{Mixing Statistics}
+\label{sec:StochMedTrans-Mixing}
+
+\noindent
+	\indent The purpose of this study is to determine the effect of energy dependence on the group flux
+	and~k-eigenvalue for a binary stochastic medium.  A suitable problem has to be chosen in order 
+	to illustrate this effect.  Planar geometry transport is not a realistic model of a fuel assembly or
+	a nuclear reactor.  However, the data used for this study is based upon a standard 17x17 pressurized
+	water reactor (PWR) fuel assembly so that the cross section data is physically realistic.
+	Using this data, the effect of energy dependence is investigated in a simple stochastic transport study.
+	
+\noindent
+	\indent A two-dimensional axial slice of a fuel assembly can be crudely modeled as a~two-material
+	heterogeneous medium.  A ${1/4}$ fuel assembly is given in Figure~\ref{fig:quart-assem}.
+	\begin{figure}[htbp]
+		\unitlength1in
+		\begin{center}
+			\begin{minipage}[t]{4in}
+			\centering
+			\begin{picture}(3.07,3.03)
+%			{\includegraphics[width=3.07in,height=3.03in]{qrt_assem}}
+			\end{picture}
+			\caption{\label{fig:quart-assem} ${1/4}$ Fuel Assembly}
+			\end{minipage} %\hfill
+		\end{center}
+	\end{figure}
+	In this model, the fuel pins (red) exist in a fixed lattice surrounded by a water moderator (blue).  The system
+	length is taken to be the average chord length through a PWR assembly.  [This is described in detail briefly.]
+	This chord is a 1-dimensional system
+	populated with random segments of fuel and moderator.  It is the goal of this study to model random
+	chord lengths with random material loading as a binary stochastic medium in planar geometry.  Suitable
+	mixing statistics and system lengths must be determined to perform a transport calculation for this
+	stochastic medium.
+	
+\noindent
+	\indent The system length was chosen to be the average chord length connecting two sides of
+	a PWR fuel assembly of standard size.  The standard PWR fuel assembly is a square, with a side of length
+	${21.4 \ cm}$~\cite{Dud:76}.  The average chord length through a square of this size was determined
+	numerically.  This numerical calculation involved randomly sampling a point on a side of the assembly
+	${0 \le \xi_s \le 21.4 \ cm}$ and a random angle ${0 \le \xi_\theta \le \pi}$.  A chord was then drawn from the
+	point ${\xi_s}$ along the angle ${\xi_\theta}$ to a point of intersection with another side of the assembly
+	(Figure~\ref{fig:crd-lnth}).
+	\begin{figure}[htbp]
+		\unitlength1in
+		\begin{center}
+			\begin{minipage}[t]{4in}
+			\centering
+			\begin{picture}(3.03,3.33)
+%			{\includegraphics[width=3.03in,height=3.33in]{crd_lnth}}
+			\end{picture}
+			\caption{\label{fig:crd-lnth} Generation of an Assembly Chord Length}
+			\end{minipage} %\hfill
+		\end{center}
+	\end{figure}	
+	These chord lengths were calculated and the average chord length determined from a simulation
+	of ${10^7}$ random chords.  The average chord length determined from this simulation is ${15.206 \ cm}$
+	and is taken to be the system length ${(X)}$.
+	
+\noindent
+	\indent Different segment length distributions for each material describing the mixing statistics of this 
+	binary stochastic mixture are assumed or calculated.  For historical reasons discussed in
+	Section~\ref{sec:Intro-LitRev}, segment lengths which are exponentially distributed in each
+	material (Markovian distributions) are the first set of mixing statistics considered.  This is known to be a
+	reasonable approximation for the segment length distribution in a matrix material containing randomly
+	distributed disks~\cite{Ols:03}.  Therefore, Markovian statistics are a reasonable approximation to the
+	segment length distribution for the moderator material.
+	A Markovian distribution is not representative of segment lengths in disks of a fixed radius.  The
+	segment lengths in a disk range from ${0 \le x \le 2r}$ and the segment lengths in a Markovian distribution
+	range from ${0 \le x \le \infty}$.  A Markovian distribution is given by,
+	\begin{equation}
+		f(x) = \frac{1}{\lambda}e^{-x/\lambda},
+	\end{equation}
+	where ${f(x)}dx$ is the probability of any segment length lying between ${x}$ and ${x+dx}$.  This
+	distribution function has the property, 
+	\begin{equation}
+		\int_{0}^{\infty} dx\frac{1}{\lambda}e^{-x/\lambda} = 1.
+	\end{equation}
+	This distribution is sampled randomly with a random number ${\xi}$, yielding a random segment length,
+	\begin{subequations}
+		\begin{equation}
+			\xi = \int_{0}^{x_i} dx\frac{1}{\lambda}e^{-x/\lambda},
+		\end{equation}
+		\begin{equation}
+			\left(x_i\right)_{Mark} = -\lambda \ ln(\xi).
+		\end{equation}
+	\end{subequations}
+	The mean segment length for the Markovian distribution is,
+	\begin{subequations}
+		\begin{equation}
+			\lambda_{Mark} = \int_{0}^{\infty} dxx\frac{1}{\lambda}e^{-x/\lambda} = \lambda.
+		\end{equation}
+	The standard deviation of this distribution is,
+		\begin{equation}
+			\left({\sigma_{x_i}}\right)_{Mark} = \sqrt{\left(\int_{0}^{\infty} dxx^2\frac{1}{\lambda}e^{-x/\lambda}
+			\right)- \lambda^2} = \lambda,
+		\end{equation}
+	\end{subequations}
+	which is large relative to the mean.
+	
+\noindent
+	\indent The next natural choice of mixing statistics is the Disk distribution in the fuel material
+	and a Markovian distribution in the moderator material.  The Disk distribution is given by,
+	\begin{equation}
+		f(x) = \frac{x}{2r\sqrt{4r^2-x^2}},
+	\end{equation}
+	where ${r}$ is the disk radius~\cite{Don:03a}.  This is a distribution of segment lengths ranging from
+	${0 \le x_i \le 2r}$, such that:
+	\begin{equation}
+		\int_{0}^{2r} dx \frac{x}{2r\sqrt{4r^2-x^2}} = 1.
+	\end{equation}
+	This distribution is sampled randomly yielding a random segment length,
+	\begin{subequations}
+		\begin{equation}
+			\xi = \int_{0}^{x_i} dx\frac{x}{2r\sqrt{4r^2-x^2}},
+		\end{equation}
+		\begin{equation}
+			\left(x_i\right)_{Disk} = 2r\sqrt{2\xi-\xi^2}.
+		\end{equation}
+	\end{subequations}
+	The mean segment length for the Disk distribution is,
+	\begin{subequations}
+		\begin{equation}
+			\lambda_{Disk} = \int_{0}^{2r} dx\frac{x^2}{2r\sqrt{4r^2-x^2}} = \frac{\pi r}{2},
+			\label{eq:Mean-Disk}
+		\end{equation}
+	and the standard deviation is,
+		\begin{equation}
+			\left({\sigma_{x_i}}\right)_{Disk} = \sqrt{\left(\int_{0}^{2r} dx\frac{x^3}{2r\sqrt{4r^2-x^2}}
+				\right)- \frac{\pi^2r^2}{4}} = \frac{r\sqrt{3\left(32-3\pi^2\right)}}{6} \approx 0.4464 \ r.
+		\end{equation}
+	\end{subequations}
+	The Disk distribution is exact in the fuel material and the Markovian distribution is approximate in the
+	moderator considering a random chord drawn through a PWR fuel assembly.  The standard deviation
+	of the Disk distribution is considerably less than the Markovian distribution. 
+	
+\noindent
+	\indent In the third set of statistics considered, an ``exact'' segment length distribution is sought for
+	both the fuel and moderator materials.  The Disk distribution is again used in the fuel material.  The
+	numerical calculation of the average chord length in a square was modified to determine
+	the average chord length in the moderator of a 17x17 PWR fuel assembly (Figure~\ref{fig:quart-assem}).
+	An ordered lattice of 17x17 fuel disks is placed in a square with dimensions of a common PWR fuel
+	assembly.  Again a point on a side of the assembly is randomly sampled ${0 \le \xi_s \le 21.4 \ cm}$ and
+	a random angle is sampled ${0 \le \xi_\theta \le \pi}$.  A chord is then drawn from the point ${\xi_s}$ along
+	the angle ${\xi_\theta}$ to a point of intersection with a fuel pin or a point of intersection with an assembly
+	side.  Distances to intersections of the random chord with either fuel disks, or an assembly side are calculated
+	and the chord length is taken to be the minimum of these distances.  Again, ${10^7}$ chords were drawn to
+	determine both the average chord length in the moderator material and the PDF of the chord length distribution.
+	The mean chord length of this distribution, hereafter referred to as the Matrix distribution, is,
+	\begin{subequations}
+		\begin{equation}
+			\lambda_{Matrix} = 1.1531 \ cm,
+			\label{eq:Mean-Mod}	
+		\end{equation}
+	and the standard deviation is,
+		\begin{equation}
+			\left({\sigma_{x_i}}\right)_{Matrix} = 1.8829 \ cm \approx 1.63 \lambda_{Matrix}.
+		\end{equation}
+	\end{subequations}
+
+\noindent This is even a larger standard deviation about the mean chord length than in the Markovian distribution
+	giving the expectation of a large variability of chord lengths for the Matrix distribution. The distribution of chord
+	lengths
+	in the moderator material is approximately exponentially
+	distributed with peaks between each row of pins.  Figure~\ref{fig:matrix}
+	shows the PDF of chord lengths in the moderator material of the assembly.
+		\begin{figure}[htbp]
+		\unitlength1in
+		\begin{center}
+			\begin{minipage}[t]{5.5in}
+			\centering
+			\begin{picture}(\width,\height)
+%                            {\includegraphics[width=\imgwidth,height=\imgheight]{chrd_lnth}}
+			\end{picture}
+			\caption{\label{fig:matrix}Distribution of Chord Length in Moderator Material of
+				a 17x17 Fuel Assembly}
+			\end{minipage} %\hfill
+		\end{center}
+	\end{figure}
+	\vspace{-0.2in}
+	
+\noindent
+	\indent The angle formed between adjacent fuel pins in a row
+	and the random point on a side of the assembly decreases for increasing distance of the row from the
+	random point.  Therefore, these peaks become more narrow for longer chord lengths.  The peak on the
+	right-hand side of the PDF is due to those chords of a length equal to, or slightly longer than,
+	an assembly side.  These chords can exist in the small gap between an edge of the fuel lattice and 
+	an assembly boundary, or between fuel pins.  The cumulative probability distribution function (numerically
+	integrated PDF) of chord lengths of the Matrix distribution is sampled for segment lengths in the moderator
+	material and the Disk distribution is sampled for fuel material segment lengths in the third set of mixing
+	statistics.  This is an exact distribution in the fuel material and a better approximation to the distribution of
+	chord lengths in the moderator material in a PWR fuel assembly.  
+	
+\noindent
+	\indent For all three sets of statistics, the same mean chord lengths in each material are utilized.
+	The mean chord length in the fuel material is calculated using Eq.~(\ref{eq:Mean-Disk}) with a radius 
+	determined from standard PWR data of ${0.4749 \ cm}$~\cite{Dud:76}.  This radius is slightly greater
+	than the actual fuel pellet radius, since it includes the thickness of the gap between the pellet and clad,
+	and the clad thickness.  The mean chord length in the moderator for all simulations is given in
+	Eq.~(\ref{eq:Mean-Mod}).  
+
+\belowSubSecSkip
+
+%=====================================================================%
+% SubSection:                        	                              %
+%     Stochastic Media Transport: Cross Section Data %
+%=====================================================================%
+\subsection{Cross Section Data}
+\label{sec:StochMedTrans-X-Sect}
+
+\noindent
+	\indent The~two-group cross-sections for this study were based on a group collapse calculation 
+	performed with CASMO-3 for a standard PWR fuel pin with 5\% enriched ${UO_2}$~\cite{Ede:93}.
+	The impact of variability in \emph{each} cross section, for \emph{each} material, and for different
+	segment length distributions is beyond the scope of this study.  Therefore, assumptions are made
+	which are common to reactor analysis (Table~\ref{table:X-Data}) to narrow the range of variable
+	parameters: no upscatter is allowed, and neutrons are only born in the fast group.
+\begin{table}[htbp]
+	\begin{center}	
+	\begin{tabular} {|c|c|c|} \hline
+		\multicolumn{3}{|c|} {Material: Fuel} \\ \hline
+		Cross Section ${\left(cm{^{-1}}\right)}$ & Group 1 & Group 2\\[0.5ex] \hline\hline
+		${\sigma_{t,g}}$ & 0.01972 + ${\sigma_{s,1\rightarrow 1}^{fuel}}$ & Variable \\ \hline
+		${\sigma_{s,1\rightarrow g}}$ & Variable & 0.0 \\ \hline
+		${\sigma_{s,2\rightarrow g}}$ & 0.0 & 0.0 \\ \hline
+		${\nu_g \sigma_{f,g}}$ & 0.0 & 0.564819 \\ \hline\hline
+		${\chi}$ & 1 & 0 \\ \hline\hline
+		\multicolumn{3}{|c|} {Material: Moderator} \\ \hline
+		Cross Section ${\left(cm{^{-1}}\right)}$ & Group 1 & Group 2\\[0.5ex] \hline\hline
+		${\sigma_{t,g}}$ & 0.02678 & 1.662 \\ \hline
+		${\sigma_{s,1\rightarrow g}}$ & 0.0 & 0.02678 \\ \hline
+		${\sigma_{s,2\rightarrow g}}$ & 0.0 & 1.655 \\ \hline
+		${\nu_g \sigma_{f,g}}$ & 0.0 & 0.0 \\ \hline\hline
+		${\chi}$ & 0 & 0 \\ \hline
+	\end{tabular}
+ 	\caption{\label{table:X-Data} Cross Sections by Material and Energy Group}
+	\end{center}
+ \end{table}
+	The moderator cross sections are fixed, with no fast within-group scatter, and no fission.  All of the variability
+	in cross section data exists in the fuel material.  Downscatter and thermal within-group scatter are not
+	allowed in the fuel.  The fission cross section and average neutron yield per fission are fixed.  The
+	fast within-group scatter and both the fast and thermal group total cross sections are variable.  The fast group
+	absorption cross section of the fuel material is fixed (${\sigma_{a,1}^{fuel}=0.0197155 \ cm^{-1}}$)
+	where, ${\sigma_{1}^{fuel} = \sigma_{a,1}^{fuel} + \sigma_{s,1\rightarrow1}^{fuel}}$.  Only the 
+	absorption interaction is allowed in the thermal group fuel material (${\sigma_{2}^{fuel} = \sigma_{a,2}^{fuel}}$).
+	Therefore, if any interaction takes place in the fuel material in the thermal group, it will be either fission or
+	parasitic capture (${\sigma_a = \sigma_s + \sigma_c}$), with a fixed average number of neutrons released
+	per fission of ${\nu=2.4188}$.  The ranges of variability for these parameters are given by, 
+	\begin{subequations}
+		\begin{equation}
+			0 < \frac{\sigma_{s,1^\rightarrow{1}}^{fuel}}{\sigma_{s,1^\rightarrow{1}}^{fuel}+
+			\sigma_{a,1}^{fuel}} = c^{fuel} < 1,
+			\label{eq:c-fuel}
+		\end{equation}
+		and, 
+		\begin{equation}
+			1 < \frac{\nu_2^{fuel}\sigma_{f,2}^{fuel}}{\sigma_{a,2}^{fuel}} = k_{\infty} < \nu.
+			\label{eq:k-inf}
+		\end{equation}
+	\end{subequations}
+	
+\noindent
+	\indent The simple atomic mix approximation of the cross sections is made by calculating a homogenized
+	cross section based on the material transition probability of Eq.~(\ref{eq:trans-prob}),
+	\begin{equation}
+		<{\sigma}_{\ell}>_{i,g} = p_{\alpha}\sigma_{\alpha,\ell,i,g} + p_{\beta}\sigma_{\beta,\ell,i,g};
+			\quad {\alpha}=0,1;\quad  {\alpha}\not= {\beta},
+		\label{eq:am}
+	\end{equation}
+	where, ${\ell}$ represents any of the cross sections: scattering, fission, absorption or total.  Since the atomic
+	mix
+	approximation considers a homogeneous medium, the computational expense of an atomic mix
+	calculation is significantly less than in the benchmark case.
+	The accuracy of the atomic mix approximation for a two-group, binary stochastic medium is
+	unknown.  Atomic mix solutions will be compared with the ensemble average benchmark to determine
+	its validity as a model.
+	
+\belowSubSecSkip
+
+%=====================================================================%
+% SubSection:                        	                              %
+%     Stochastic Media Transport: Calculations %
+%=====================================================================%
+\subsection{Calculations}
+\label{sec:StochMedTrans-Calcs}
+
+\noindent
+	\indent The calculations are grouped by boundary conditions, material segment length distribution (sets),
+	 ${c^{fuel}}$ (cases) and ${k_{\infty}}$ (calculations).  For vacuum boundaries, three values of both
+	${c^{fuel}}$ and ${k_{\infty}}$ are considered.
+	These nine calculations are repeated for each of the three sets of mixing statistics.  This gives a total of 27
+	benchmark calculations with vacuum boundary conditions.  Another 27 homogeneous medium calculations
+	were performed employing the atomic mix approximation of the cross sections (Eq.~(\ref{eq:am})).
+	
+\noindent
+	\indent Using reflecting boundaries, three values of ${k_{\infty}}$ of Eq.~(\ref{eq:k-inf}) were considered
+	for the three different sets of mixing statistics.  Variation of ${c^{fuel}}$ was not
+	considered since the solution will be exactly the same for any given value of ${k_{\infty}}$ because there is
+	no leakage.  This gives a total of nine benchmark calculations with reflecting boundary conditions.  Another
+	nine homogeneous medium calculations are preformed employing the atomic mix approximation.  The set of
+	cases for each of the mixing statistics are summarized for vacuum boundaries in
+	Tables~\ref{table:Set-1-V} - \ref{table:Set-3-V} below.  The sets of cases for each of the mixing statistics
+	are summarized for reflecting boundaries in Table~\ref{table:Set-1-R} below.
+\begin{table}[htbp]
+	\begin{center}	
+	\begin{tabular} {|c|c|c||c|c|c||c|c|c|} \hline
+		\multicolumn{9}{|c|} {Set 1: Fuel: Markov, Moderator: Markov} \\ \hline
+		\multicolumn{9}{|c|} {Vacuum Boundaries} \\ \hline\hline
+		\multicolumn{3}{|c||} {Case 1} &  \multicolumn{3}{|c||} {Case 2} & 
+			\multicolumn{3}{|c|} {Case 3}\\ \hline\hline
+		Calc. & ${c^{fuel}}$ & ${k_{\infty}}$ & Calc. & ${c^{fuel}}$ & ${k_{\infty}}$ &
+			Calc. & ${c^{fuel}}$ & ${k_{\infty}}$ \\ \hline \hline
+		\bf{\emph{1.1.1}} & 0.1 & 1 & \bf{\emph{1.2.1}} & 0.5 & 1 & \bf{\emph{1.3.1}} & 0.9 & 1 \\ \hline
+		\bf{\emph{1.1.2}} & 0.1 & ${\nu/2}$ & \bf{\emph{1.2.2}} & 0.5 & ${\nu/2}$ & \bf{\emph{1.3.2}} &
+		0.9 & ${\nu/2}$ \\ \hline
+		\bf{\emph{1.1.3}} & 0.1 & ${\nu}$ & \bf{\emph{1.2.3}} & 0.5 & ${\nu}$ & \bf{\emph{1.3.3}} & 0.9
+		& ${\nu}$ \\ \hline
+	\end{tabular}
+ 	\caption{\label{table:Set-1-V} Calculation Set 1 Variable Parameter Values, Vacuum Boundaries}
+	\end{center}
+ \end{table}
+ \begin{table}[htbp]
+	\begin{center}	
+	\begin{tabular} {|c|c|c||c|c|c||c|c|c|} \hline
+		\multicolumn{9}{|c|} {Set 2: Fuel: Disk, Moderator: Markov} \\ \hline
+		\multicolumn{9}{|c|} {Vacuum Boundaries} \\ \hline\hline
+		\multicolumn{3}{|c||} {Case 1} &  \multicolumn{3}{|c||} {Case 2} & 
+			\multicolumn{3}{|c|} {Case 3}\\ \hline\hline
+		Calc. & ${c^{fuel}}$ & ${k_{\infty}}$ & Calc. & ${c^{fuel}}$ & ${k_{\infty}}$ &
+			Calc. & ${c^{fuel}}$ & ${k_{\infty}}$ \\ \hline \hline
+		\bf{\emph{2.1.1}} & 0.1 & 1 & \bf{\emph{2.2.1}} & 0.5 & 1 & \bf{\emph{2.3.1}} & 0.9 & 1 \\ \hline
+		\bf{\emph{2.1.2}} & 0.1 & ${\nu/2}$ & \bf{\emph{2.2.2}} & 0.5 & ${\nu/2}$ & \bf{\emph{2.3.2}} & 0.9
+		& ${\nu/2}$ \\ \hline
+		\bf{\emph{2.1.3}} & 0.1 & ${\nu}$ & \bf{\emph{2.2.3}} & 0.5 & ${\nu}$ & \bf{\emph{2.3.3}}
+		& 0.9 & ${\nu}$ \\ \hline
+	\end{tabular}
+ 	\caption{\label{table:Set-2-V} Calculation Set 2 Variable Parameter Values, Vacuum Boundaries}
+	\end{center}
+ \end{table}
+ \begin{table}[htbp]
+	\begin{center}	
+	\begin{tabular} {|c|c|c||c|c|c||c|c|c|} \hline
+		\multicolumn{9}{|c|} {Set 3: Fuel: Disk, Moderator: Matrix} \\ \hline
+		\multicolumn{9}{|c|} {Vacuum Boundaries} \\ \hline\hline
+		\multicolumn{3}{|c||} {Case 1} &  \multicolumn{3}{|c||} {Case 2} & 
+			\multicolumn{3}{|c|} {Case 3}\\ \hline\hline
+		Calc. & ${c^{fuel}}$ & ${k_{\infty}}$ & Calc. & ${c^{fuel}}$ & ${k_{\infty}}$ &
+			Calc. & ${c^{fuel}}$ & ${k_{\infty}}$ \\ \hline \hline
+		\bf{\emph{3.1.1}} & 0.1 & 1 & \bf{\emph{3.2.1}} & 0.5 & 1 & \bf{\emph{3.3.1}} & 0.9 & 1 \\ \hline
+		\bf{\emph{3.1.2}} & 0.1 & ${\nu/2}$ & \bf{\emph{3.2.2}} & 0.5 & ${\nu/2}$ & \bf{\emph{3.3.2}} & 0.9 &
+		${\nu/2}$ \\ \hline
+		\bf{\emph{3.1.3}} & 0.1 & ${\nu}$ & \bf{\emph{3.2.3}} & 0.5 & ${\nu}$ & \bf{\emph{3.3.3}} & 0.9 &
+		${\nu}$ \\ \hline
+	\end{tabular}
+ 	\caption{\label{table:Set-3-V} Calculation Set 3 Variable Parameter Values, Vacuum Boundaries}
+	\end{center}
+ \end{table} 
+  \begin{table}[htbp]
+	\begin{center}	
+	\begin{tabular} {|c|c||c|c||c|c|} \hline
+		\multicolumn{6}{|c|} {Set 1: Fuel: Markov, Moderator: Markov} \\ \hline
+		\multicolumn{6}{|c|} {Reflecting Boundaries} \\ \hline\hline
+		\multicolumn{2}{|c||} {Case 1} &  \multicolumn{2}{|c||} {Case 2} & 
+			\multicolumn{2}{|c|} {Case 3}\\ \hline\hline
+		Calc. & ${k_{\infty}}$ & Calc. & ${k_{\infty}}$ & Calc.
+			& ${k_{\infty}}$ \\ \hline \hline
+		\bf{\emph{1.1}} & 1 & \bf{\emph{1.2}} & ${\nu/2}$ & \bf{\emph{1.3}} & ${\nu}$ \\ \hline\hline
+		\multicolumn{6}{|c|} {Set 2: Fuel: Disk, Moderator: Markov} \\ \hline
+		\multicolumn{6}{|c|} {Reflecting Boundaries} \\ \hline\hline
+		\multicolumn{2}{|c||} {Case 1} &  \multicolumn{2}{|c||} {Case 2} & 
+			\multicolumn{2}{|c|} {Case 3}\\ \hline\hline
+		Calc. & ${k_{\infty}}$ & Calc. & ${k_{\infty}}$ & Calc.
+			& ${k_{\infty}}$ \\ \hline \hline
+		\bf{\emph{2.1}} & 1 & \bf{\emph{2.2}} & ${\nu/2}$ & \bf{\emph{2.3}} & ${\nu}$ \\ \hline\hline
+		\multicolumn{6}{|c|} {Set 3: Fuel: Disk, Moderator: Matrix} \\ \hline
+		\multicolumn{6}{|c|} {Reflecting Boundaries} \\ \hline\hline
+		\multicolumn{2}{|c||} {Case 1} &  \multicolumn{2}{|c||} {Case 2} & 
+			\multicolumn{2}{|c|} {Case 3}\\ \hline\hline
+		Calc. & ${k_{\infty}}$ & Calc. & ${k_{\infty}}$ & Calc.
+			& ${k_{\infty}}$ \\ \hline \hline
+		\bf{\emph{3.1}} & 1 & \bf{\emph{3.2}} & ${\nu/2}$ & \bf{\emph{3.3}} & ${\nu}$ \\ \hline
+	\end{tabular}
+ 	\caption{\label{table:Set-1-R} Calculation Set 1-3 Variable Parameter Values, Reflecting Boundaries}
+	\end{center}
+ \end{table} 	
+
+\noindent
+	\indent The described sampling algorithm does not preserve a specified material loading from realization
+	to realization.  Therefore, the overall behavior of the random system will not be compared to a non-random
+	reference case.  In the case of reflecting boundaries, these calculations are indicative of the possible
+	transport solutions of an infinite lattice of a randomly fueled planar geometry system of length ${(X)}$.  In the
+	case of vacuum boundaries, these solutions are related to transport solutions for a small subcritical,
+	randomly fueled assembly.  
+	
+\belowSubSecSkip
+
+%=====================================================================%
+% SubSection:                        	                              %
+%     Transport: Summary %
+%=====================================================================%
+\subsection{Summary}
+\label{sec:StochMedTrans-Summary}
+
+\noindent
+	\indent This chapter outlines the method used to generate individual realizations of the mixing
+	statistics.  The preconditioned discretized transport algorithm of Chapter~\ref{sec:Transport}
+	is integrated into a statistical sampling algorithm to generate realizations of the binary stochastic mixture.
+	The method for calculating the ensemble average~k-eigenvalue and scalar flux was given, and the
+	determination of convergence of the statistical solution was discussed.
+	
+\noindent
+	\indent The origin of the distributions of the mixing statistics was discussed.  These
+	distributions approximate the distribution of segment
+	lengths for a random chord through a simplified~two-material PWR fuel assembly model.  The cross section
+	data used in this study 
+	is based on a two-group collapsed PWR pin cell calculation using CASMO-3.  The variability in these
+	cross sections based on common assumptions in reactor analysis was given.  Finally, a listing of the
+	calculations performed and what knowledge is expected to be gleaned from their solution was
+	provided.  
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

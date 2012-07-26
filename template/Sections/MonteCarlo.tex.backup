@@ -1,0 +1,373 @@
+%=================================================%
+% Section:                        	              %
+%    Implicit Monte Carlo%
+%=================================================%
+
+\begin{center}
+\section{Implicit Monte Carlo}
+\label{sec:MonteCarlo}
+\end{center}
+
+%====================================================================%
+% SubSection:                        	                             %
+%    Implicit Monte Carlo: Introduction %
+%====================================================================%
+\aboveSubSecSkip
+
+\subsection{Introduction}
+\label{sec:MonteCarlo-Intro}
+
+\noindent
+	\indent Monte Carlo methods have been used extensively in the field of nuclear physics. This chapter will describe in detail how a linear system  with certain characteristics can be solved via a Monte Carlo algorithm[Ham. 1964]. This linear system must be diagonally dominant and the off diagonal terms must be negative. Though it might be possible to solve linear systems that do not have these properties with this method, it is not included in the scope of this work and should be further explored for the needs of running problems on non-orthogonal meshes.
+			
+\belowSubSecSkip
+
+%====================================================================%
+% SubSection:                        	                             %
+%    Implicit Monte Carlo: Monte Carlo%
+%====================================================================%
+\aboveSubSecSkip
+
+\subsection{Monte Carlo Basics}
+\label{sec:MonteCarlo-MC}
+
+\noindent
+	\indent A Monte Carlo method consits of the generation of a finite number of particle histories that are controlled by known probabilities of the system of interest. For demonstrative purposes, we will use an example of a fixed source problem with scattering. In this system, there are two possible interactions; scatter or absorption. First it is necessary to define a probability distribution function (PDF). This function describes the probability that a variable (x) will lie in the range of two values (a and b). A probability distribution function can be written as a function of the probability density function $f(x)$[Lew. 1993];
+	\begin{equation}
+	 P(x)=\int_a^b\delta x' f(x')
+	\end{equation}
+	A probability density function is a function which describes the probability at value x. In the example problem, the probability that a particle will have an interaction over a distance (x) $[cm]$ can be written as
+	\begin{equation}
+	 f(x)=e^{-x{\sigma_t}}.
+	\end{equation}
+	Where $\sigma_t$ is the total opacity $[1/cm]$. The total opacity is equal to the sum of the scattering opacity and the absorption opacity. Now it is necessary to define the cumulative probability distribution function (CPDF). This function represents the probability that some random variable x' is less then or equal to x. This can be written as;
+	\begin{equation}
+	 F(x)=\int_0^xf(x')dx'.
+	\end{equation}
+ 	Given the definition of the example probability density function, the CPDF can be expressed as;
+	\begin{equation}
+	 F(x)=1-e^{{-x{\sigma_t}}}
+	\end{equation}
+	Knowing that the value of a CPDF will always range between zero and one, it is possible to select a random number, between zero and one, to determine the distance (x) traveled by the particle before a collision[Lew. 1993]. This is done by setting $F(x)$ equal to a random number $(\zeta)$ and then solving for x. Knowing the location of the next collision it is now necessary to determine the collision type.
+
+	It is possible to determine the collision type by constructing another probability density function. For the example problem there are two types of possible interactions; scattering and absorption. The probability density function of the collision types will consits of a histogram with two values.
+	\[
+	 f(k)=\left(
+	 \begin{array}{c c}
+	   {\sigma_s\over{\sigma_t}}\hspace{0.25in} & \, k_0\leq k\leq k_1 \\
+	   {\sigma_a\over{\sigma_t}}\hspace{0.25in} & \, k_1<k\leq k_2  \\
+	 \end{array}
+	 \right)
+	\]
+	where the range between $k$ denotes a collision type. The CPDF is constructed by integrating this histogram from $k_0$ to some value k. If this integration is performed and $F(k)$ is set equal to a random number $(\zeta)$ between zero and one, the collision type can be selected using;
+	\[
+	 k(\zeta)=\left(
+	 \begin{array}{c  c}
+	    scatter\hspace{0.25in} \, 0\leq\zeta\leq{\sigma_s\over{\sigma_t}}\\
+	    absorbed\hspace{0.25in} \, {\sigma_s\over{\sigma_t}}<\zeta\leq1\\
+	 \end{array}
+	 \right).
+	\]
+	If the collision type is an absorption, the weight of the particle is ``tallied''; its weight is added to a sum of absorption events for its current location. If the particle is scattered, a new direction and frequency is chosen and the particle continues to the next interaction location.
+
+	The IMD code presented in this work uses the probabilities defined in the next section to create PDFs and CPDFs which are then used to create and transport particles. This work also uses absorption suppression combined with Russian Roulette as a variance reduction technique. Absorption suppression works by tallying the probability of an absorption event multiplied by the current particle weight at the beginning of every random walk, rather than including it in the CPDF. This is done until a particle dies (is tallied into census or leaves the problem) or falls below a designated weight and Russian Roulette occurs[Lew. 1993]. During Russian Roulette, the particle is either killed or its weight is increased according to a user designated probability. Russian Rouletting is a unbiased way of ending a particle history[Lew. 1993]. Absorption suppression with Russian Roulette accurately accounts for the absorption probability and it reduces the variance in the system.
+			
+\belowSubSecSkip
+
+
+%=====================================================================%
+% SubSection:                        	                              %
+%     Implicit Monte Carlo: Linear System%
+%=====================================================================%
+\subsection{Linear System}
+\label{sec:MonteCarlo-Linear-System}
+
+\noindent
+	\indent There are a few very important properties that a matrix must have in order for a probabilistic interpretation of the linear system to be stable. The matrix must be positively diagonally dominant and the fringe terms must be negative. This forces the probabilities to be positive and finite. The linear system that is being solved in this paper is a simple tridiagonal system that is diagonally dominant and has the correct sign for the matrix terms (equation \ref{disDiff}). The system can be written as
+	\begin{equation}
+	\label{linearSystem}
+	Ax=b.
+	\end{equation}
+	Where $A$ is the coefficient matrix which for a tridiagonal system can be expressed as follows;
+	\[
+	\left(
+	\begin{array}{ c c c c c c c c c c c c c}
+	D_1 & \, & C_2 & \, & 0  & \, & . & \, & . & \, & . & \, & 0 \\
+	B_1 & \, & D_2 & \, & C_3  & \, & . & \, & \, & \, & \, & \, & . \\
+	0 & \, & B_2 & \, & D_3  & \, & C_4 & \, & . & \, & \, & \, & . \\
+	. & \, & . & \, & .  & \, & . & \, & . & \, & . & \, & . \\
+	. & \, & \, & \, & .  & \, & B_{N-3} & \, & D_{N-2} & \, & C_{N-1} & \, & 0 \\
+	. & \, & \, & \, & \,  & \, & . & \, & B_{N-2} & \, & D_{N-1} & \, & C_{N} \\
+	0 & \, & . & \, & .  & \, & . & \, & 0 & \, & B_{N-1} & \, & D_{N} \\
+	\end{array}
+	\right)
+	\left(
+	\begin{array}{ c }
+	E_0 \\
+	. \\
+	. \\
+	. \\
+	. \\
+	. \\
+	E_N 
+	\end{array}
+	\right)
+	=
+	\left(
+	\begin{array}{ c }
+	Q_0 \\
+	. \\
+	. \\
+	. \\
+	. \\
+	. \\
+	Q_N 
+	\end{array}
+	\right),
+	\]
+	where B, C, and D are defined by equations \ref{distDiffB}, \ref{distDiffC}, and \ref{distDiffD} respectively, $E_j$ denotes the photon energy density at the current time step in cell $j$, and $Q_j$ is the source term expressed in equation \ref{distDiffQ}.
+	
+	To put this expression in a form that can be used to solve the linear equations via Monte Carlo, we split $A$ into its diagonal and off-diagonal components.
+	\begin{equation}
+	\label{fring}
+	F=A-D
+	\end{equation}
+	Where $D$ is defined by
+	\[
+	D=
+	\left(
+	\begin{array}{ c c c c c c c c c }
+	D_1 & \, & 0 & \, & . & \, & . & \, & 0 \\
+	0 & \, & D_2 & \, & . & \, & \, & \, & . \\
+	. & \, & . & \, & . & \, & . & \, & . \\
+	. & \, & \, & \, & .  & \, & D_{N-1} & \, & 0  \\
+	0 & \, & . & \, & . & \, & 0 & \, & D_{N} \\
+	\end{array}
+	\right).
+	\]
+	Using the definition in equation \ref{fring}, it is possible to rewrite the linear system as
+	\begin{equation}
+	Fx+Dx=b.
+	\end{equation}
+	This can be rearranged to get the form necessary to solve the linear equations with a Monte Carlo algorithm[Ham. 1964].
+	\begin{equation}
+	\label{linearMC}
+	x=Hx+D^{-1}b
+	\end{equation}
+	Where $H$ can be expressed as;
+	\begin{equation}
+	H=-D^{-1}F
+	\end{equation}
+	or
+	\[
+	H=
+	\left(
+	\begin{array}{ c c c c c c c}
+	0  & -{C_2\over{D_2}}  & 0   & .  & .  & .  & 0 \\
+	-{B_1\over{D_1}}  & 0  & -{C_3\over{D_3}}  & .  & \, & \,  & . \\
+	0 &  -{B_2\over{D_2}} & 0  & -{C_4\over{D_4}} & . & \, & . \\
+	. & . & . & . & . & . & . \\
+	. & \, & . & -{B_{N-3}\over{D_{N-3}}} & 0 & -{C_{N-1}\over{D_{N-1}}} & 0 \\
+	. & \, & \, & . & -{B_{N-2}\over{D_{N-2}}} & 0 & -{C_{N}\over{D_{N-1}}} \\
+	0 & .  & . & . & 0 & -{B_{N-1}\over{D_{N-1}}} & 0 \\
+	\end{array}
+	\right)
+	\].
+
+	For simplicity of the probability derivations, matrix $A$ can be broken up into the streaming operator terms plus the remaining terms in the coefficient matrix. We will denote these two matrices as $\mathcal{F}$ and $\mathcal{D}$. Where these terms denote the streaming operator (equation \ref{dStream8}) and the remaining terms in the coefficient matrix respectively. 
+	\begin{equation}
+	 \mathcal{D}=A-\mathcal{F}
+	\end{equation}
+	
+
+\belowSubSecSkip
+
+%=====================================================================%
+% SubSection:                        	                              %
+%      Implicit Monte Carlo: Probabilities %
+%=====================================================================%
+\subsection{Probabilities}
+\label{sec:MonteCarlo-Probabilities}	
+
+\noindent
+	\indent It can be seen that the diffusion equation (equation \ref{finalDiffusion})  in  a single cell with a single frequency or frequency group ($\nu$) can be expressed as;
+	\begin{eqnarray}
+	\label{ProbabilitiesDiffusion}
+	& &{1\over{c}}{\Delta{E(\nu)_j}\over{\Delta{t}}} + \sum_{i=1}^N\mathcal{F}_{ij}^{t+1}(v)E^{t+1}_i(\nu)=\nonumber \\& & -E^{t+1}_j(\nu)(\sigma_{s_j}(\nu)+\sigma_{a_j}(\nu))+{b(\nu,T_j)\sigma(\nu)\over{\sigma_p(T_j)}}(\nu)\sigma_p(T_j)f(T_j)aT_j^{t^4}\nonumber \\& & +{\sum_{\nu_{k-1}}^{\nu_k}\sigma(\nu)\int_{\nu_{k-1}}^{\nu_k}d\nu b(\nu,T_j)\over{\sigma_p(T_j)}}{\int{d\nu}E^{t+1}_j(\nu)\sigma_{s_j}(\nu)}.
+	\end{eqnarray}
+	In matrix form it can also be seen from equation \ref{linearMC} that the photon energy density in a single cell for a single frequency can be expressed as;
+	\begin{equation}
+	\label{componentMC}
+	E^{t+1}_j(\nu)=D_j^{-1}(\nu)Q_j(\nu)+\sum_{i=1}^N{h_{ji}(\nu)E_i(\nu)}.
+	\end{equation}
+	These equations will be important later in this section.
+
+	$P_{th}(\nu)$ is the probability that a photon will have the frequency $\nu$ when it is emitted from the material body. This probability can be expressed as;
+	\begin{equation}
+	\label{thermalDistribution}
+	P_{th_j}(\nu)={b(\nu,T_j)\sigma(\nu)\over{\int^\infty_0d\nu{b(\nu,T_j)\sigma(\nu)}}}={b(\nu,T_j)\sigma(\nu)\over{\sigma_p(T_j)}}.
+	\end{equation}
+	For a multigroup method this probability would be expressed for group k as;
+	\begin{equation}
+	\label{multigroupThermalDistribution}
+	P_{th,k_j}={\sum_{\nu_{k-1}}^{\nu_k}\sigma(\nu)\int_{\nu_{k-1}}^{\nu_k}d\nu b(\nu,T_j)\over{\sigma_p(T_j)}}.
+	\end{equation}
+	The Taylor expansion of the Plankian, as described by Barnett and Canfield [Bar. 1970], is integrated analytically and then used to calculate the Planckian. The integrated Taylor expansion can be carried out to as high an order as the user desires. Each extension of the Taylor expansion increases the accuracy of the integral calculation.
+ 
+	The problems we consider do not have real scattering this is an effective scattering system which means it is known that a scattering event is an approximation for a quick absorption and reemission. This means that the probability of a photon with frequency $\nu$ being emitted after a scatter is equal to the probability of a thermal photon being emitted at the frequency $\nu$. 
+	\begin{equation}
+	P_{th}(\nu)=P_s(\nu).
+	\end{equation}
+	
+	The newly created particles must adhere to some interaction probabilities. The most important of these probabilities is the {\it census probability}. Census, in this case, means that a particle will remain in the cell at the next time step. This probability can be expressed as
+	\begin{equation}
+	\label{censusProb}
+	P^c_j(\nu)={1\over{D_j(\nu)}}.
+	\end{equation}
+	Where $D$ represents the diagonal terms expressed for internal cells in equation \ref{distDiffD}. As $\Delta{t}$ approaches zero, the probability of census goes to one, and as the opacity gets very large the probability of census will decrease toward zero. The {\it scattering probability} can be defined as 
+	\begin{equation}
+	\label{absorptionProb}
+	P^s_j(\nu)={c\Delta{t}\sigma(\nu){(1-f(T_j))}\over{D_j(\nu)}}
+	\end{equation}
+	The scattering probability will go to zero as $f$ approaches one. The {\it leakage probability}, 
+	\begin{equation}
+	\label{leakageProb}
+	P^l_{ij}(\nu)=h_{ij}(\nu)={\mathcal{F}_{ji}(\nu)\over{D_j(\nu)}},
+	\end{equation}
+	is the probability that a particle will leak from a neighboring cell $i$ into the current cell $j$. This term will be always positive if the terms of matrix $H$ are positive. This means that the fringe terms of matrix $A$ must be negative. The {\it total leakage probability},  
+	\begin{equation}
+	\label{totalLeakageProb}
+	P^{Tl}_j(\nu)=\sum_{i=1}^N{h_{ji}(\nu)}=\sum_{i=1;i\neq{j}}^N{\mathcal{F}_{ji}(\nu)\over{D_j(\nu)}},
+	\end{equation}
+	is the probability of a particle leaking out of cell $j$. The total probability of leakage will always be less than or equal to one because the denominator can be expressed as a sum which contains all terms in the numerator.  The total leakage probability is equal to zero if the cell is infinitely large. The {\it source probability} can be written as
+	\begin{equation}
+	\label{sourceProb}
+	P^q_j(\nu)={Q_j(\nu)\over{\sum\limits_{i=1}^N{Q_i(\nu)}}}.
+	\end{equation}
+	Where $Q_i$ and $Q_j$ are terms in the source vector $Q$. Again, because the sum in the denominator always contains the term in the numerator, the probability expressed in equation \ref{sourceProb} will range between zero and one.
+
+	The total radiation energy in the system can be expressed as;
+	\begin{equation}
+	\label{totalEnergy}
+	E_T=\sum\limits_{i=1}^N\left(c\Delta{t}\sigma_pfaT_i^4V_i+\int^\infty_0d\nu E_i^t(\nu)V_i\right)
+	\end{equation}
+	If the total number of particles to be created is equal to $N$, then the number of particles created in a single frequency in a cell $j$ can be expressed as
+	\begin{equation}
+	\label{censusTally}
+	N^c_j(\nu)=N\left({c\Delta{t}b(\nu,T_j)\sigma_a(\nu) aT_j^4V_j+E_j^t(\nu)V_j\over{E_T}}\right)
+	\end{equation}
+	This also means that the weight of each particle created can be expressed as;
+	\begin{equation}
+	\label{particleWeight}
+	w_j(\nu)={(c\Delta{t}b(\nu,T)\sigma_a(\nu) aT_j^4V_j+E_j^t(\nu)V_j)\over{N^c_j(\nu)}}.
+	\end{equation}
+	The photon energy density at any one time in a given cell $j$ can be expressed as
+	\begin{equation}
+	\label{censusTally}
+	E_j(\nu)\equiv\lim_{N_j \to +\infty}P^c_j(\nu)w_j(\nu)N_j(\nu).
+	\end{equation}
+	where $ P^c_j(\nu) $ is the census probability for cell $j$, $w_j(\nu)$ is the weight of each particle, and $N_j(\nu)$ is the number of particles with frequency $\nu$ in the cell $j$. This should be equal to the total number of particles with frequency $\nu$ that are created in the cell, enter the cell from surrounding cells, and scatter in the cell from a different frequency into frequency $\nu$.
+	\begin{equation}
+	\label{numParticles} 
+	N_j(\nu)=\sum_{i=1}^N{P^l_{ij}(\nu)}N_i(\nu)+N^c_j(\nu)+P_s(\nu)\int^\infty_0d\nu' P^s(\nu')N_j(\nu')
+	\end{equation}
+	Now it is possible to substitute equation \ref{numParticles} into equation \ref{censusTally}.
+	\begin{eqnarray}
+	\label{censusTally2}
+	E_j(\nu)=& &P^c_j(\nu)w_j(\nu)\sum_{i=1;i\neq{j}}^N{P^l_{ij}(\nu)}N_i(\nu)+\\& & \nonumber
+		P^c_j(\nu)w_j(\nu)N^c_j(\nu)+P^c_jw_j(\nu)P_s(\nu)\int^\infty_0d\nu' P^s(\nu')N_j(\nu')
+	\end{eqnarray}
+	The source term in equation \ref{censusTally2} can be rewritten such that
+	\begin{equation}
+	\label{censusSourceTerm}
+	P^c_j(\nu)w_j(\nu)N^c_j(\nu)={P_{th}(\nu)c\Delta{t}\sigma_pfaT_t^4+E_j^t(\nu)\over{D_j(\nu)}}.
+	\end{equation}
+	Using equations \ref{leakageProb}, \ref{censusTally}, and \ref{censusProb} the leakage term can be rewritten such that
+	\begin{eqnarray}
+	\label{censusLeakageTerm}
+	P^c_j(\nu)w_j(\nu)\sum_{i=1}^N{P^l_{ij}(\nu)}N_i(\nu)& &={1\over{D_j}}{\sum_{i=1;i\neq{j}}^N{\mathcal{F}_{ji}(\nu)w_pN_i\over{D_i(\nu)}}} \\& & \nonumber
+	={\sum_{i=1;i\neq{j}}^N{\mathcal{F}_{ji}(\nu)E_i\over{D_j(\nu)}}}
+	\end{eqnarray}
+	The scatter term of equation \ref{censusTally2} can now be rewritten using equations \ref{censusTally} and \ref{censusProb} yielding;
+	\begin{equation}
+	\label{censusScatteringTerm}
+	P^c_j(\nu)w_j(\nu)P_s(\nu)\int^\infty_0d\nu' P^s(\nu')N_j(\nu')={P_s(\nu)\over{D_j(\nu)}}{\int{d\nu'}E_j(r,\nu')\sigma(\nu')_s}
+	\end{equation}
+	Rewriting equation \ref{censusTally2} with equations \ref{censusSourceTerm}, \ref{censusLeakageTerm}, and \ref{censusScatteringTerm} and replacing the probabilities with associated matrix terms yields;
+	\begin{equation}
+	\label{censusTallyFinal}
+	E_j=Q_jD_j^{-1}+\sum_{i=1}^N{h_{ji}E_i}
+	\end{equation}
+	Using equation \ref{censusTally2} with equations \ref{censusSourceTerm}, \ref{censusLeakageTerm}, and \ref{censusScatteringTerm} and multiplying $D_j\over{c\Delta{t}}$ by both sides will yield the following result;
+	\begin{eqnarray}
+	\label{ProbabilitiesDiffusion}
+	& &{1\over{c}}{\Delta{E(\nu)_j}\over{\Delta{t}}} + \sum_{i=1}^N\mathcal{F}_{ij}(v)E_i(\nu)=\nonumber \\& & -E_j(\nu)(\sigma_s(\nu)_j+\sigma_a(\nu)_j)+P_{th}(\nu)\sigma_pfaT^4\nonumber \\& & +P_s({\nu}){\int{d\nu}E_j(\nu)\sigma(\nu)_s}.
+	\end{eqnarray}
+	This shows that if the system of probabilities defined above was solved with an infinite number of particles $E_j(\nu)$ would be equal to $E^{t+1}_j(\nu)$.
+
+	For the right albedo boundary condition, the diagonal term can be expressed as
+	\begin{eqnarray}
+	\label{albedoBoundaryD}
+	&&D_a=1+c\Delta{t}\sigma(\nu){f(T_J)}+c\Delta{t}\sigma(\nu){(1-f(T_J))}\nonumber \\ && +{c2\Delta{t}D_{J}(\nu)D_{J-1}(\nu)\over{\Delta{x_J}\left(\Delta{x_{J-1}}D_{J}(\nu)+\Delta{x_{J}}D_{J-1}(\nu)\right)}}+{c2\Delta{t}D_J(\nu)\left({1-\gamma\over{1+\gamma}}\right)\over{\Delta{x_J}\left(\left({1-\gamma\over{1+\gamma}}\right)+{4D_J(\nu)\over{\Delta{x}_J}}\right)}}.
+	\end{eqnarray}
+	For the incident flux boundary condition, the diagonal term and the source term can be expressed as 
+	\begin{eqnarray}
+	\label{incidentBoundaryD}
+	&&D_{if}=1+c\Delta{t}\sigma(\nu){f(T_J)}+c\Delta{t}\sigma(\nu){(1-f(T_J))}\nonumber \\ && +{c2\Delta{t}D_{J}(\nu)D_{J-1}(\nu)\over{\Delta{x_J}\left(\Delta{x_{J-1}}D_{J}(\nu)+\Delta{x_{J}}D_{J-1}(\nu)\right)}}+{c2\Delta{t}D_J(\nu)\over{\Delta{x_J}\left(1+{4D_J(\nu)\over{\Delta{x}_J}}\right)}}\end{eqnarray}
+	and
+	\begin{equation}
+	\label{boundarySourceQ}
+	Q_{if}=c\Delta{t}\sigma_p(T_J)f(T_J)aT^{t^4}_J+E_J^t+{c8\Delta{t}D_J(\nu){F_o}\over{\Delta{x_J}\left(1+{4D_J(\nu)\over{\Delta{x}_J}}\right)}}.
+	\end{equation}
+	For the boundary cells it is necessary to define a boundary leakage probability ($P^{b}$) and a boundary source probability $P^{b,q}$. The albedo boundary leakage probability is expressed as;
+	\begin{equation}
+	\label{boundaryLeakageProbAl}
+	P^{bl}_a(\nu)={{c2\Delta{t}D_J(\nu)\left({1-\gamma\over{1+\gamma}}\right)\over{\Delta{x_J}\left(\left({1-\gamma\over{1+\gamma}}\right)+{4D_J(\nu)\over{\Delta{x}}}\right)}}\over{D_a(\nu)}}.
+	\end{equation}
+	The incident flux boundary leakage probability is expressed as;
+	\begin{equation}
+	\label{boundaryLeakageProbIF}
+	P^{bl}_{if}(\nu)={{c2\Delta{t}D_J\over{\Delta{x_J}\left(1+{4D_J(\nu)\over{\Delta{x}}}\right)}}\over{D_{if}(\nu)}}.
+	\end{equation}
+	For these boundary cells the source probability shown in equation \ref{sourceProb} would remain true with the new value of $Q$ defined in equation \ref{boundarySourceQ} for the incident flux boundary, or the value of $Q$ defined by equation \ref{Q_j} for the albedo boundary. If the appropriate boundary leakage probability, either albedo or incident flux depending on user specifications, was add to the total leakage probability defined by equation \ref{totalLeakageProb} the census tally (equation \ref{censusTally2}) will yields the correct results for the right boundary cell equations. This will also be true for the left boundary conditions as defined in Section \ref{sec:Transport-Discret-Boundary-Cells}.
+	
+	If an infinite number of particles were simulated, this method would yield the result as defined in equation \ref{linearMC}. Using this method, it is possible to solve for the photon energy density at the end of a single time step. However, it is not possible to recalculate the material energy density, which is necessary to calculate time steps in sequence, without including more probabilities and tallies. To solve for the material energy density at the end of the time step it is necessary to invert the equation of state (equation \ref{EqState}). This is done by creating an emission source tally and an absorption tally. The absorption tally can be defined as the amount of energy absorbed into the material over a time step
+	\begin{equation}
+	\label{absorptionTally}
+	E^a_j(\nu)=P^a_j(\nu)w_pN_j
+	\end{equation}
+	where $P^a_j(\nu)$ is the probability of absorption into the material of cell j. The {\it absorption probability} can be expressed as;
+	\begin{equation}
+	\label{absorptionProb}
+	P^a_j(\nu)={c\Delta{t}\sigma(\nu){f(T_j)}\over{D_j(\nu)}}
+	\end{equation}
+	As the Fleck factor ($f(T_j)$) approaches zero, the probability of absorption goes to zero. This is true for systems that are purely scattering. As the opacity gets very large, the probability of absorption goes to one. If equation \ref{absorptionProb} is subsituted into equation \ref{absorptionTally} the following expresssion can be made for the energy absorbed in cell j;
+	\begin{equation}
+	\label{energyAbsorbed}
+	E^a_j(\nu)={c\Delta{t}\sigma(\nu){f(T_j)}w_pN_j\over{D_j(\nu)}}=c\Delta{t}\sigma(\nu){f(T_j)}P^c_j(\nu)w_pN_j.
+	\end{equation}
+	Given the definition in equation \ref{censusTally2}
+	\begin{equation}
+	\label{reducedEnergyAbsorbed}
+	E^a_j(\nu)=\int{d\nu}c\Delta{t}\sigma(\nu){f(T_j)}E_j(\nu).
+	\end{equation}
+	Knowing that $E_j(\nu)$ is an approximation for $E^{t+1}_j(\nu)$ equation \ref{EqState} can be rewritten using equation \ref{reducedEnergyAbsorbed}.
+	\begin{equation}
+	\label{EqState}
+	\Delta{E_{m_j}}=\int{d\nu}c\Delta{t}\sigma(\nu){f(T_j)}E_j(\nu)-c\Delta{t}\sigma_p(T_j) f(T_j){aT^{t^4}_j}.
+	\end{equation}
+	This shows that the change in the material energy density can be determined using the absorption tally defined above.
+
+\belowSubSecSkip
+
+
+%=====================================================================%
+% SubSection:                        	                              %
+%     Implicit Monte Carlo: Summary %
+%=====================================================================%
+\subsection{Summary}
+\label{sec:MonteCarlo-Summary}
+
+\noindent
+	\indent This section describes the matrix manipulations required to get the linear system in a form that is solvable via Monte Carlo. After the matrix manipulations are performed the probabilities are derived along with their associated proofs to be used with the Monte Carlo Method. This includes the development of the tallies which are required to produce the photon energy density and the material energy density at the next time step. This section also includes the frequency distribution functions associated with the thermal and scattering sources.
+

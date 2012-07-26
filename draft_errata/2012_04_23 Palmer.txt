@@ -1,0 +1,65 @@
+Paul,
+
+I am attaching a copy of Elan Somasundarum's MS thesis for you to use as a comparator.  Pay particular attention to his first chapter, and when you read it, think about the differences between the tone and style of language the two of you are using.  Here are some other things you need to address in your writing:
+
+1. Your first page contains a number of historical references, and there are no citations in the literature.  Any statement of fact that you make, that is not your own work, should be accompanied by a citation.
+
+2. This is a formal document.  Think of it as a lab report.  When you write, use simple sentence structures, and avoid the temptation to be clever or entertaining.  If you want to be clever or entertaining, you can include this in your acknowledgments.
+
+4.  You need to get your citations working now.  Writing without citing literature is very dangerous, and leads to unintended attribution of others' work to the author.
+
+
+6. The introductory chapter needs to finish with a statement of your research objectives, and the preceding text should very obviously motivate the need for and significance of your work.  You should make sure that your reader knows that people use IMC to solve real problems of practical interest, and that the method has characteristics which could use improving.  Citing IMC research here will be very important.
+
+[People gauge the impact of research by the number of researchers working in the area.  If there is only one person working on something, there is reason to be suspicious of its value...]
+
+7. "The subset of general numerical methods for particle transport I will focus on is stochastic methods." - Avoid the first person at all costs.  You can use "we" if you need to, but never I or me.
+
+8. "The genesis of this method is commonly attributed to Stan Ulam [?]. Ulam shared his ideas with John von Neumann in 1946 and he in turn began the development of Monte Carlo methods. In some unpublished remarks captured by Roget Eckhardt, Ulam describes his thought development:"
+
+9. How is it possible for you to introduce the IMC equations _without_ showing the IMC equations?
+
+10.  Your literature review currently contains only three papers?  In this way, you give the reader the impression that there are only three previous contributions in the field that matter to you.  This is an inappropriate impression, and demonstrates ignorance on your part.  You need to spend some time looking through the literature to see what others have done to determine whether it deserves mention in your thesis.  The papers you are including are there, I expect, primarily because others have pointed you to them.  Broaden your scope and increase your investment in the work you have done.
+
+11. I notice that there are a lot of details left "TODO" in the document you sent me.  As we iterate on your writing, I would like you to send me complete drafts of sections.  It is fine that this first document is not finished, but from now on, I want you to complete a section before you send it to me.  That way, while I am revising, you can be working on the next section.
+
+12.  Some examples of language that sounds like you are trying to be too clever in your writing:
+
+- "The physical nature of radiative heat is described by Planck's description..."
+- "Really, the spectrum of photon emission has simply shifted
+to the point where photons with a wavelength corresponding to red light dominates."  Avoid "really" and the rest of the sentence is awkward (photons dominates...)
+- "however, in relatively high temperatures"  In temperatures?  Do you mean at temperatures, or in materials with relatively high temperatures?
+- "in fact, the photon emission term relies on the fourth power of temperature."  In what way does it rely on temperature?
+- "... the radiative heat transfer equations can be reformed to
+a form..."
+- ' "Boundedness" refers to the ability of the code to return results that are physically viable.' In the previous sentence you are talking about equations, and in this sentence you are talking about a code.  Is the problem with the equations, or with their solution on a computer?
+- "Clearly this is unbounded,..."  "Clearly" is pretentious.  If others don't see what is clear to you, they feel like you are talking down to them.
+
+13.  I think what you have now is a bit redundant, in that you mention Fleck and Cummings, Larsen and Mercier and Wollaber et. al. twice in two chapters.  Combine the two chapters, and mention them only once in motivating your work.
+
+14.  Always, always be precise in your language.  For example, you say: "The work of this thesis is to remove some of the assumptions made in the DMP and
+implement it rigorously into an existing radiative heat transfer code and demonstrate fidelity in multiple dimensions, non-equilibrium initial conditions, and problems other than the Marshak wave."  You should talk about your research objectives, and specifically state how you are extending the previous research.  Your objectives are to extend the discrete maximum principle development to include:
+
+* multiple spatial dimensions,
+* frequency dependence,
+* non-equilibrium initial conditions,
+
+and to test the DMP predictions against the behavior of an IMC code for various physical problems.
+
+15.  You don't define the weak maximum principle.
+
+16.  What does pseudo-analytically mean in the context of "While this initial DMP was derived with some simplifying assumptions and implemented pseudo-analytically..."
+
+17.  Time steps and spatial cells, not spatial steps.  We need to avoid confusion...
+
+18. "Additionally, the only problem run..."  This is colloquial language.  You can talk about performing simulations, or solving test problems, but don't use the word "run".
+
+19.  Section 2.4 concerns me.  Are these results from previously published research, or your results?  Try to avoid emotive language such as "The discrete maximum principle of Wollaber, Larsen, and Densmore is clearly a huge step in the right direction, and serves ..."  Clearly is pretentious and huge is imprecise.
+
+20.  Just to make me happy, please hold off on sending me any writing for your conclusions section, as it is difficult for me to understand how you can draw conclusions without results.
+
+I hope this is helpful to you.  I don't mean to tell you to "bring me another rock", but you've definitely got significant revisions to complete.  Also, I am not sure what you are doing with the thesis template that you received, but it is definitely not in the proper format.  On the next go around, please send me a zipped, tar-ed version of everything you are using to create the thesis.
+
+Thanks,
+
+TP 

@@ -1,0 +1,88 @@
+\documentclass[12pt,letterpaper]{article}
+\usepackage{standard} %OSU formatting
+\usepackage{personal}
+\usepackage{amsmath}
+%\usepackage{fullpage}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{graphics}
+\usepackage{url}
+\usepackage{textcomp}
+\usepackage{setspace}
+\usepackage[toc]{glossaries}
+
+\makeglossaries
+
+%opening
+%\title{Expanding the Discrete Maximum Principle}
+%\author{Paul W. Talbot\\ \\ \\
+%	  \large A THESIS \\\normalsize in partial fulfillment of the\\\normalsize requiremnts for %the degree of \\ \large Master of Science
+% \\ \\\normalsize Under the Advisement of\\
+%        Dr. Todd Palmer\\\small {} \\ \normalsize
+%	Nuclear Engineering and Rad. Health Physics Dept.\\
+%        \normalsize Oregon State University}
+
+\date{date TBD}
+
+%\includeonly{DMP_NoEquib_implement,DMP_NoEquib_Discretize}
+%Research Questions: 
+%  How does the DMP need to be modified in order to become general in out-of-
+%    equilibrium conditions?
+%  How does the DMP need to be modified to consider multiple temperature
+%    gradients?
+%  How does the DMP need to be approximated to be implemented in use code?
+
+\SetDoubleSpace
+\begin{document}
+\include{./sections/thesis_glossary}
+%\maketitle
+
+%\begin{abstract}
+%In recent papers regarding the Discrete Maximum Principle (DMP) for the 
+%Implicit Monte Carlo equations, a model problem is considered for the 
+%first time-step under the assumption that the initial temperatures in 
+%the radiation field and coupled material are in equilibrium.   In this 
+%work, we have removed the equilibrium assumption and introduced 
+%approximations to allow computation of the DMP at the beginning of each 
+%time step.  An additional generalization is performed that allows the 
+%DMP to apply to each cell, not just the boundary cell.  We have 
+%integrated these calculations, along with unit tests, into Jayenne 
+%project software as a step toward generating a physics-based time-step 
+%limiter for the IMC equations.
+%\end{abstract}
+
+
+\include{./sections/thesis_abstract}
+\include{./sections/thesis_copyright}
+\include{./sections/thesis_title}
+\newpage
+\include{./sections/thesis_approval}
+%\include{./sections/thesis_ack}
+
+\pagestyle{startlists}\clearpage
+\tableofcontents \clearpage
+\listoffigures \clearpage
+\listoftables \clearpage
+\pagestyle{endlists}\clearpage
+
+\thispagestyle{empty}
+\section*{}
+\clearpage
+
+\pagestyle{myheadings}
+\ResetDoubleSpace
+
+\include{./sections/thesis_intro}
+\include{./sections/thesis_imc}
+\include{./sections/thesis_methods}
+\include{./sections/thesis_results}
+\include{./sections/thesis_conclusions}
+
+\ResetSingleSpace
+
+%\include{./sections/thesis_refs}
+\bibliographystyle{amsplain}
+\bibliography{./bibliography/imcref}
+%\appendix
+
+\end{document}

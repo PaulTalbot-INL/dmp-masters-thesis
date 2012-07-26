@@ -1,0 +1,196 @@
+%=================================================%
+% Section:                        	              %
+%    Difference Formulation%
+%=================================================%
+
+\begin{center}
+\section{Difference Formulation}
+\label{sec:DifferenceFormulation}
+\end{center}
+
+%====================================================================%
+% SubSection:                        	                             %
+%    Difference Formulation: Introduction %
+%====================================================================%
+\aboveSubSecSkip
+
+\subsection{Introduction}
+\label{sec:DifferenceFormulation-Intro}
+
+\noindent
+	\indent In this chapter the difference formulation will be derived for the frequency dependent implicit diffusion and material energy balance equations. We demonstrate that the application of the difference formulation does not change the converged solution. The difference formulation is a variance reduction technique which changes the source of the problem to focus the computational work on parts of the system that are rapidly changing[Bro 2005]. The difference formulation in-dues subtracting a differential time and streaming operator applied to the Planckian source from both sides of the equation. This results in a new ``differenced'' energy density, defined as;
+	\begin{equation}
+	\label{newEnergyDensity}
+	E^{t+1}_{d}(r)=E^{t+1}(r)-B{(v,T_{d}(r))}.
+	\end{equation}
+	Here $B$ denotes the Planck distribution (equation \ref{newPlanck}) integrated over all angle and $T_d(r)$ is the ``differencing'' temperature used for the subtracted Planckian source.
+
+\belowSubSecSkip
+
+%=====================================================================%
+% SubSection:                        	                              %
+%     Difference Formulation: Diffusion Equation                      %
+%=====================================================================%
+\subsection{Diffusion Equation}
+\label{sec:DifferenceFormulation-Diffusion-Equation}
+
+\noindent
+	\indent The photon energy density differencing shown in equation \ref{newEnergyDensity} can be used to rewrite the diffusion equation (equation \ref{finalDiffusion}) in a new form.
+	\begin{eqnarray}
+	\label{differenceFormulation1}
+	& &{1\over{c}}{\Delta{E_d(r,\nu)}\over{\Delta{t}}} + \nabla{F^{t+1}_{d}(r,\nu)}=\nonumber \\& & -E^{t+1}_{d}(r,\nu)\sigma(\nu)+{b(\nu,T(r))}\sigma(\nu)f(T(r)) aT^4(r)\nonumber \\& & +{\sigma(\nu)b(\nu,T(r))\over{\sigma_p}}{\int{d\nu}E^{t+1}_{d}(r,\nu)\sigma(\nu)(1-f(T(r)))}\nonumber \\& &
+	-b(\nu,T_d(r))aT_d^4(r)\sigma(\nu)\nonumber \\& &
+	+{\sigma(\nu)b(\nu,T(r))\over{\sigma_p}}{\int{d\nu}b(\nu,T_d(r))aT_d^4(r)\sigma(\nu)(1-f(T(r)))}\nonumber \\& &
+	-{1\over{c}}{\Delta{b(\nu,T_d(r))aT_d^4(r)}\over{\Delta{t}}} - \nabla{\left(-D\nabla{b(\nu,T_d(r))}aT_d^4(r)\right)}.
+	\end{eqnarray}
+	Where the $T_d$ is a user definable temperature chosen for the differencing. If the new scattering term containing the normalized Planckian for the ``differencing'' temperature in equation \ref{differenceFormulation1} is integrated and expanded, the new form of the difference diffusion equation is;
+	\begin{eqnarray}
+	\label{differenceFormulation2}
+	& &{1\over{c}}{\Delta{E_d(r,\nu)}\over{\Delta{t}}} + \nabla{F^{t+1}_{d}(r,\nu)}=\nonumber \\& & -E^{t+1}_{d}(r,\nu)\sigma(\nu)+{\sigma(\nu)b(\nu,T(r))\over{\sigma_p}}{\int{d\nu}E^{t+1}_{d}(r,\nu)\sigma(\nu)(1-f(T(r)))}\nonumber \\& &
+	+b(\nu,T(r))\sigma(\nu){f(T(r))}a\left(T^4(r)-T_d^4(r){\sigma_{d_p}\over{\sigma_p}}\right)\nonumber \\& & +aT_d^4(r)\left({\sigma_{d_p}\over{\sigma_p}}b(\nu,T(r))\sigma(\nu)-b(\nu,T_d(r))\sigma(\nu)\right)\nonumber \\& &
+	-{1\over{c}}{\Delta{b(\nu,T_d(r))aT_d^4(r)}\over{\Delta{t}}} - \nabla{\left(-D\nabla{b(\nu,T_d(r))}aT_d^4(r)\right)}.
+	\end{eqnarray}
+	Since the differenced temperature is time independent for a single time step, the time derivative of the difference term is zero. However, the difference temperature is dependent on space and using the second order differencing introduced in the previous chapter, the difference spatial operator will become;
+	\begin{eqnarray}
+	\label{differencedStreaming}
+	&&\nabla{(-D\nabla{b(\nu,T_d(r))}aT_d^4(r))}=\nonumber \\ & &
+	-c{2D_j(\nu)D_{j+1}(\nu)\over{\Delta{x_j}\left(\Delta{x_{j+1}}D_j(\nu)+\Delta{x_{j}}D_{j+1}(\nu)\right)}}\left(b(\nu,T_{d_{j+1}})aT_{d_{j+1}}^4-b(\nu,T_{d_{j}})aT_{d_{j}}^4\right)\nonumber \\ & & +c{2D_{j-1}(\nu)D_{j}(\nu)\over{\Delta{x_j}\left(\Delta{x_{j}}D_{j-1}(\nu)+\Delta{x_{j-1}}D_{j}(\nu)\right)}}\left(b(\nu,T_{d_{j}})aT_{d_{j}}^4-b(\nu,T_{d_{j-1}})aT_{d_{j-1}}^4\right).\nonumber \\& &
+	\end{eqnarray}
+
+	It is possible to combine equations \ref{differenceFormulation2} and \ref{differencedStreaming} to yield a familiar form of the diffusion equation (equation \ref{finalDiffusion}). 
+	\begin{eqnarray}
+	\label{differenceFormulation3}
+	& &{1\over{c}}{\Delta{E_d(r,\nu)}\over{\Delta{t}}} + \nabla{F^{t+1}_{d}(r,\nu)}=\nonumber \\& & -E^{t+1}_{d}(r,\nu)\sigma(\nu)+{\sigma(\nu)b(\nu,T(r))\over{\sigma_p}}{\int{d\nu}E^{t+1}_{d}(r,\nu)\sigma(\nu)(1-f)}\nonumber \\& &
+	- \nabla{\left(-D(\nu)\nabla{b(\nu,T_d(r))}aT_d^4(r)\right)}.
+	\end{eqnarray}
+	In fact this is identical to equation \ref{finalDiffusion} with a new source term to replace the thermal emission source. This is true if the differencing temperature is constant over a single time step and the difference temperature is equal to the local material temperature. 
+
+	If the discretization scheme applied to equation \ref{finalDiffusion} in Section \ref{sec:Transport-Discret} is applied to equation \ref{differenceFormulation3}, the diffusion equation would take on the following form;
+	\begin{equation}
+	\label{disDiff_d}
+	A_d(\nu)E_{d,{j-1}}^{t+1}(\nu) + D_d(\nu)E_{d,j}^{t+1}(\nu) + C_d(\nu)E_{d,{j+1}}^{t+1}(\nu) = Q_{d,j}^t(\nu).
+	\end{equation}
+	Where
+	\begin{equation}
+	\label{distDiffA_d}
+	A_d(\nu)=-{c2\Delta{t}D_{j-1}(\nu)D_{j}(\nu)\over{\Delta{x_j}\left(\Delta{x_{j}}D_{j-1}(\nu)+\Delta{x_{j-1}}D_{j}(\nu)\right)}},
+	\end{equation}
+	\begin{equation}
+	\label{distDiffC_d}
+	C_d(\nu)=-{c2\Delta{t}D_{j}(\nu)D_{j+1}(\nu)\over{\Delta{x_j}\left(\Delta{x_{j+1}}D_{j}(\nu)+\Delta{x_{j}}D_{j+1}(\nu)\right)}},
+	\end{equation}
+	\begin{equation}
+	\label{distDiffD_d}
+	D_d(\nu)=1+c\Delta{t}\sigma(\nu){f(T_j)}+c\Delta{t}\sigma(\nu){(1-f(T_j))} -A_d(\nu) -C_d(\nu), 
+	\end{equation}
+	and
+	\begin{eqnarray}
+	\label{distDiffQ_d}
+	& &Q_d(\nu)=\nonumber \\& & c{2D_j(\nu)D_{j+1}(\nu)\over{\Delta{x_j}\left(\Delta{x_{j+1}}D_j(\nu)+\Delta{x_{j}}D_{j+1}(\nu)\right)}}\left(b(\nu,T_{d,{j+1}})aT_{d,{j+1}}^4-b(\nu,T_{d,{j}})aT_{d,{j}}^4\right)\nonumber \\ & & -c{2D_{j-1}(\nu)D_{j}(\nu)\over{\Delta{x_j}\left(\Delta{x_{j}}D_{j-1}(\nu)+\Delta{x_{j-1}}D_{j}(\nu)\right)}}\left(b(\nu,T_{d,{j}})aT_{d,{j}}^4-b(\nu,T_{d,{j-1}})aT_{d,{j-1}}^4\right)\nonumber \\ & &+E_{d,j}^t.
+	\end{eqnarray}
+	This coefficient matrix is the same as that previously derived but with a different source term. This means all the probabilities developed in Section \ref{sec:MonteCarlo} are applicable to simulations using the difference formulation. The only difference is that the system is solving for the ``differenced'' energy density ($E_d^{t+1}(\nu)$)  rather than the actual energy density ($E^{t+1}(\nu)$). After the ``differenced'' energy density is found for a given time step, it is possible to determine the actual energy density by adding $B(\nu,T_d(r))$ to the ``differenced'' energy density.
+
+\belowSubSecSkip
+
+%=====================================================================%
+% SubSection:                        	                              %
+%      Difference Formulation: Material Energy Balance Equation       %
+%=====================================================================%
+\subsection{Material Energy Balance}
+\label{sec:DifferenceFormulation-Material-Energy-Balance}	
+
+\noindent
+	\indent The difference formulation also changes the material energy balance equation. The absorption tally defined in the Monte Carlo section (Section \ref{sec:MonteCarlo-Probabilities}) is identical in the differenced system to that of the standard system. However, the census tally involves $E_d(\nu)$ rather than $E(\nu)$. Given the difference formulation the energy absorbed into the material ($E^a_{d_j}(\nu)$) can be written as:
+	\begin{equation}
+	 \label{differencedAbsorptionTally}
+		E^a_{d,j}(\nu)=\int{d\nu}c\Delta{t}\sigma(\nu){f}E_{d,j}(\nu)
+	\end{equation}
+	Using equation \ref{newEnergyDensity} yields,
+	\begin{equation}
+	 \label{newDifferencedAbsorptionTally}
+		E^a_{d,j}(\nu)=\int{d\nu}c\Delta{t}\sigma(\nu){f(T_j)}\left(E(\nu)-B{(v,T_{d}(r))}(\nu)\right)
+	\end{equation}
+	Integrating simplifies the expression to the Planck distribution.
+	\begin{equation}
+	 \label{newDifferencedAbsorptionTally2}
+		E^a_{d_j}(\nu)=\int{d\nu}c\Delta{t}\sigma(\nu){f}E(\nu)-c\Delta{t}\sigma_p{f}aT_d^4
+	\end{equation}
+	This means that the absorption tally of $E_d(\nu)$ is equal to the change in the material energy density. 
+	\begin{equation}
+	 \label{newDifferencedAbsorptionTally3}
+		\Delta{E_m}=E^a_{d,j}(\nu).
+	\end{equation}
+
+
+\belowSubSecSkip
+
+%=====================================================================%
+% SubSection:                        	                              %
+%      Difference Formulation: Frequency Distribution       %
+%=====================================================================%
+\subsection{Frequency Distribution}
+\label{sec:DifferenceFormulation-Frequency-Distribution}	
+
+\noindent
+	\indent The derivation of the difference formulation is, in practice, simple. Creating the appropriate frequency distribution for sampling is slightly more complex. In the standard Monte Carlo case, the frequency distribution is fairly intuitive and is described by a single Planckian (equation \ref{thermalDistribution}) and the current census distribution. When the difference formulation is used, there are a number of new source distributions that must be sampled. The first of these distributions is the initial census distribution. In the standard form, the initial census distribution carries over from the census distribution at the end of the last time step. In the difference formulation, the Planck function is subtracted from the initial photon density (equation \ref{newEnergyDensity}) changing not only the magnitude of the initial differenced photon density, but also changing the frequency distribution. This means that the energy needs to be either added into the photon energy density using appropriate frequency bins (for multigroup methods) or as particles (continuous or multigroup frequencies) with the following probability distribution function $PDF^{b}(\nu)$;
+	\begin{equation}
+	\label{differencedCensusFP}
+	PDF^{b}(\nu)={b(\nu,T_d)\over{\int^\infty_0d\nu{b(\nu,T_d)}}}={b(\nu,T_d)}
+	\end{equation}
+	For the grey case, this distribution is irrelevant and the differenced census energy can just be subtracted from the magnitude of the total census. In the multigroup or continuous energy case, if the subtracted difference energy is added to the census using a distribution of negatively weighted particles it may artificially increase the variance rather than decreasing it. In this case, the range of the census distribution is no longer non-negative; it now includes a range of negative values. To avoid this, it is possible to create a grouped frequency distribution function that spans the range of frequencies currently represented in census. If this is done, the new differenced census for each group can be expressed by;
+	\begin{equation}
+	\label{E_d}
+	E_d^k=E^k-aT_d^4\int^{\nu_k}_{\nu_{k-1}}d\nu{PDF^{b}(\nu)}=E^k-aT_d^4\int^{\nu_k}_{\nu_{k-1}}d\nu{b(\nu,T_d)}
+	\end{equation}
+
+	After the initial photon density has been modified it is necessary to determine the frequency distribution of the new difference formulation streaming source (equation \ref{differencedStreaming}). This streaming source term is treated as two separate sources, each with different opacity dependent coefficients. These two sources can be defined as;
+	\begin{eqnarray}
+	 \label{leftStreamingSource}
+	&&q_{d,{j-1}}(\nu)=\nonumber \\&& c{2D_{j-1}(\nu)D_{j}(\nu)\over{\Delta{x_j}\left(\Delta{x_{j}}D_{j-1}(\nu)+\Delta{x_{j-1}}D_{j}(\nu)\right)}}\left(b(\nu,T_{d,{j-1}})aT_{d,{j-1}}^4-b(\nu,T_{d,{j}})aT_{d,{j}}^4\right)\nonumber \\& &
+	\end{eqnarray}
+	and
+	\begin{eqnarray}
+	 \label{rightStreamingSource}
+	&&q_{d,{j+1}}(\nu)=\nonumber \\&& c{2D_j(\nu)D_{j+1}(\nu)\over{\Delta{x_j}\left(\Delta{x_{j+1}}D_j(\nu)+\Delta{x_{j}}D_{j+1}(\nu)\right)}}\left(b(\nu,T_{d,{j+1}})aT_{d,{j+1}}^4-b(\nu,T,{d_{j}})aT_{d,{j}}^4\right)\nonumber \\& &
+	\end{eqnarray}
+	For multigroup methods it is possible to use equations \ref{leftStreamingSource} and \ref{rightStreamingSource} to get the frequency distribution. Using these equations the following probability distribution functions can be created;
+	\begin{equation}
+	\label{PDF_q_d_j-1}
+	PDF^{q_d}_{j-1}(\nu)={q_{d_{j-1}}(\nu)\over{\int^\infty_0d\nu q_{d_{j-1}}(\nu)}}
+	\end{equation}
+	and
+	\begin{equation}
+	\label{PDF_q_d_j+1}
+	PDF^{q_d}_{j+1}(\nu)={q_{d_{j+1}}(\nu)\over{\int^\infty_0d\nu q_{d_{j+1}}(\nu)}}
+	\end{equation}
+	Using these PDFs, cumulative distribution functions (CDF) can be created, and a random number between zero and one can be compared to these CDFs to determine the event type. With an infinite number of random numbers the function will yield the events in a quantity equal to their associated probabilities. The given CDF for the emission of any particle emitted from the differenced streaming source with multigroup opacities can be expressed as;
+	\begin{equation}
+	\label{CDF_q_d_j-1}
+	CDF^{q_d}_{j-1}(\nu_k)={\sum_0^k\int^{\nu_k}_{\nu_{k-1}}d\nu q_{d,{j-1}}(\nu)\over{\int^\infty_0d\nu q_{d,{j-1}}(\nu)}}
+	\end{equation}
+	and
+	\begin{equation}
+	\label{CDF_q_d_j+1}
+	CDF^{q_d}_{j+1}(\nu_k)={\sum_0^k\int^{\nu_k}_{\nu_{k-1}}d\nu q_{d,{j+1}}(\nu)\over{\int^\infty_0d\nu q_{d,{j+1}}(\nu)}}
+	\end{equation}
+	This method of frequency distribution determination can be computationally expensive if performed in this fashion for every frequency selection. Improved performance may be possible using tabulated functions or possibly some improved selection techniques similar to those shown by Brooks[Bro. 2005][Bro. 2006]. In Brooks' approach the streaming operator is independent of opacity, unlike the streaming source in our work. Tabulating the distribution functions is likely a more usable approach. After the new difference census value is determined, the amount of initially differenced energy must be added back into the system to obtain the energy density:
+	\begin{equation}
+	\label{finalEnergyDensity}
+	E^{t+1}(r)=E^{t+1}_{d}(r)+B{(v,T_{d}(r))}
+	\end{equation}
+	Again, it is necessary to consider the frequency distribution (described by equation \ref{differencedCensusFP}) when adding this energy back into the photon energy density solution. In this research, this addition is performed in the same fashion as the initial subtraction, with the exception of when no particles registered in census. In this case, particles were created with the frequency distribution of $b(\nu,T_d(r))$ and weights that sum to $aT^d(r)^4$. The frequency distribution of the normalized Planckian for this work was selected using the efficient algorithm described by Barnett and Canfield.[Bar. 1970] 
+	
+
+\belowSubSecSkip
+
+
+%=====================================================================%
+% SubSection:                        	                              %
+%     Implicit Monte Carlo: Summary %
+%=====================================================================%
+\subsection{Summary}
+\label{sec:DifferenceFormulation-Summary}
+
+\noindent
+	\indent In this section the difference formulation was derived for the diffusion equation, including detailed descriptions of the new streaming source associated with the difference formulation. The new streaming source was discretized using the second-order central differencing applied earlier to the diffusion equation in the standard form. We also derived the frequency distribution function as it relates to the new streaming source.
+

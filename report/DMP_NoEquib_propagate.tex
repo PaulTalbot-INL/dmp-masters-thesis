@@ -1,0 +1,169 @@
+\subsection{Propagating DMP}\label{propagate}
+An assumption throughout this paper thus far has been a Marshak boundary on the
+left and a generally uninteresting initial and right boundary condition. 
+This allowed us to assume only steep temperature gradients on one side ofthe
+left boundary cellduring the first time step. We now desire to apply the DMP in
+general to each cell in the mesh, so
+that an inequality similar to Eq.\ \eqref{DMP} can be computed for a cell with
+steep temperature gradients on
+multiple sides.  We will do this by accounting for impingent radiation on
+multiple faces of a cell, although we will continue to treat teh radiation as
+being isotropic and Planckian.  The primary location of the previous assumption
+allowed us to
+find the solution in Eq.\ \eqref{uncol_solve}.  This was then used to calculate
+the uncollided scalar intensity $\hat\phi_0$.  In the 1D case, $\hat\phi_0$ can
+be found more accurately as follows:
+\begin{equation}
+\hat\phi_1\equiv\int_{-1}^1 \hat I_i\ d\mu = \int_{-1}^0 \hat I_i\ d\mu + 
+  \int_0^1 \hat I_i\ d\mu. \label{uncol_gen}
+\end{equation}
+Because the initial conditions prescribe no uncollided intensity in a cell
+initially, the intensity present at a point $x$ can only originate from incident
+intensity on the boundaries.  The differential equation describing this is
+given in Eq.\ \eqref{uncol_ode} and is solved in Eq.\ \eqref{uncol_solve}. 
+There is physical meaning to the terms: $2\pi B_u$ represents the initial
+spectrum of intensity found at the Marshak boundary entering the cell, and
+$e^{-\Sigma x/\mu}$ attenuates this intensity through material interactions up
+to point $x$.  Hence, a similar expression for uncollided flux arriving at $x$
+from the right boundary can be derived as well.
+
+Let $B_L$ replace $B_u$ as the Planck radiation spectrum on the left boundary,
+and let $B_R$ represent a similar spectrum on the right boundary.  Similarly
+let $\hat I_{L,i}$ and $\hat I_{R,i}$ represent the incident uncollided
+intensity at the left and right right boundary, respectively.  Eq.\
+\eqref{uncol_mom1} becomes
+\begin{align}
+\hat\phi_1&\equiv\int_{-1}^1 \hat I_i\ d\mu \nonumber ,\\
+&=\int_{-1}^0 \hat I_{R,i}\ d\mu + 
+  \int_0^1 \hat I_{L,i}\ d\mu \nonumber ,\\
+&=\int_{-1}^0 \hat I_{R,i}\ d\mu +
+  \int_0^1 2\pi B_Le^{-\hat\Sigma x/\mu}\ d\mu. \label{uncol_gen2}
+\end{align}
+Because of the arbitrary definition of positive $\mu$, we expect $\hat I_{R,i}$
+to have a similar form to $\hat I_{L,i}$.  However, the attenuation term must
+be treated differently for negative $\mu$ radiation.  Because the radiation
+enters at the right and moves to the left, the attenuation distance for the
+right side becomes $\Delta_x-x$. Thus by inspection and symmetry,
+\begin{equation}
+\int_{-1}^0 \hat I_{R,i}\ d\mu
+  =\int_{-1}^0 2\pi B_R e^{-\hat\Sigma(\Delta_x-x)/\mu}\ d\mu.\label{IR1}
+\end{equation}
+To continue shaping this new first term to correlate with the second term,
+consider that in the first integral all values of $\mu$ are negative.  Given
+this condition,
+\[\mu=-|\mu|, \hspace{30pt} \mu\leq0.\]
+Substituting this into Eq.\ \eqref{IR1} and making a change of integration
+variable to $|\mu|$, we obtain an expression very similar to the second term in
+Eq.\ \eqref{uncol_gen2}:
+\begin{equation}
+\int_{-1}^0 \hat I_{R,i}\ d\mu = \int_0^1 2\pi B_R
+  e^{-\hat\Sigma(x-\Delta_x)/|\mu|}\ d|\mu|.
+\end{equation}
+Since the new attenuation coefficient is identical in form to that in Eq.\
+\eqref{uncol_solve}, the integral solution has the same form.  Thus,
+\begin{equation}
+\hat\phi_1=2\pi B_LE_2(\hat\Sigma x) +
+  2\pi B_RE_2\left(\hat\Sigma(\Delta_x-x)\right) \label{phi1_LR}
+\end{equation}
+Eq.\ \eqref{phi1_LR} is sufficiently different from Eq.\ \eqref{uncol_solve}
+that the original operator $L$ is divided into an operator $L_L$ for the left
+side and $L_R$ for the right:
+\begin{subequations}
+\begin{align}\label{L_LR}
+L_L(\xi)&\equiv\frac{1-f_0}{-D}\int_0^\infty\sigma_02\pi B_L\xi\ d\nu, \\
+L_R(\xi)&\equiv\frac{1-f_0}{-D}\int_0^\infty\sigma_02\pi B_R\xi\ d\nu,
+\end{align}
+\end{subequations}
+which, using the same procedure as in \cite{WolLarDen}, leads to a new
+particular solution for $\breve\phi_1$:
+\begin{align}
+\breve\phi^p_1=\frac{1}{\lambda^2}\bigg[
+  &-A-L_RE_2(\hat\Sigma(x-\Delta_x))+L_R\frac{\hat\Sigma}{2\lambda}\left(
+    e^{-\lambda x}g(x-\Delta_x)+
+    e^{\lambda x}E_1[(\lambda+\hat\Sigma)(\hat\Sigma(x-\Delta_x))]
+    \right)\nonumber\\
+  &-L_LE_2(\hat\Sigma x)+L_L\frac{\hat\Sigma}{2\lambda}\left(
+    e^{-\lambda x}g(x)+e^{\lambda x}E_1[(\lambda+\hat\Sigma)x]\right)\bigg],
+\end{align}
+where
+\begin{equation}
+g(x)\equiv\int\frac{e^{(\lambda-\hat\Sigma)x}}{x}dx=
+\begin{cases}
+\mbox{Ei}[(\lambda-\hat\Sigma)x], & \lambda\neq\hat\Sigma, \\
+\ln{x}, & \lambda=\hat\Sigma,
+\end{cases}
+\end{equation}
+which makes use of the extension to Ei(x) noted in \cite{MathFunc}:
+\[\mbox{Ei}(-x)\equiv-E_1(x),\; 0<x.\]
+
+Next we apply the Marshak and finite boundary conditions.  The homogeneous
+solution for $\breve\phi_1$ is the same as derived earlier, and we still set
+$c_2=0$ to preserve the condition in Eq.\ \eqref{infBC}.  After some algebraic
+manipulation, and noting the convenient equal divergence and limits described
+in \cite{WolLarDen}, it can be shown that the average energy deposited in a
+cell ($\tilde R$) follows the superposition principle for left and right sides
+of the cell.  That is to say,
+\[\tilde R = \tilde R_L + \tilde R_R.\]
+
+The temperature update in a cell then becomes
+\[\frac{c_v}{\Delta_t}(T_1-T_0)+f_0c\sigma_p aT_0^4=\tilde R_L+\tilde R_R,\]
+\begin{equation}
+T_1-T_0=\frac{\Delta_t}{c_v}(\tilde R_L+\tilde R_R-f_0c\sigma_p aT_0^4).
+\label{tempUpd}
+\end{equation}
+Two separate equations fall out of Eq.\ \eqref{tempUpd}, one for each side of
+the cell.  Since both the left boundary temperature $T_L$ and the right
+boundary temperature $T_R$ limit the time step in similar ways, we here
+define the maximum temperature
+\[T_m\equiv\mbox{max}(T_L,T_R). \]
+\begin{equation}\label{boundTempUpd}
+T_m-T_1=T_m-T_0-\frac{\Delta_t}{c_v}(\tilde R_L+\tilde R_R-f_0c\sigma_p aT_0^4),
+\end{equation}
+As in \cite{WolLarDen}, the maximum principle is only satisfied if the boundary
+temperature is greater than the update temperature, meaning the right side of
+Eq.\ \eqref{boundTempUpd} is positive:
+\begin{equation}\label{DMP_LR}
+T_m-T_0>\frac{\Delta_t}{c_v}(\tilde R_L+\tilde R_R-f_0c\sigma_p aT_0^4),
+\end{equation}
+or, rearranging, the maximum principle can be stated in the same form as that
+in \cite{WolLarDen},
+\begin{equation}
+\Delta_t < \frac{c_v(T_m-T_0)}{\tilde R_L(\Delta_x,\Delta_t)+\tilde
+  R_R(\Delta_x,\Delta_t) - f_0c\sigma_p aT_0^4},
+\end{equation}
+
+It should be noted that the term $T_m-T_0$ in the numerator here is misleading. 
+An analysis of the frequency-independent DMP leads to an inequality with
+$T_m^4-T_0^4$ in the denominator, for example.
+
+\subsection{Multidimensional Considerations}
+Given the results achieved in the one-dimensional case, the maximum principle in
+multiple dimensions can be extrapolated by adjusting
+$\tilde R$.  Since the average energy deposited ($\tilde R$) is
+separable in that it follows superposition rules, the composite term is as
+follows:
+\begin{equation}
+\tilde R_{tot} = \sum_{s=1}^S \tilde R_s(\Delta_x,\Delta_t),
+\end{equation}
+where $S$ is the number of faces on the cell in question and $s$ represents one
+of those faces.
+
+The question of what to use for $\Delta_x$, the spatial discretization, in
+higher dimensions is a valid one, and needs addressing.  In one dimension, it is
+obvious that the cell size is equal to its length. However, in multiple
+dimensions, the cell size is an area or volume, and linear distance
+becomes more difficult to define uniquely.  To resolve this, we turn to the work
+done by Bardsley and Dubi \cite{BardDub}, who expound the average-chord-length
+theorem developed by Dirac \cite{Dirac}. This theorem states that for any
+three-dimensional volume, the average chord length within that volume is given
+by
+\begin{equation}
+\bar\Delta_x = 4\frac{V}{A},
+\end{equation}
+where $V$ is the volume and $A$ is the surface area of the volume.  We use this
+definition to describe the value $\Delta_x$ in three dimensions to redefine the
+discrete maximum inequality
+\begin{equation}
+\Delta_t<\frac{c_v(T_m-T_0)}{\tilde R_{tot}(\Delta_x,\Delta_t)-
+  f_0c\sigma_paT_0^4},  \hspace{20pt} T_m=\mbox{max}(T_s).\label{FINAL dmp}
+\end{equation}

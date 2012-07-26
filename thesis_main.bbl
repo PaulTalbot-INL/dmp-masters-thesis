@@ -1,0 +1,72 @@
+\providecommand{\bysame}{\leavevmode\hbox to3em{\hrulefill}\thinspace}
+\providecommand{\MR}{\relax\ifhmode\unskip\space\fi MR }
+% \MRhref is called by the amsart/book/proc definition of \MR.
+\providecommand{\MRhref}[2]{%
+  \href{http://www.ams.org/mathscinet-getitem?mr=#1}{#2}
+}
+\providecommand{\href}[2]{#2}
+\begin{thebibliography}{10}
+
+\bibitem{MathFunc}
+M.~Abramowitz and I.~A. Stegun, \emph{Handbook of mathematical functions with
+  formulas, graphs, and mathematical tables}, Dover Publications, Inc., New
+  York, 1972.
+
+\bibitem{BardDub}
+J.~N. Bardlsey and A.~Dubi, \emph{Average transport path length in scattering
+  media}, SIAM Journal on Applied Mathematics \textbf{40} (1981), 71--77.
+
+\bibitem{Dirac}
+P.~A.~M. Dirac, \emph{Approximate rate of neutron multiplication for a solid of
+  arbitrary shape and density}, Declassified British Report MS-D-5, Part I
+  (1943).
+
+\bibitem{FleckCumm}
+J.~A. Fleck and J.~D. Cummings, \emph{An {I}mplicit {M}onte {C}arlo {S}cheme
+  for {C}alculating {T}ime and {F}requency {D}ependent {N}onlinear {R}adiation
+  {T}ransport}, J. Comp. Phys. \textbf{8} (1971), 313--342.
+
+\bibitem{Fleck2}
+Jr. J~A~Fleck, \emph{The calculation of nonlinear radiation transport by a
+  monte carlo method}, Computational Methods in the Physical Sciences
+  \textbf{1} (1963), 43.
+
+\bibitem{DenLar}
+E.~W.~Larsen J.~D.~Densmore, \emph{Asymptotic equilibrium diffusion analysis of
+  time-dependent monte carlo methods for grey radiative transfer}, J. Comp.
+  Phys. \textbf{199} (2004), 175--204.
+
+\bibitem{ddmc}
+T.~M. Evans M. W.~Buksas J.~D.~Densmore, T. J.~Urbatsch, \emph{A hybrid
+  transport-diffusion method for monte carlo radiative-transfer simulations},
+  J. Comp. Phys. \textbf{222} (2007), 485--503.
+
+\bibitem{CarterForest}
+C.~A.~Forest L.~L.~Carter, \emph{Nonlinear radiation transport simulation with
+  an implicit monte carlo method}, Tech. Rep. LA-5038, Los Alamos National
+  Laboratory (1973).
+
+\bibitem{LarsMerc}
+Edward~W. Larsen and Bertrand Mercier, \emph{Analysis of a {M}onte {C}arlo
+  method for nonlinear radiative transfer}, J. Comp. Phys. \textbf{71} (1987),
+  50--64.
+
+\bibitem{long}
+A.~Long, \emph{Todo}, MS Thesis, Oregon State University (2012).
+
+\bibitem{Nkaoua}
+T.~N'kaoua, \emph{Solution of the nonlinear radiative transfer equations by a
+  fully implicit matrix monte carlo method coupled with the rosseland diffusion
+  equation via domain decomposition}, SIAM J. Sci. Stat. Comput. \textbf{12}
+  (1991), 505.
+
+\bibitem{WolThesis}
+A.~B. Wollaber, \emph{Advanced monte carlo methods for thermal radiation
+  transport}, Ph.D. Thesis, University of Michigan (2008).
+
+\bibitem{WolLarDen}
+Allan~B. Wollaber, Edward~W. Larsen, and Jeffery~D. Densmore, \emph{Towards a
+  frequency-dependent discrete maximum principle for the {I}mplicit {M}onte
+  {C}arlo equations}, Proc. of ANS M\&C 2011, May 8-12, 2011.
+
+\end{thebibliography}

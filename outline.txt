@@ -1,0 +1,66 @@
+
+
+=========================
+= Multi-level Outline =
+=========================
+
+Introduction: No mathematics in this part, just history and theory!
+ - Scientific Solutions
+    :Benefits of solving physics eqns to society
+ - Numerical Modeling
+    :Advent of high-performance computing
+    :binary-based discrete methods
+ - Monte Carlo
+    :Stochastic methods
+    :abbreviated history: von Neumann
+    :example of using MC
+ - IMC
+    :RHT
+    :Fleck and Cummings
+    :nonlinearity
+ - DMP
+    :boundedness
+    :physical results
+    :parallels to other fields
+- Research Objectives
+
+Literature Review: Some non-original derivations in this section, summarize previous results
+ - Fleck and Cummings
+    :IMC equations derived
+    :noted problems for given time steps/spatial steps
+ - Larsen and Mercier
+    :Continuous maximum principle (derive?)
+    :discrepancy with experiment
+ - Wollaber, Larsen, Densmore
+    :derivation
+    :agrees with experiment
+    :pseudo-analytic
+    :limitations
+
+
+Methods: pretty much all derivation here
+ - Non-equilibrium initial conditions
+    :rad. field and material not necc. in agreement
+ - Multiple Sources/Gradients
+    :superposition
+ - Multiple Dimensions
+    :approximations to dx
+ - Multigroup Application
+    :discrete frequencies
+    :approximate summation/integration
+
+
+Results
+ - Comparison to Wollaber data
+    :very close fit at high dx,dt
+    :good fit at lower dx, dt
+ - Comparison to experiment
+    :improvement compared to analytic version
+   - 1D
+   - 2D
+   - Hohlraum
+
+Conclusions/Future Work
+ - Summary of accomplishment
+ - work going forward
+

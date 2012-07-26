@@ -1,0 +1,297 @@
+\section{Discretization}
+\subsection{Time, Part I}
+In a single time step $0\leq t\leq t_1$, the opacity and specific heat are
+treated explicitly at $t=0$ as $\sigma_0$ and $c_{v0}$ respectively.  Next, it
+is useful
+to define a few variables and constants:
+\begin{subequations}\label{defs}
+\begin{align}
+B(\nu,T) & =\mbox{Planck spectrum}
+  =\frac{15ac}{4\pi^5}\frac{\nu^3}{e^{\nu/T}-1},\\
+b(\nu,T) & =\mbox{normalized Plank spectrum}
+  =\frac{15}{\pi^4T^4} \frac{\nu^3}{e^{\nu/T}-1}, \\
+\sigma(\nu,T) & =\mbox{absorption opacity}=\frac{\gamma}{\nu^3}(1-e^{-\nu/T}),\\
+\sigma_p &
+  =\int_0^\infty b(\nu,T_0)\sigma(\nu,T_0)d\nu=\frac{15\gamma}{\pi^4T_0^3},\\
+f_0 & =\mbox{Fleck factor}=\frac{1}{1+\beta_0\sigma_0c\Delta_t},\\
+\beta_0 & =\frac{\partial aT_0^4/\partial T}{\partial
+  c_{v0}T_0/\partial T}=\frac{4aT_0^3}{c_{v0}},\\
+a & =\mbox{radiation constant}=0.01372 \frac{\mbox{jk}}{\mbox{cm$^3$keV$^4$}},\\
+c & =\mbox{speed of light}=299.792458 \mbox{cm $/$ sh}.
+\end{align}
+\end{subequations}
+With Eqs. \eqref{defs} defined and moving to a 1-dimensional geometry in the
+$x$-direction, Eqs. \eqref{be_rad} and \eqref{be_mat} take the following
+form, for the first time step, dropping dependency notation (see Appendix
+\ref{flcm}):
+\begin{subequations}\label{time_start}
+\begin{align}
+\frac{1}{c}\frac{\partial I}{\partial t} + \mu\frac{\partial I}{\partial x}
++\sigma I =
+  \frac{1-f_0}{2}\frac{\sigma_0b_0}{\sigma_p}\int_0^\infty\int_{-1}^1
+  \sigma_0 I\ d\mu\ d\nu + &\sigma_0 f_0 2\pi B_0, \nonumber\\& %\hspace{40pt}
+  0\leq x\leq\infty,\; |\mu|\leq 1,\; 0\leq t\leq t_1, \label{time_start_1}
+\end{align}
+\begin{equation}
+\frac{c_{v0}}{\Delta_t}(T_1-T_0)=\frac{f_0}{\Delta_t}\int_0^{\Delta_t}
+\int_0^\infty\int_ { -1 } ^1
+  \sigma_0(I-2\pi B_0)\ d\mu\ d\nu\ dt.
+\end{equation}
+
+The initial and boundary conditions are given by:
+\begin{equation}
+I(0,\mu,\nu,t)=2\pi B_u\equiv2\pi B(\nu,T_u), \hspace{30pt} 
+  0<\mu\leq1, \hspace{10pt} 0\leq t, \label{Bu_def}
+\end{equation}
+\begin{equation}
+I(\infty,\mu,\nu,t)=2\pi B_0\equiv2\pi B(\nu,T_0), \hspace{30pt}
+  -1\leq\mu\leq1,\hspace{10pt} 0\leq t,
+\end{equation}
+\begin{equation}
+ I(x,\mu,\nu,0)=I_i, \hspace{30pt}0\leq x\leq\infty, |\mu|<1 \label{initcond}.
+\end{equation}
+\end{subequations}
+Eq. \eqref{initcond} is the first deviation from \cite{WolLarDen}, where
+the initial intensity was set to the same properties as the right boundary
+condition, which assumes complete thermal equilibrium.
+
+
+\subsection{Space}
+As is necessary in most computational transport solutions, the continuous
+properties governed by Eqs.\hspace{3pt}\eqref{time_start} must be spatially
+discretized
+into $J$ distinct
+portions, or grid cells, each with a left boundary at $x_j$ and having width
+$\Delta_{x,j}=x_{j+1}-x_j$.  The average temperature within each cell is given
+by a
+temperature averaging function:
+\[T_j=\frac{1}{\Delta_{xj}}\int_{x_j}^{x_{j+1}}T(x)dx, \hspace{15pt}
+  0\leq j\leq J-1. \]
+In this manner, the discontinuous temperature approximation function $\tilde
+T(x)$ approximates the physical continuous temperature function $T(x)$ as
+follows:
+\[\tilde T(x)\equiv\sum_{j=0}^{J-1}\chi_j(x)T_j\approx T(x),\]
+where $\chi_j$ is a piecewise distribution, as follows:
+\begin{equation}
+\chi_j(x)\equiv
+\begin{cases}
+1 & x_j\leq x\leq x_{j+1}, \\
+0 & \mbox{otherwise}.
+\end{cases}
+\end{equation}
+Thus, temperature is often treated in as piecewise constant by
+using $\tilde T(x)$ instead of $T(x)$ for explicit terms in Eqs.
+\eqref{time_start} such as $\sigma$ and $B$.  The material equation then
+appears as follows:
+\begin{equation}
+\frac{\tilde c_{v0}}{\Delta_t}(T_{j,1}-T_{j,0}) + 
+  \tilde f_0 \tilde \sigma_p acT^4_{j,0} = 
+  \frac{\tilde f_0}{\Delta_{x,j}
+  \Delta_t}\int_0^\infty\tilde\sigma_0\int_{x_j}^{x_{j+1}}
+\int_{\Delta_t}\int_{-1}^1 I \ d\mu \ dt\  dx\  d\nu.
+\end{equation}
+
+\subsection{Time, Part II}
+The previous definitions, time-explicit coefficients, and grid data are typical
+for the IMC equations.  In the following sections, we introduce additional
+approximations in order to estimate the radiation energy deposited in the first
+cell.
+We start by assuming separability of the radiative
+intensity $I$ into the collided ($\breve I$) and uncollided ($\hat I$)
+parts so that $\hat I + \breve I=I$.
+
+\subsubsection{Uncollided Intensity}
+We approach the uncollided intensity first
+because it is more analytically tractable and appears in the collided intensity
+equation as a source term. The
+following equations govern uncollided intensity:
+\begin{subequations} \label{uncollided_1}
+\begin{equation}
+\frac{1}{c}\frac{\partial\hat I}{\partial t} + \mu\frac{\partial\hat
+  I}{\partial x} + \sigma_0\hat I = 0,
+\end{equation}
+\begin{align}
+\hat I(0,\mu,\nu,t)&=2\pi B_u,\hspace{15pt} 0<\mu\leq1, \hspace{10pt}0\leq t,\\
+\hat I(\infty,\mu,\nu,t)&=0,\hspace{15pt} -1\leq\mu<0,\hspace{10pt}0\leq t,\\
+\hat I(x,\mu.\nu,0)&=0, \hspace{15pt}0\leq x\leq\infty,\hspace{10pt}|\mu|\leq1.
+\end{align}
+\end{subequations}
+Given the lack of any source terms in Eqs. \eqref{uncollided_1}, the
+system is completely absorbing in nature.  By way of note, it could be solved
+analytically, but will be treated by discretizing in time implicitly:
+\[ \frac{1}{c}\left(\frac{\hat I_1-\hat I_0}{\Delta_t}\right) +
+  \mu\frac{\partial}{\partial x}\hat I_1 + \sigma_0\hat I_1=0,\]
+where $\hat I_k\equiv\hat I(t_k)$ designates the uncollided radiation intensity
+at discrete time step $t_k$.  Because of the specified initial condition (i.e.,
+all intensity existing at the start of the problem is collided
+intensity, the uncollided intensity is zero throughout the mesh at time
+$t=0$),
+\[\frac{1}{c\Delta_t}{\hat I_1} + \mu\frac{\partial}{\partial x}\hat
+I_1 + \sigma_0\hat I_1=0,\]
+or, in operator form,
+\begin{equation}
+\mu\frac{\partial\hat I_1}{\partial x} +
+  \left(\sigma_0+\frac{1}{c\Delta_t}\right)\hat I_1 = 0 \label{uncol_ode}.
+\end{equation}
+For $\mu\geq0$ the solution for the time-implicit uncollided radiation is found
+using the integrating factor $e^{\sigma_0x+\frac{1}{c\Delta_t}x}\equiv
+e^{\hat\Sigma(\nu)x}$:
+\begin{equation}
+\hat I_1(x,\mu,\nu)=2\pi B_ue^{-\hat\Sigma x/\mu} \label{uncol_solve}.
+\end{equation}
+This is limited to particles traveling in angles of positive $\mu$.  This is
+practical for a problem with isotropically impinging radiation on once face
+of a cell; however, further treatment is necessary in order to
+account for significant influences on multiple faces of a cell.  This will be
+addressed in Section \ref{propagate} for both single- and multidimensional
+cases.
+
+Taking the zeroth angular moment of Eq. \eqref{uncol_solve},
+\[\hat\phi_1(x,\nu)\equiv\int_{-1}^1\hat I_1d\mu =
+  \int_0^1 2\pi B_ue^{-\hat\Sigma x/\mu}d\mu,\]
+\begin{equation} \label{uncol_mom1}
+\hat\phi_1(x,\nu)=2\pi B_uE_2(\hat\Sigma x).
+\end{equation}
+where $E_n$ is the exponential integral defined as follows:
+\[E_n(x)\equiv\int_0^1\mu^{n-2}e^{-x/\mu}d\mu,\hspace{15pt}0<x.\]
+
+Eq.\ \eqref{uncol_mom1}, is the approximate solution of the
+uncollided intensity.  Note that this derivation coincides precisely with the
+process employed by Wollaber, Larsen, and Densmore \cite{WolLarDen}.
+
+\subsubsection{Collided Intensity}
+It is in this section that the deviation from previous derivation of the
+discrete maximum principle occurs.  Because the collided intensity contains
+all the source terms, it is more difficult to treat.  Eqs.
+\eqref{collided} are the governing equations of the collided intensity:
+\begin{subequations}\label{collided}
+\begin{equation}
+\frac{1}{c}\frac{\partial\breve I}{\partial t} + 
+  \mu\frac{\partial\breve I}{\partial x} + \sigma_0\breve I =
+  \frac{1-f_0}{2}\frac{\sigma_0b_0}{\sigma_p}\int_0^\infty\int_{-1}^1
+    \sigma_0(\hat I+\breve I)d\mu d\nu +
+  2\pi\sigma_0f_0B_0,
+\end{equation}
+\begin{align}
+\breve I(0,\mu,\nu,t)&=0,\hspace{15pt} 0<\mu\leq1, \hspace{10pt}0\leq t,\\
+\breve I(\infty,\mu,\nu,t)&=2\pi B_R,\hspace{15pt}
+  -1\leq\mu<0,\hspace{10pt}0\leq t,\\
+\breve I(x,\mu,\nu,0)&=I_i(x,\mu,\nu), \hspace{15pt}0\leq
+  x\leq\infty,\hspace{10pt}|\mu|\leq1 \label{initcond2}.
+\end{align}
+\end{subequations}
+Note that Eq.\ \eqref{initcond2} is the general initial condition employed
+particular to this derivation.
+
+To solve Eqs.\ \eqref{collided}, a standard diffusion approximation is
+made, leading to the following:
+\begin{equation}\label{diff_appr}
+\frac{1}{c}\frac{\partial\breve\phi}{\partial t} -
+  \frac{1}{3\sigma_0}\frac{\partial^2\breve\phi}{\partial x^2} +
+  \sigma_0\breve\phi =
+  (1-f_0)\frac{\sigma_0b_0}{\sigma_p}
+    \int_0^\infty\sigma_0(\hat\phi+\breve\phi)d\nu +
+  4\pi f_0\sigma_0B_0,
+\end{equation}
+where the scalar intensity $\breve\phi$ is
+\[ \breve\phi(x,\nu,t)\equiv\int_{-1}^1\breve I(x,\mu,\nu,t)d\mu.\]
+As in \cite{WolLarDen}, it is assumed that $\breve\phi$ has a frequency shape
+given
+by the Planckian spectrum $b_0$ for cell temperature $T_0$, allowing it to be
+separated as follows:
+\[\breve\phi(x,\nu,t)\approx b_0(\nu)\check\phi(x,t).\]
+Defining the diffusion coefficient
+\begin{equation}
+D\equiv\int_0^\infty\frac{b_0(\nu)}{3\sigma_0(\nu)}d\nu,\label{defD}
+\end{equation}
+Eq. \eqref{diff_appr} can be integrated over all frequencies $\nu$ to
+obtain
+\begin{equation} \label{diff2}
+\frac{1}{c}\frac{\partial\check\phi}{\partial t}
+  -D\frac{\partial^2\check\phi}{\partial x^2} + f_0\sigma_p\check\phi
+  =(1-f_0)\int_0^\infty\sigma_0\hat\phi d\nu + f_0\sigma_pacT^4_0.
+\end{equation}
+At this point, an implicit time discretization is
+employed, although the approach is more general here given the undefined
+initial condition throughout the mesh given in Eqs.\ \eqref{collided}. 
+Implicit time discretization is employed as follows for any time-dependent
+function $f(t)$:
+\[ \bar f(t) \equiv\frac{1}{\Delta_t}\int_{t_n}^{t_{n+1}}f(t) dt 
+  \approx f(t_{n+1}).\]
+Additionally, we define the radiation temperature at time $t=0$ to satisfy:
+\[ \int_0^\infty\check\phi_0\ d\nu\equiv\int_0^\infty\int_{-1}^1\check I_i\
+d\mu\ d\nu \equiv acT_R^4,\]
+where we define $T_R$ as the radiation field temperature within the cell at
+time $t=0$.
+Applying time differencing to Eq. \eqref{diff2}, we arrive at the
+following:
+\begin{equation}
+\frac{\partial^2 \check\phi_1}{\partial x^2} - \lambda^2\check\phi_1 =
+  \frac{1-f_0}{-D}\int_0^\infty \sigma_0\hat\phi d\nu -
+  \frac{acT_R^4}{c\Delta_tD} - \frac{f_0\sigma_p}{D}acT_0^4,
+\end{equation}
+where $\lambda$ has been
+introduced as
+\[ \lambda^2\equiv\frac{f_0\sigma_p+1/c\Delta_t}{D}.\]
+
+Using Eq. \eqref{uncol_mom1} in Eq. \eqref{diff2},
+\begin{subequations}\label{ode}
+\begin{equation}
+\frac{\partial^2 \check\phi_1}{\partial x^2} - \lambda^2\check\phi_1 =
+  \frac{1-f_0}{-D}\int_0^\infty\sigma_02\pi B_uE_2(\hat\Sigma x) d\nu -
+  \frac{acT_R^4}{c\Delta_tD} - \frac{f_0\sigma_p}{D}acT_0^4. \label{ode_main}
+\end{equation}
+As with \cite{WolLarDen}, a Marshak boundary condition is set at the left:
+\begin{equation}
+\check\phi_1(0)-2D\frac{d\check\phi_1}{dx}\bigg|_{x=0}=0, \label{marshakBC}
+\end{equation}
+and the right boundary is
+\begin{equation}
+\lim_{x\to\infty}\check\phi_1(x)=acT_R^4. \label{infBC}
+\end{equation}
+To bring this derivation back in harmony with \cite{WolLarDen}, $\tilde A$ is
+defined
+\begin{equation}
+\tilde A\equiv - \frac{acT_R^4}{c\Delta_tD} - \frac{f_0\sigma_p}{D}acT_0^4,
+\end{equation}
+and operator $L$
+\begin{equation}
+L(\xi)\equiv\frac{1-f_0}{-D}\int_0^\infty\sigma_02\pi B_u\xi d\nu,\label{defL}
+\end{equation}
+making Eq.\ \eqref{ode_simple}, the simplification of Eq.\ \eqref{ode_main},
+identical in
+appearance to Eq. (17g) in \cite{WolLarDen}:
+\begin{equation}\label{ode_simple}
+\frac{\partial^2\check\phi_1}{\partial x^2}-\lambda^2\check\phi_1 =
+  \tilde A + L\left(E_2(\hat\Sigma x)\right).
+\end{equation}
+\end{subequations}
+\\
+We see by inspection that the remainder of the derivation in \cite{WolLarDen}
+applies perfectly to
+\eqref{ode_simple}, only trivially replacing $A$ everywhere with $\tilde A$. 
+The final results arrived at in \cite{WolLarDen} are shown here, noting only
+that $\tilde R$ (the average energy deposited in the first cell) and $\tilde A$
+contain the radiation temperature $T_R$ as well as the material temperature
+$T_0$.
+\begin{align}\label{R}
+\tilde R(\Delta_x,\Delta_t)&\equiv\frac{f_0\Delta_t2\pi}{\Delta_x}
+  \int_0^\infty\frac{\sigma_0B_u}{\hat\Sigma}\left(\frac{1}{2}-
+    E_3(\hat\Sigma\Delta_x)\right)d\nu \nonumber\\
+  &+\frac{c_1f_0\Delta_t\sigma_p}{\lambda\Delta_x}(1-e^{-\lambda\Delta_x}) +
+  \frac{f_0\Delta_t\sigma_p}{\lambda^2\Delta_x}\left[-\tilde A\Delta_x
+    -L\left\{\frac{1}{\hat\Sigma}\left(\frac{1}{2}
+    -E_3(\hat\Sigma\Delta_x)\right)\right\}\right] \\
+  &\hspace{15pt}+\frac{f_0\Delta_t\sigma_p}{\Delta_x\lambda^4}L\Bigg\{\hat\Sigma
+    \bigg[e^{-\lambda\Delta_x}\mbox{Ei}[(\lambda-\hat\Sigma)\Delta_x] +
+    e^{\lambda\Delta_x}\mbox{Ei}[-(\lambda+\hat\Sigma)\Delta_x] \nonumber \\
+  &\hspace{140pt} -2\mbox{Ei}(-\hat\Sigma\Delta_x)+ \nonumber
+    \ln\frac{\hat\Sigma^2}{(\lambda+\hat\Sigma)|\lambda-\hat\Sigma|}
+    \bigg]\Bigg\},
+\end{align}
+Thus, the IMC equations can be expected to satisfy the maximum principle if the
+following inequality is satisfied, calculating $\tilde R$ as in Eq.\ \eqref{R}.
+\begin{equation}\label{DMP}
+\Delta_t<\frac{c_v(T_u-T_0)}{\tilde
+R(\Delta_x,\Delta_t)-f_0c\sigma_paT_0^4}.
+\end{equation}

@@ -1,0 +1,114 @@
+\begin{center}
+\section{Implicit Monte Carlo}
+\end{center}
+\subsection{Thermal Radiative Transfer Equations}
+The thermal radiative transfer equations center around the generation, interaction, and absorption of photons in a background medium with non-zero temperature.  The generation of photons by a material  is described by Planck's blackbody distribution.  For a given material temperature $T$, the spectrum of emitted photons by that material is given by
+\begin{equation}\label{blackbody}
+B(T)=\frac{2h\nu^3}{c^2}\frac{1}{\exp(\frac{h\nu}{kT})-1},
+\end{equation}
+where $h$ is Planck's constant, $\nu$ is photon frequency, $c$ is the speed of light in a vacuum, and $k$ is Boltzmann's constant.  The interactions of photons with a background medium is represented by coupled integro-differential equations:
+\begin{subequations}\label{eqn:rtt}
+\begin{equation}\label{eqn:rtt1}
+\frac{1}{c}\frac{\partial I}{\partial t}(\mathbf{r},\mathbf{\Omega},\nu,t) + \mathbf{\Omega}\cdot\nabla I (\mathbf{r},\mathbf{\Omega},\nu,t)    
+    =\sigma_a(\mathbf{r},\mathbf{\Omega},t)\big[B(\nu,T)-I(\mathbf{r},\mathbf{\Omega},\nu,t)\big],
+\end{equation}
+\begin{equation}\label{eqn:rtt2}
+c_v(\mathbf{r},T)\frac{\partial T}{\partial t}(\mathbf{r},t)=
+        \int_0^\infty\int_{0}^{4\pi}\sigma_a(\mathbf{r},\nu',T)\big[(I(\mathbf{r},\Omega',\nu',t)
+            -B(\nu',T)\big]d\Omega'd\nu',
+\end{equation}
+where $I$ is the photon intensity, $\sigma_a$ is the absorption opacity, $c_v$ is the material heat capacity, and $T$ is the material temperature.  $I$ is more accurately the photon intensity per second, here given in units of photons per cm$^2$ per second.  The opacity is similar to a macroscopic cross-section, with units of inverse centimeters.  $1/\sigma_a$ is the mean free path for a photon, or the average distance a photon with a given energy travels before being absorbed in the material.
+
+The phase space considered for $I$ covers particles at location $\mathbf{r}$ in three-dimensional space, moving in solid angle $\mathbf{\Omega}$, with frequency $\nu$, all at time $t$.
+\end{subequations}
+
+
+\subsection{Implicit Monte Carlo}
+While a complete derivation of the \gls{imc} method for radiative heat transfer is contained in previous work \cite{FleckCumm}, here we repat the single-frequency (grey) one-dimension derivation that leads to the Fleck factor.
+
+We begin by taking Eqs. \ref{eqn:rtt}, assuming local thermodynamic equilibrium:
+\begin{subequations}\label{eqn:fleck_rtt}
+\begin{equation}
+\frac{1}{c}\frac{\partial I}{\partial t}+\mu\frac{\partial I}{\partial x}+\sigma I = 
+    \frac{1}{2}\sigma_a a c T^4,
+\end{equation}
+\begin{equation}
+c_v\frac{\partial T}{\partial t} - \sigma_a\left(\int_{-1}^1Id\mu-acT^4\right),
+\end{equation}
+\end{subequations}
+noting 
+\begin{equation}
+\int_0^\infty B(\nu,T)d\nu = acT^4.
+\end{equation}
+Following after the fashion of Fleck and Cummings, we define
+\begin{align}
+u_m &= c_vT, \mbox{ material energy density},\\
+u_r &=aT^4, \mbox{ radiation energy density},
+\end{align}
+and 
+\begin{equation}
+\frac{1}{\beta}=\frac{u_r}{u_m}.
+\end{equation}
+Rewriting Eqs. \ref{eqn:fleck_rtt},
+\begin{subequations}
+\begin{equation}\label{eqn:fleck_dens_trans}
+\frac{1}{c}\frac{\partial I}{\partial t}+\mu\frac{\partial I}{\partial x}+\sigma_a I = 
+    \frac{1}{2}\sigma_a c u_r,
+\end{equation}
+\begin{equation}\label{eqn:fleck_dens_mat}
+\frac{\partial u_r}{\partial t} = \beta\sigma\left(\int_{-1}^1 Id\mu-cu_r\right).
+\end{equation}
+\end{subequations}
+We then begin discretizing by integrating over time $t=t^n$ to $t=t^{n+1}$:
+\begin{equation}
+u_r^{n+1}-u_r^n=\int_{t^n}^{t^{n+1}}dt\beta\sigma\int_{-1}^1Id\mu -c\int_{t^n}^{t^{n+1}}dt\beta\sigma u_r,
+\end{equation}
+noting that
+\[u_r^n=u_r(x,t^n). \]
+Allowing $\beta$ and $\sigma$ to take a single average value over the time step and defining $\Delta_t=t^{n+1}-t^n$,
+\begin{equation}
+u_r^{n+1}-u_r^n=\Delta_t\beta\sigma\left\{ \int Id\mu -c[\alpha u_r^{n+1}+(1-\alpha)u_r^n]\right\},
+\end{equation}
+where $\alpha$ ranges between 0 and 1 and determines the implicitness of the radiation energy densities.  In practice, $\alpha$ usually takes the value of 1/2 or 1, with strong preference being given to $\alpha=1$ for stability, although adaptive methods for selecting $\alpha$ have been proposed \cite{WolThesis}.  We have also assumed an appropriate value for $I$has been determined for the time step by some centering, implicit, or explicit method.  For this derivation, we may assume an instantaneous value is representative of the value throughout the time step.  Solving for $u_r^{n+1}$,
+\begin{equation}\label{eqn:fleck_mat_int}
+u_r^{n+1}=\frac{1-(1-\alpha)\beta c\Delta_t\sigma}{1+\alpha\beta c\Delta_t\sigma}u_r^n +\frac{\beta\sigma\Delta_t}{1+\alpha\beta c\Delta_t\sigma}\int Id\mu.
+\end{equation}
+Defining $u_r=\alpha u_r^{n+1}+(1-\alpha)u_r^n$, then solving Eq. \ref{eqn:fleck_mat_int} for $u_r$ and plugging into Eq. \ref{eqn:fleck_dens_trans} yields
+\begin{equation}
+\frac{1}{c}\frac{\partial I}{\partial t}+\mu\frac{\partial I}{\partial x}+\sigma I =
+  \frac{1}{2}\sigma\left(\frac{\alpha\beta c\Delta_t\sigma}{1+\alpha\beta c\Delta_t\sigma}\right)\int Id\mu + \frac{1}{2}\left(\frac{c\sigma u_r^n}{1+\alpha\beta c\Delta_t\sigma}\right).
+\end{equation} 
+This brings us to the Fleck factor $f$, which we define as
+\begin{equation}
+f=\frac{1}{1+\alpha\beta c\Delta_t\sigma},
+\end{equation}
+and we may write the thermal radiative transfer equations as
+\begin{subequations}
+\begin{equation}
+\frac{1}{c}\frac{\partial I}{\partial t}+\mu\frac{\partial I}{\partial x}+\sigma_a I = 
+    \frac{\sigma(1-f)}{2}\int Id\mu+\frac{fc\sigma u_r^n}{2},
+\end{equation}
+\begin{equation}
+c_v\frac{\partial T}{\partial t}=\sigma f\int_{\Delta_t}\int_{-1}^1 Id\mu\ dt-f\big(c\Delta_t\sigma u_r^n\big).
+\end{equation}
+\end{subequations}
+A similar derivation for the multifrequency case (see \cite{FleckCumm}) leads to radiative thermal transfer equations of a similar form:
+\begin{subequations}
+\begin{equation}
+\frac{1}{c}\frac{\partial I}{\partial t} + \mu\frac{\partial I}{\partial x}
++\sigma I =
+  \frac{1-f}{2}\frac{\sigma b}{\sigma_p}\int_0^\infty\int_{-1}^1
+  \sigma I\ d\mu\ d\nu + \sigma f 2\pi B,
+\end{equation}
+\begin{equation}
+c_v\frac{\partial T}{\partial t}=f \int_0^\infty\int_ { -1 } ^1
+  \sigma(I-2\pi B)\ d\mu\ d\nu,
+\end{equation}
+\end{subequations}
+where we introduce
+\begin{equation}
+\sigma_p=\int_0^\infty b\sigma d\nu,
+\end{equation}
+and $b$ is the integrated Planck spectrum.
+\subsection{Discrete Maximum Principle}
+TODO parrot DMP derivation

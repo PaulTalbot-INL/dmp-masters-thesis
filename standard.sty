@@ -1,0 +1,444 @@
+%========================================================================%
+%
+% Author:  
+%  - Brenton S. Ching             
+%    Graduate Research Assistant
+%    Oregon State University
+%    August, 2000
+%
+% Description:
+%  - This ".sty" file defines (or re-defines) the preamble and some tex 
+%    environments to be consistent with the formatting according to the 
+%    OSU thesis style guide.
+%       ---------------------------------------------------
+%       *** NOTE: This file shouldn't have to be modified !
+%       ---------------------------------------------------
+%
+%  - This file is organized as follows:
+%       + Preamble :
+%		Defines the pagestyle and packages to use.
+%       + User-defined (new) commands :
+%		New commands that should NOT be changed.
+%	+ OSU modifications
+%		Re-formatting the pagestyle(s) for the OSU thesis.
+%
+% Helpful hints:
+%	   - read through the style file comments to get a better 
+%		understanding of how/what changes were made.
+%	   - take advantage of some of the user-defined commands such
+%		as "\half".  These commands can be found in the
+%		"User-defined commands" section.
+%
+%
+%========================================================================%
+
+%===========================================%
+% Preamble 				    %
+%   (defines the page style and formatting) %
+%===========================================%
+
+%\setlength{\textwidth}{5.8in}
+%\setlength{\textheight}{8.75in}
+%\setlength{\oddsidemargin}{0.7in}
+%\setlength{\evensidemargin}{0.7in}
+
+\setlength{\textwidth}{5.8125in}
+\setlength{\textheight}{8.4875in}
+\setlength{\oddsidemargin}{0.705in}
+\setlength{\evensidemargin}{0.705in}
+
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+%    \usepackage[dvips]{graphics}         % for final LaTeX-ing
+%\usepackage[dvips,draft]{graphics}   % for draft LaTeX-ing
+
+%\usepackage[dvips]{graphics,color}  % for use with "\colorbox"
+%\usepackage[dvips]{graphicx,color}  % for use with "\colorbox"
+
+%\usepackage{epsfig}
+
+
+%\setlength{\topmargin}{0.5in} 
+%\setlength{\headheight}{0.25in}
+%\setlength{\headsep}{0.25in}
+%\setlength{\footskip}{0.0in}
+
+%\setlength{\parindent}{0.25in}
+%\setlength{\parskip}{0.05in}
+
+\setlength{\topmargin}{0.0in}
+\setlength{\headheight}{0.2in}
+\setlength{\headsep}{0.25in}
+\setlength{\footskip}{0.25in}
+
+\setlength{\parindent}{0.25in}
+\setlength{\parskip}{0.05in}
+
+
+% **********
+% Heading style
+% **********
+
+\pagestyle{myheadings}
+
+%========================================================================%
+
+%=======================%
+% User-defined commands %
+%=======================%
+
+% **********
+% Define spacing commands for double- and single- spacing.
+% **********
+
+\newcommand{\SetDoubleSpace}{\setlength{\baselineskip}{24pt}}
+\newcommand{\SetSingleSpace}{\setlength{\baselineskip}{12pt}}
+
+\newcommand{\ResetSingleSpace}{\addtolength{\baselineskip}{-10pt}}
+\newcommand{\ResetDoubleSpace}{\addtolength{\baselineskip}{10pt}}
+
+
+% **********
+% Changing spacing for environments
+%    - want below space
+%      to be less       ---> define a new command which is a 
+%			     _negative_ space
+%    - place after "\end{table}" environment
+%    - place after "\end{eqnarray}" environment
+%    - place after "\end{tabbing}" environment
+%    - place after "\end{figure}" environment
+% **********
+
+\newcommand{\vertTableSkip}{\vspace{-0.2in}}
+
+\newcommand{\vertEqnarraySkip}{\vspace{-0.25in}}
+
+\newcommand{\vertTabbingSkip}{\vspace{-0.25in}}
+
+\newcommand{\vertFigureSkip}{\vspace{0.25in}}
+
+% **********
+% Spacing before and after sections and sub-sections
+%    - want spacing to agree
+%      with OSU thesis format
+% **********
+
+\newcommand{\belowSecSkip}{\vspace{0.2in}}
+
+\newcommand{\aboveSubSecSkip}{\vspace{0.3in}}
+\newcommand{\belowSubSecSkip}{\vspace{0.15in}}
+
+% **********
+% Spacing for punctuation after equations.
+% **********
+
+\newcommand{\eqspace}{\,}
+
+% **********
+% Configure super- and sub- script sizes in math mode.
+%    - want nested levels to be same size.
+% **********
+
+\newcommand{\D}{\displaystyle}
+\newcommand{\T}{\textstyle}
+
+
+% **********
+% Some shortcut keys
+% **********
+
+\newcommand{\half}{\frac{1}{2}}
+\newcommand{\third}{\frac{1}{3}}
+\newcommand{\fourth}{\frac{1}{4}}
+
+% **********
+% Shortcut for scaling images with the same size
+% **********
+
+\newcommand{\imgwidth}{6in}
+\newcommand{\width}{6}
+\newcommand{\imgheight}{5in}
+\newcommand{\height}{5}
+
+%========================================================================%
+
+%===================%
+% OSU modifications %
+%===================%
+
+% **********
+% Changing "section" and "subsection" style:
+%    - want section heading 
+%      to be \normalsize    --> \normalsize
+% **********
+
+\renewcommand\section{\@startsection {section}{1}{\z@}%
+   {-3.5ex \@plus -1ex \@minus -.2ex}%
+   {2.3ex \@plus.2ex}%
+   {\normalfont\normalsize\bfseries}}
+
+%\renewcommand{\thesection}{\Roman{section}}  % for Roman numerals(NS & E)
+
+\renewcommand\subsection{\@startsection{subsection}{2}{\z@}%
+   {-3.25ex\@plus -1ex \@minus -.2ex}%
+   {1.5ex \@plus .2ex}%
+   {\normalfont\normalsize\bfseries}}
+
+\renewcommand\subsubsection{\@startsection{subsubsection}{3}{\z@}%
+   {-3.25ex\@plus -1ex \@minus -.2ex}%
+   {1.5ex \@plus .2ex}%
+   {\normalfont\normalsize\bfseries\slshape}}
+
+
+% **********
+% Changing "lists" styles: TOC, LOF, LOT.
+% **********
+
+% This defines the pagestyle for the toc, lof and lot.
+%   Credit: Department of Physics
+%	    Oregon State University
+%   Also:   Brenton Ching
+%	    July, 2000
+%	    Department of Nuclear Engineering
+%	    Oregon State University
+%   Note:   To use this, your "main.tex" file should
+% 	    look like:
+%    
+%               \pagestyle{startlists}\clearpage	(%1)
+%		\tableofcontents\clearpage		(%2)
+%		\listoffigures\clearpage		(%3)
+%		\listoftables\clearpage			(%4)
+%		\pagestyle{endlists}\clearpage		(%5)
+%		\thispagestyle{empty}			(%6)
+%		\section*{}				(%7)
+%		\clearpage				(%8)
+%		\pagestyle{myheadings}			(%9)
+%    
+%	    where the TOC (%2), LOF (%3), and LOT (%4) must be
+%	    ordered such that the list which is only ONE page
+%	    is first.  At this time, I don't know why the first
+%	    page is not broken automatically.  Also, (%7)-(%9)
+%	    creates an empty (blank) page.  It's actually tricky;
+%	    the TOC, LOF, and LOT are _not_ sections, rather 
+%	    it's their pagestyles that are defined.
+
+\def\ps@startlists{
+\newdimen\hsave
+\newdimen\tsave
+\newdimen\bsave
+\hsave=\headheight
+\tsave=\textheight
+\bsave=3.75\baselineskip
+\advance \headheight by \bsave
+\advance \textheight by -\bsave
+\addtocontents{toc}{\protect\vspace{-24.0pt}}
+\addtocontents{lof}{\protect\vspace{-24.0pt}}
+\addtocontents{lot}{\protect\vspace{-24.0pt}}
+}
+
+% This re-defines the pagestyle for use AFTER the  toc, lof, and lot.
+
+\def\ps@endlists{
+    \headheight=\hsave
+    \textheight=\tsave
+    \def\@evenhead{}
+    \def\@oddhead{}
+    \def\@evenfoot{}
+    \def\@oddfoot{}
+}
+
+% For spacing between entries (assumes double-spacing has already been
+% invoked) that is consistent with OSU thesis style guide.
+
+\def\l@subsection#1#2{\vskip 9.5pt{\baselineskip 19.0pt%
+        \@dottedtocline{2}{2pc}{2.8em}{#1}{#2}}}
+\def\l@subsubsection#1#2{\vskip 9.5pt{\baselineskip 14.5pt
+        \@dottedtocline{3}{3.5pc}{3.1em}{#1}{#2}}\vskip -9.5pt}
+
+% For "." from section name to page number.
+
+\renewcommand*\l@section[2]{%
+  \ifnum \c@tocdepth >\z@
+    \addpenalty\@secpenalty
+    \addvspace{1.0em \@plus\p@}%
+    \setlength\@tempdima{1.5em}%
+    \begingroup
+      \parindent \z@ \rightskip \@pnumwidth
+      \parfillskip -\@pnumwidth
+      \leavevmode %\bfseries
+      \advance\leftskip\@tempdima
+      \hskip -\leftskip
+      {#1}\nobreak         %next 4 lines edited by bsc -----
+      \leaders\hbox{$\m@th 
+         \mkern \@dotsep mu\hbox{.}\mkern \@dotsep 
+         mu$}\hfill 
+      \nobreak\hb@xt@\@pnumwidth{\hfil\normalfont \normalcolor #2}
+    \par
+    \endgroup
+  \fi}
+
+
+% **********
+% Changing toc style:
+% **********
+
+% For "TOC" all caps and centered.
+
+\renewcommand\contentsname{TABLE OF CONTENTS}
+
+% For right-justified "Page" above the page numbers.
+
+\newcommand{\tocPagelabel}{\vspace{0.25in} 
+%	    \flushright \hfill \underline{\bf{Page}}}
+		\flushright \hfill \underline{Page} }   %No Bold, GGD
+
+% This defines the pagesytle for the toc.
+
+\def\ps@toca{\def\@oddhead{\vbox to \headheight{\vss
+%              \hfil\centerline{\bf \contentsname}\hfil\break % old way, BSC
+%              \center{\bf \contentsname}\break                % my way,  BSC
+               \center{ \contentsname}\break                   % No Bold, GGD
+		\tocPagelabel}\break}
+             \def\@oddfoot{}
+             \def\@evenfoot{}
+}
+
+\def\ps@tocb{\def\@oddhead{\vbox to \headheight{\vss
+%              \hfil\centerline{\bf \contentsname \ (Continued)}\hfil\break
+               \hfil\centerline{ \contentsname \ (Continued)}\hfil\break  % No Bold, GGD
+		\tocPagelabel}\break}
+             \def\@oddfoot{}
+             \def\@evenfoot{}
+}
+
+\def\tableofcontents{
+\pagestyle{tocb}\thispagestyle{toca}
+\@starttoc{toc}}
+
+
+% **********
+% Changing lof style:
+% **********
+
+% For "LOF" all caps and centered.
+
+\renewcommand\listfigurename{LIST OF FIGURES}
+
+% For left-justified "Figure" and right-justified "Page" above 
+% the page numbers.
+
+\newcommand{\lofPagelabel}{\vspace{0.25in} 
+%	\flushleft \underline{\bf{Figure}} \hfill \underline{\bf{Page}}}
+	\flushleft \underline{Figure} \hfill \underline{Page}}   % No Bold, GGD
+
+% This defines the pagestyle for the lof.
+
+\def\ps@lofa{\def\@oddhead{\vbox to \headheight{\vss
+%	     \hfil\centerline{\bf \listfigurename}\hfil\break
+		 \hfil\centerline{\listfigurename}\hfil\break
+		\lofPagelabel}}
+             \def\@evenhead{}
+             \def\@oddfoot{}
+             \def\@evenfoot{}
+}
+
+\def\ps@lofb{\def\@oddhead{\vbox to \headheight{\vss
+%             \hfil\centerline{\bf \listfigurename \ (Continued)}\hfil\break
+              \hfil\centerline{\listfigurename \ (Continued)}\hfil\break
+		\lofPagelabel}}
+             \def\@evenhead{}
+             \def\@oddfoot{}
+             \def\@evenfoot{}
+}
+
+\def\listoffigures{
+\pagestyle{lofb}\thispagestyle{lofa}
+\@starttoc{lof}}
+
+
+% **********
+% Changing lot style:
+% **********
+
+% For "LOT" all caps and centered.
+
+\renewcommand\listtablename{LIST OF TABLES}
+
+% For left-justified "Table" and right-justified "Page" above 
+% the page numbers.
+
+\newcommand{\lotPagelabel}{\vspace{0.25in} 
+%	\flushleft \underline{\bf{Table}} \hfill \underline{\bf{Page}}}
+	\flushleft \underline{Table} \hfill \underline{Page}}
+	
+% This defines the pagestyle for the lot.
+
+\def\ps@lota{\def\@oddhead{\vbox to \headheight{\vss
+%             \hfil\centerline{\bf \listtablename}\hfil\break
+             \hfil\centerline{\listtablename}\hfil\break
+		\lotPagelabel}}
+             \def\@evenhead{}
+             \def\@oddfoot{}
+             \def\@evenfoot{}
+}
+
+\def\ps@lotb{\def\@oddhead{\vbox to \headheight{\vss
+%             \hfil\centerline{\bf \listtablename \ (Continued)}\hfil\break
+             \hfil\centerline{\listtablename \ (Continued)}\hfil\break
+		\lotPagelabel}}
+             \def\@evenhead{}
+             \def\@oddfoot{}
+             \def\@evenfoot{}
+}
+
+\def\listoftables{
+\pagestyle{lotb}\thispagestyle{lota}
+\@starttoc{lot}}
+
+
+% **********
+% Changing references style:
+%    - want all caps and centered
+% **********
+
+\renewcommand\refname{Bibliography}   % for OSU thesis
+%\renewcommand\refname{REFERENCES}   % for journal
+
+\renewenvironment{thebibliography}[1] % for OSU thesis
+     {\section*{
+         {
+         \vspace{-0.35in}
+         \begin{center}
+         \mdseries{\refname}
+         \end{center}
+         }
+        }%
+      \list{\@biblabel{\@arabic\c@enumiv}}%
+           {\settowidth\labelwidth{\@biblabel{#1}}%
+            \leftmargin\labelwidth
+            \advance\leftmargin\labelsep
+            \@openbib@code
+            \usecounter{enumiv}%
+            \let\p@enumiv\@empty
+            \renewcommand\theenumiv{\@arabic\c@enumiv}}%
+      \sloppy\clubpenalty4000\widowpenalty4000%
+      \sfcode`\.\@m}
+     {\def\@noitemerr
+       {\@latex@warning{Empty `thebibliography' environment}}%
+      \endlist}
+
+
+% **********
+% Changing "Figure" to "Fig." in captions
+% **********
+
+\renewcommand\figurename{Figure}
+
+
+% **********
+% Put extra space between rows in
+% \eqnarray and \eqnarray* formulas.
+% **********
+
+\jot0.2in

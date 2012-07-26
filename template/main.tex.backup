@@ -1,0 +1,140 @@
+%=================================================================%
+%
+% Author:  Mathew Cleveland
+%	   Masters Thesis
+%          Oregon State University
+%          June, 2004
+%
+% LaTex Styling by Brenton Ching
+%
+% Description:
+%          This is the thesis "root" file which
+%          includes:
+%             - preamble
+%             - style packages
+%             - "includes" of the files
+% 
+% Outline:
+
+%
+%=================================================================%
+
+%==========%
+% Preamble %
+%==========%
+
+\documentclass[12pt,letterpaper]{article}
+
+\usepackage{standard}         % Tells LaTeX to use "standard.sty"
+			      % *** does NOT require modifications
+
+\usepackage{personal}         % Tells LaTeX to use "personal.sty"
+			      % *** user can modify this file
+			      
+\usepackage{graphicx}	% Added by IMD
+
+\usepackage{paralist}	% Added by IMD
+
+\begin{document} 
+
+%=================================================================%
+
+                     %==========================%
+                     %    Build the document    %
+                     %==========================%
+
+\SetDoubleSpace        % Start double-spacing
+
+%==========%
+% Abstract %
+%==========%
+
+\include{./Sections/abstract}
+
+%===========%
+% Copyright %
+%===========%
+
+\include{./Sections/copyright}
+
+%============%
+% Title page %
+%============%
+
+\ResetSingleSpace      % ... back to single-spacing
+
+\include{./Sections/title}
+
+%==========%
+% Approval %
+%==========%
+
+\include{./Sections/approval}
+
+%=================%
+% Acknowledgement %
+%=================%
+
+\ResetDoubleSpace      % ... back to double-spacing
+
+\include{./Sections/acknow}
+
+%======================================================%
+% Table of Contents / List of Figures / List of Tables %
+%======================================================%
+
+% This formats the pagestyle.
+\ResetSingleSpace 
+\pagestyle{startlists}\clearpage 
+
+% The toc, lof, and lot must be ordered so that the list
+% which is only ONE page is first.
+%\setlength{\topmargin}{-0.7in}
+%\setlength{\textheight}{8.7in}
+\tableofcontents\clearpage
+
+\listoffigures\clearpage
+
+\listoftables\clearpage
+
+% This re-formats the pagestyle.
+
+\pagestyle{endlists}\clearpage 
+
+% This re-re-formats the pagestyle.  Unfortunately, it
+% also creates an empty (blank) page.
+
+\thispagestyle{empty}
+\section*{}
+\clearpage
+
+\pagestyle{myheadings}
+
+%==============%
+% Introduction %
+%==============%
+\ResetDoubleSpace 
+\include{./Sections/Intro}
+
+\include{./Sections/Transport}
+
+\include{./Sections/MonteCarlo}
+
+\include{./Sections/DifferenceFormulation}
+
+\include{./Sections/Results}
+
+\include{./Sections/Conclusions}
+
+\ResetSingleSpace      % ... back to single-spacing
+
+\include{./Sections/Refs}
+
+
+%=================================================================%
+
+%=====================%
+% End of the document %
+%=====================%
+
+\end{document}

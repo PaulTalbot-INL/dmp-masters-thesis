@@ -1,0 +1,81 @@
+%==================%
+% Section:         %
+%    Bibliography  %
+%==================%
+
+\addcontentsline{toc}{section}{{}{\refname}}
+
+\begin{thebibliography}{Wac 75}
+
+\vskip0.1in
+
+\bibitem[Ada. 1998]{Ada:1998} Adams, M. L., Nowak, P.F.,
+	``Asymptotic analysis of a computational method for time- and frequency- dependent radiative transfer'', 
+	\emph{Journal of Computational Physics},
+	\textbf{146}, 366-403 (1998).
+
+\bibitem[Bar. 1970]{Bar:1970} Barnett, C., Canfield, E., ``Sampling a random variable distributed according to Planck's law'', \emph{Internal Livermore Document.},
+
+\bibitem[Bro. 1989]{Bro:1989}  Brooks, E. D., ``Symbolic Implicit Monte Carlo'', 
+	\emph{Journal of Computational Physics}, 
+	\textbf{83(2)}, 433-446 (1989).
+
+\bibitem[Bro. 2005]{Bro:2005} Brooks, E. D., McKinley, M.S., Daffin, F., Szoke, A., ``Symbolic implicit Monte Carlo radiation transport in the difference formulation: a piecewise constant discretization'', \emph{Journal of Computational Physics}, \textbf{205},
+	737-754 (2005).
+
+\bibitem[Bro 2006]{Bro:2006} Brooks, E. D., Szoke, A., Peterson, J.D.L., ``Piecewise linear discretization of Symbolic Implicit Monte Carlo radiation transport in the difference formulation'', \emph{Journal of Computational Physics}, , \textbf{220},
+	471-497 (2006).
+	
+\bibitem[Clo 2003]{Clo:2003} Clouet, J. F., Samba, G., ``A hybrid symbolic Monte Carlo method for radiative transfer equations'', \emph{Journal of Computational Physics}, \textbf{188},
+	139-156 (2003).
+
+\bibitem[Dud. 1976]{Dud:1976y} Duderstadt, J. J., Hamilton, L. J., ``Nuclear Reactor Analysis'', 
+
+
+\bibitem[Daf 2005]{Daf:2005} Daffin, F., McKinley, M.S., Brooks, E.D., Szoke, A., ``An evaluation of the difference formulation for photon transport in a two level system'', 
+	\emph{Journal of Computational Physics},
+	\textbf{204},  27-45 (2005).
+	
+\bibitem[Den 2007]{Den:2007} Densmore, J. D., Urbatsch, T.J., Evans, T.M., Buksas, M.W., ``A hybrid transport-diffusion method for Monte Carlo radiative-transfer simulations'', 
+	\emph{Journal of Computational Physics},\textbf{222}, 485-503 (2007).
+
+\bibitem[Fle. 1971]{Fle:1971} Fleck, J. A., Cummings, J.D., ``An implicit Monte Carlo scheme for calculating time and frequency dependent nonlinear radiation transport'',  \emph{Journal of Computational Physics}, \textbf{8}, 313-342 (1971).
+
+\bibitem[Fle. 1984]{Fle:1984} Fleck, J. A., Canfield, E.H., ``A random walk procedure for improving the computational efficiency of the implicit Monte Carlo method for nonlinear radiation transport'', \emph{Journal of Computational Physics}, \textbf{54(3)}, 508-523 (1984).
+	
+
+\bibitem[Gen 2001]{Gen:2001} Gentile, N. A., ``Implicit Monte Carlo Diffusion - An acceleration method for Monte Carlo time-dependent radiative transfer simulations'', 
+	\emph{Journal of Computational Physics},
+	\textbf{172}, 543-571 (2001).	
+
+\bibitem[Gen. 2006]{Gen:2006} Gentile, N. A., ``The difference formulation of radiation transport in implicit Monte Carlo, invited'', 
+	\emph{Transactions of the American Nuclear Society },
+	\textbf{95}, 871-872 (2006).
+
+\bibitem[Ham. 1964]{Ham:1964} Hamerssley, J. M., Handscomb, D. C., ``Monte Carlo methods'', 
+	
+\bibitem[Inc. 2002]{Inc:2002} Incropera, F. P., DeWitt, D. P., ``Fundamentals of heat and mass transfer-5th ed.'', 
+
+
+\bibitem[Lar 1983]{Lar:1983} Larsen, E. W., Pomraning, G.C., Badham, V.C., ``Asymptotic analysls of radiative transfer problems. Journal of Quantitative Spectroscopy and Radiative Transfer'',  \emph{Journal of Quantitative Spectroscopy and Radiative Transfer}, \textbf{29(4)}, 
+	285-310 (1983).
+
+\bibitem[McK 2002]{McK:2002} McKinley, M. S., Brooks, E.D., Szoke, A., ``Comparison of Implicit and Symbolic Implicit Monte Carlo Line Transport with Frequency Weight Vector Extension'', \emph{Internal Livermore Document}, (2002). 	
+	
+\bibitem[N'Ka 1991]{N'Ka:1991} N'Kaoua, T., ``Solution of the nonlinear radiative transfer equations by a fully implicit matrix Monte Carlo method coupled with the Rosseland diffusion equation via domain decomposition'',
+	\emph{SIAM Journal on Scientific and Statistical Computing}, \textbf{2(3)}, 505-520 (1991).
+	
+\bibitem[Su 1996]{Su:1996} Su, B., Olson, G.L., ``Benchmark results for the non-equilibrium Marshak diffusion problem'', \emph{Journal of Quantitative Spectroscopy and Radiative Transfer}, \textbf{56(3)}, 337-351(1996).
+
+\bibitem[Su 1997]{Su:1997} Su, B., Olson, G.L., ``An analytical benchmark for non-equilibrium radiative transfer in an isotropically scattering medium'', \emph{Annals of Nuclear Energy}, \textbf{24(13)}, 1035-1055 (1997).
+
+\bibitem[Su 1999]{Su:1999} Su, B., Olson, G.L., ``Non-grey benchmark results for two temperature non-equilibrium radiative transfer'', \emph{Journal of Quantitative Spectroscopy and Radiative Transfer}, \textbf{62}, 279-302(1999).
+	
+\bibitem[Szi 1992]{Szi:1992} Szilard, R. H., Pomraning, G.C., ``Numerical transport and diffusion methods in radiative transfer'',
+	\emph{Nuclear Science and Engineering}, \textbf{112}, 256-269 (1992).
+
+\bibitem[Szo 2005]{Szo:2005} Szoke, A., Brooks, E.D., ``The transport equation in opitically thick media'', 
+	\emph{Journal of Quantitative Spectroscopy and Radiative Transfer}, \textbf{91}, 95-110 (2005).
+
+\end{thebibliography}
+

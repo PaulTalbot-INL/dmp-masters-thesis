@@ -1,0 +1,24 @@
+\section{Conclusions}
+We undertook in this work to add to the theory surrounding the discrete
+maximum principle as it applies to the implicit Monte Carlo equations, which in
+turn govern radiative thermal transport.  First, we generalized previous
+definitions of the principle \cite{WolLarDen} to allow for non-equilibrium
+starting conditions between the radiation field and material temperatures. 
+Next, the principle was extended to predict maxiumum principle violations in
+conditions where strong temperature gradients due to isotropically impinging,
+Planckian-distributed radiation fields on multiple faces of a
+region of interest.  Lastly, approximations were applied in order to allow the
+discrete maximum principle to be applied in use codes.%, and we demonstrated
+%that such implementation produced maximum principles that predicted violations
+%of physical behaviour in good coincidence with where those voilations actually
+%occur in code.
+
+There is still significant opportunity for future work on developing this
+discrete maximum principle.  Assumptions such as the linear superposition of
+radiation energy deposited in a cell from multiple boundaries deserve further
+analysis to support such claims.  In addition, no effort has been made to
+analyze the effect of a negative temperature gradient on unphysical behavior;
+rather, it has been assumed that unphysical effects from such radical cooling
+will be substantially less limiting in time step than heating effects.  Further
+exploration of negative temperature gradients may help to lead to a more
+general discrete maximum principle still.
